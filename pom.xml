@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jmxsampler</groupId>
+	<artifactId>jmx-sampler</artifactId>
+	<version>0.3-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>JMX Sampler</name>
+	<developers>
+		<developer>
+			<name>Dimo Velev</name>
+			<email>dimo.velev@gmail.com</email>
+		</developer>
+	</developers>
+	<modules>
+		<module>jmx-sampler-core</module>
+		<module>jmx-sampler-extension-base</module>
+		<module>jmx-sampler-extension-jmx</module>
+		<module>jmx-sampler-extension-graphite</module>
+		<module>jmx-sampler-extension-modqos</module>
+		<module>jmx-sampler-tester</module>
+		<module>jmx-sampler-distribution</module>
+	</modules>
+</project>

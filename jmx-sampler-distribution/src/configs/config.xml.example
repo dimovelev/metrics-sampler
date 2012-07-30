@@ -1,0 +1,47 @@
+<configuration pool-size="10">
+	<readers>
+ 		<jmx-reader name="wls" url="service:jmx:t3://weblogic.jmxsampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true" />
+ 		<jmx-reader name="tomcat" url="service:jmx:rmi:///jndi/rmi://tomcat.jmxsampler.org:9001/jmxrmi" persistent-connection="true" />
+		<mod-qos-reader name="apache.qos" url="http://apache.jmxsampler.org:8240/qos-viewer?auto" username="user" password="pass" auth="basic"/>
+	</readers>
+	<writers>
+		<console-writer name="console" />
+		<graphite-writer name="graphite" host="graphite.jmxsampler.org" port="2003" />
+	</writers>
+	<mapping-templates>
+		<mapping-template name="app-server">
+			<regexp-mapping from-name="java\.lang:type=ClassLoading\.(TotalLoadedClassCount|LoadedClassCount|UnloadedClassCount)" to-name="${reader.name}.CLA.${name[1]}"/>
+			<regexp-mapping from-name="com\.bea:ServerRuntime=.*,Name=DataSource_(.*),Type=JDBCOracleDataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${reader.name}.JDBC_${name[1]}.${name[2]}" />
+			<regexp-mapping from-name="com\.bea:ServerRuntime=.*,Name=JTARuntime,Type=JTARuntime\.(.*TotalCount)" to-name="${reader.name}.JTA.${name[1]}" />
+			<regexp-mapping from-name="com\.bea:ServerRuntime=.*,Name=ThreadPoolRuntime,Type=ThreadPoolRuntime\.(CompletedRequestCount|ExecuteThreadIdleCount|ExecuteThreadTotalCount|HoggingThreadCount|MinThreadsConstraintsCompleted|MinThreadsConstraintsPending|PendingUserRequestCount|QueueLength|SharedCapacityForWorkManagers|StandbyThreadCount|Throughput)" to-name="${reader.name}.THD.${name[1]}"/>
+			<regexp-mapping from-name="com\.bea:ServerRuntime=.*,Name=.*,Type=JRockitRuntime\.(AllProcessorsAverageLoad|FreeHeap|HeapFreeCurrent|HeapFreePercent|JvmProcessorLoad|NumberOfDaemonThreads|NumberOfProcessors|TotalGarbageCollectionCount|TotalGarbageCollectionTime|TotalNumberOfThreads|TotalNurserySize)" to-name="${reader.name}.JRO.${name[1]}" />
+		</mapping-template>
+		<mapping-template name="tomcat">
+			<regexp-mapping from-name="java\.lang:type=ClassLoading\.(TotalLoadedClassCount|LoadedClassCount|UnloadedClassCount)" to-name="${reader.name}.CLA.${name[1]}"/>
+			<regexp-mapping from-name="Catalina:type=GlobalRequestProcessor,name=.http-bio-9240.\.(requestCount|bytesSent|bytesReceived)" to-name="${reader.name}.http.${name[1]}"/>
+			<regexp-mapping from-name="java.lang:type=Threading\.(ThreadCount)" to-name="${reader.name}.THD.${name[1]}"/>
+		</mapping-template>
+		<mapping-template name="mod_qos_spl">
+			<regexp-mapping from-name=".*,metric=([^,]+),path=/([^.]+)\.(current|limit)" to-name="${reader.name}.${name[2]}.${name[1]}.${name[3]}"/>
+			<regexp-mapping from-name=".*,metric=([^,]+)$" to-name="${reader.name}.${name[1]}"/>
+			<regexp-mapping from-name=".*,metric=([^,]+)\.(current|limit)" to-name="${reader.name}.${name[1]}.${name[2]}"/>
+		</mapping-template>
+	</mapping-templates>
+	<samplers>
+ 		<default-sampler reader="wls" writers="graphite" interval="10">
+ 			<mappings>
+ 				<mapping-template-ref name="app-server" />
+ 			</mappings>
+ 		</default-sampler>
+ 		<default-sampler reader="tomcat" writers="console" interval="10" disabled="true">
+ 			<mappings>
+ 				<mapping-template-ref name="tomcat" />
+ 			</mappings>
+ 		</default-sampler>
+		<default-sampler reader="apache" writers="console" interval="10">
+			<mappings>
+				<mapping-template-ref name="mod_qos_spl" />
+			</mappings>
+		</default-sampler>
+	</samplers>
+</configuration>

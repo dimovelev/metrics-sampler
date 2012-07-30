@@ -1,0 +1,68 @@
+package org.jmxsampler;
+
+import java.io.File;
+
+import org.jmxsampler.config.Configuration;
+import org.jmxsampler.config.ReaderConfig;
+import org.jmxsampler.config.SamplerConfig;
+import org.jmxsampler.reader.MetricsReader;
+import org.jmxsampler.reader.SourceMetricMetaData;
+import org.jmxsampler.sampler.Sampler;
+import org.jmxsampler.service.ExtensionsRegistry;
+
+public class Runner {
+	public enum Command {
+		START,
+		CHECK,
+		METADATA
+	}
+
+	public static void main(final String[] args) {
+		if (args.length != 2) {
+			System.err.println("Usage: <jmx-sampler> [start|check|metadata] <config.xml>");
+			System.err.println();
+			System.err.println("\tstart     start the sampler with the given configuration");
+			System.err.println("\tcheck     check whether each transformation rule matches at least one metric");
+			System.err.println("\tmetadata  dump metadata from all readers (e.g. list all bean and attributes for a JMX reader)");
+			System.exit(1);
+		}
+		final Command command = Command.valueOf(args[0].toUpperCase());
+		final File configFile = new File(args[1]);
+		if (!configFile.canRead()) {
+			System.err.println("Configuartion file "+configFile.getAbsolutePath()+" not readable");
+			System.exit(2);
+		}
+
+		final ExtensionsRegistry registry = new ExtensionsRegistry();
+		final Configuration config = registry.newConfigurationLoader().load(configFile.getAbsolutePath());
+
+		switch (command) {
+			case START:
+				final Daemon daemon = new Daemon(config, registry);
+				daemon.start();
+				break;
+			case CHECK:
+				boolean allValid = true;
+				for (final SamplerConfig samplerConfig : config.getSamplers()) {
+					final Sampler sampler = registry.newSampler(samplerConfig);
+					final boolean valid = sampler.check();
+					allValid = allValid && valid;
+				}
+				if (allValid) {
+					System.out.println("Everything looks alright");
+				}
+				break;
+			case METADATA:
+				for(final ReaderConfig readerConfig : config.getReaders()) {
+					final MetricsReader reader = registry.newReader(readerConfig);
+					reader.open();
+					System.out.println("Reader:"+readerConfig.getName());
+					for(final SourceMetricMetaData item : reader.getMetaData()) {
+						System.out.println("\tName:" + item.getName());
+						System.out.println("\tDescription:" + item.getDescription());
+					}
+					reader.close();
+				}
+		}
+	}
+}
