@@ -9,6 +9,8 @@ Supported readers
 The jmx-reader lists all beans and their attributes each time it connects to the server and caches them (metadata). Listing the beans and their attributes for each sample will cost too much overhead (weblogic has about 30K attributes). Updating the metadata upon reconnect is a trade-off which should work good enough assuming that each application redeployment is accompanied by a server restart and thus a reconnect of the reader. When updated, the metadata gets pushed to all transformers so that they can determine the names of the beans they should sample. This also means that without a reconnect no new beans will be detected. For performance reasons the jmx-readers should normally use persistent connections (meaning that they will not disconnect after each sampling).
 * mod_qos status metrics
 The mod-qos-reader parses the output of mod_qos status page (with option ?auto) and exposes the values in a more usable format. The reader uses non-persistent HTTP connection and queries both metadata and data when opened.
+* JDBC
+The jdbc-reader can execute SQL queries regularly and makes them available as metrics for further processing. The reader currently does not keep the data-base connection between samplings. Queries must return either two or three columns - the first one is the metric's name and the second one is the value. The optional third one is a timestamp (in milliseconds since epoch start).
 
 Supported transformations
 -------------------------
@@ -50,6 +52,7 @@ Internals
 * I use XStream to load the XML configuration. The XML is mapped to *XBean instances which are basically pojos with the some added abilities like validating their data and converting themselves to the more usable and configuration format independent *Config pojos. The *Config pojos are value objects.
 * The core implementation took about 2 days. In that light it might be more understandable why there are no unit tests. I intend however to write some in the future.
 * Currently the stop consists of killing the process. It would be nice to implement a graceful shutdown which can stop all samplers and disconnect all readers and writers
+* mod_qos uses the URLConnection to fetch the data. Currently we also have a trivial implementation of basic authentication. It would be nice to switch to httpcomponents so that we get all the nice stuff right away (also a better API) - maybe even persistent connections.
 
 Compatibility
 =============
@@ -58,6 +61,15 @@ Compatibility
 
 Changelog
 =========
+
+Version 0.3.1
+-------------
+* Switched to three number versioning
+* Readers wrap the metric values in a MetricValue object containing a timestamp. This way metrics for older time intervals (than the current time) can be returned.
+* Readers may not know the metadata before actually quering the metrics. In such cases the transformers fetch all metrics through a different method (readAllMetrics()).
+* Added JDBC reader support
+* The console output uses the metric's timestamp not the current timestamp
+* The console output has correct time now (hh:mm not mm:hh)
 
 Version 0.3
 -----------
