@@ -17,13 +17,14 @@ import org.apache.commons.codec.binary.Base64;
 import org.jmxsampler.extensions.modqos.ModQosReaderConfig.AuthenticationType;
 import org.jmxsampler.reader.AbstractMetricsReader;
 import org.jmxsampler.reader.MetricReadException;
+import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.SourceMetricMetaData;
 
 public class ModQosMetricsReader extends AbstractMetricsReader {
 	private final ModQosReaderConfig config;
 	private List<String> data;
 	private Collection<SourceMetricMetaData> metadata;
-	private Map<SourceMetricMetaData, String> values;
+	private Map<SourceMetricMetaData, MetricValue> values;
 
 	public ModQosMetricsReader(final ModQosReaderConfig config) {
 		this.config = config;
@@ -59,7 +60,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 
 	private void parseData() {
 		metadata = new ArrayList<SourceMetricMetaData>(data.size());
-		values = new HashMap<SourceMetricMetaData, String>();
+		values = new HashMap<SourceMetricMetaData, MetricValue>();
 		for (final String line : data) {
 			parseModQosLine(line);
 		}
@@ -95,7 +96,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 	protected void addMetric(final String name, final String value) {
 		final SourceMetricMetaData metric = new SourceMetricMetaData(name, null);
 		metadata.add(metric);
-		values.put(metric, value);
+		values.put(metric, new MetricValue(System.currentTimeMillis(), value));
 	}
 
 	@Override
@@ -116,7 +117,14 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 	}
 
 	@Override
-	public Object readMetric(final SourceMetricMetaData metric) throws MetricReadException {
+	public MetricValue readMetric(final SourceMetricMetaData metric) throws MetricReadException {
 		return values.get(metric);
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName()+"["+config.getName()+"]";
+	}
+	
+	
 }

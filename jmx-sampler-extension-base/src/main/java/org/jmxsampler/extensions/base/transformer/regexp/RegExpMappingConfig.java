@@ -18,6 +18,10 @@ public class RegExpMappingConfig extends MappingConfig {
 		this.keyExpression = keyExpression;
 	}
 
+	public boolean hasNameFilter() {
+		return namePattern != null;
+	}
+
 	public Pattern getNamePattern() {
 		return namePattern;
 	}
@@ -28,6 +32,10 @@ public class RegExpMappingConfig extends MappingConfig {
 		} catch (final PatternSyntaxException e) {
 			throw new ConfigurationException("Invalid name pattern \""+value+"\": "+e.getMessage(), e);
 		}
+	}
+
+	public boolean hasDescriptionFilter() {
+		return descriptionPattern != null;
 	}
 
 	public Pattern getDescriptionPattern() {

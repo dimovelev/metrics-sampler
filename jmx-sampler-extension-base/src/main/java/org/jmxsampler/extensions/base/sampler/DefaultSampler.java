@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricReaderListener;
+import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.MetricsReader;
 import org.jmxsampler.reader.SourceMetricMetaData;
 import org.jmxsampler.sampler.Sampler;
@@ -23,7 +24,7 @@ public class DefaultSampler implements Sampler {
 	private final MetricsReader reader;
 	private final List<MetricsWriter> writers = new LinkedList<MetricsWriter>();
 	private final List<MetricsTransformer> transformers = new LinkedList<MetricsTransformer>();
-
+	
 	public DefaultSampler(final MetricsReader reader) {
 		this.reader = reader;
 		reader.addListener(new MetricReaderListener() {
@@ -31,8 +32,10 @@ public class DefaultSampler implements Sampler {
 			public void onConnected(final MetricsReader reader) {
 				final Map<String, String> transformationContext = reader.getTransformationContext();
 				final Collection<SourceMetricMetaData> metaData = reader.getMetaData();
-				for (final MetricsTransformer transformer : transformers) {
-					transformer.setMetaData(transformationContext, metaData);
+				if (metaData != null) {
+					for (final MetricsTransformer transformer : transformers) {
+						transformer.setMetaData(metaData);
+					}
 				}
 			}
 		});
@@ -45,6 +48,7 @@ public class DefaultSampler implements Sampler {
 
 	public DefaultSampler addTransformer(final MetricsTransformer transformer) {
 		transformers.add(transformer);
+		transformer.setReaderContext(reader.getTransformationContext());
 		return this;
 	}
 
@@ -63,7 +67,7 @@ public class DefaultSampler implements Sampler {
 	@Override
 	public void sample() {
 		try {
-			final Map<String, Object> metrics = readMetrics();
+			final Map<String, MetricValue> metrics = readMetrics();
 			writeMetrics(metrics);
 		} catch (final MetricReadException e) {
 			logger.warn("Failed to read metrics", e);
@@ -72,7 +76,7 @@ public class DefaultSampler implements Sampler {
 		}
 	}
 
-	private void writeMetrics(final Map<String, Object> metrics) {
+	private void writeMetrics(final Map<String, MetricValue> metrics) {
 		openWriters();
 
 		for (final MetricsWriter writer : writers) {
@@ -87,12 +91,12 @@ public class DefaultSampler implements Sampler {
 		closeWriters();
 	}
 
-	private Map<String, Object> readMetrics() {
+	private Map<String, MetricValue> readMetrics() {
 		reader.open();
 
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
 		for (final MetricsTransformer transformer : transformers) {
-			final Map<String, Object> metrics = transformer.transformMetrics(reader);
+			final Map<String, MetricValue> metrics = transformer.transformMetrics(reader);
 			logger.debug("Transformer "+transformer+" returned "+metrics.size()+" metrics");
 			result.putAll(metrics);
 		}
@@ -102,6 +106,7 @@ public class DefaultSampler implements Sampler {
 		return result;
 	}
 
+	@Override
 	public boolean check() {
 		boolean result = true;
 		reader.open();

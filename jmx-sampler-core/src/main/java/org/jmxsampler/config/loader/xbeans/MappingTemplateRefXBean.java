@@ -32,7 +32,7 @@ public class MappingTemplateRefXBean extends MappingXBean {
 		validate();
 		final List<MappingConfig> result = mappingTemplates.get(getName());
 		if (result == null) {
-			throw new ConfigurationException("Mapping templated named \"" + getName() +"\" not found");
+			throw new ConfigurationException("Mapping template named \"" + getName() +"\" not found");
 		}
 		return result;
 	}

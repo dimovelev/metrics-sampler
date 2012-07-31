@@ -107,7 +107,7 @@ public class ConfigurationXBean {
 		final Map<String, List<MappingConfig>> result = new HashMap<String, List<MappingConfig>>();
 		for (final MappingTemplateXBean item : items) {
 			if (result.containsKey(item.getName())) {
-				throw new ConfigurationException("Two mapping templates with the same name "+item.getName());
+				throw new ConfigurationException("Two mapping templates with the same name \""+item.getName() + "\"");
 			}
 			result.put(item.getName(), item.toConfig());
 		}

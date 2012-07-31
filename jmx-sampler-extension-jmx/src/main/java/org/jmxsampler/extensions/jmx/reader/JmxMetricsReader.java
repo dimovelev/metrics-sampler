@@ -21,6 +21,7 @@ import javax.management.ReflectionException;
 
 import org.jmxsampler.reader.AbstractMetricsReader;
 import org.jmxsampler.reader.MetricReadException;
+import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.SourceMetricMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +34,12 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 
 	private final JmxReaderConfig config;
 	private List<SourceMetricMetaData> metadata;
-	private Map<String, String> context;
+	private final Map<String, String> context;
 	private final JmxConnection connection;
 
 	public JmxMetricsReader(final JmxReaderConfig config) {
 		this.config = config;
+		context = prepareContext();
 		try {
 			this.connection = new JmxConnection(config);
 		} catch (final IOException e) {
@@ -84,13 +86,14 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 	}
 
 	@Override
-	public Object readMetric(final SourceMetricMetaData metric) {
+	public MetricValue readMetric(final SourceMetricMetaData metric) {
 		final String name = metric.getName();
 		logger.debug("Reading "+name);
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
 		final int dotIdx = name.lastIndexOf('.');
 		try {
-			return serverConnection.getAttribute(new ObjectName(name.substring(0, dotIdx)), name.substring(dotIdx+1));
+			final Object value = serverConnection.getAttribute(new ObjectName(name.substring(0, dotIdx)), name.substring(dotIdx+1));
+			return new MetricValue(System.currentTimeMillis(), value);
 		} catch (final AttributeNotFoundException e) {
 			throw new MetricReadException(e);
 		} catch (final InstanceNotFoundException e) {
@@ -129,7 +132,6 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 				throw new MetricReadException("Failed to connect", e);
 			}
 			metadata = readMetaData();
-			context = prepareContext();
 			notifyOnConnected();
 		}
 	}

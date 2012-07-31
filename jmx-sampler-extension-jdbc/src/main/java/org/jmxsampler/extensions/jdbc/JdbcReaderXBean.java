@@ -2,13 +2,10 @@ package org.jmxsampler.extensions.jdbc;
 
 import static org.jmxsampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import org.jmxsampler.config.ReaderConfig;
 import org.jmxsampler.config.loader.xbeans.ReaderXBean;
-import org.jmxsampler.reader.MetricReadException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -24,6 +21,9 @@ public class JdbcReaderXBean extends ReaderXBean {
 
 	@XStreamAsAttribute
 	private String password;
+	
+	@XStreamAsAttribute
+	private String driver;
 	
 	@XStreamImplicit(itemFieldName="query")
 	private List<String> queries;
@@ -41,11 +41,7 @@ public class JdbcReaderXBean extends ReaderXBean {
 	@Override
 	public ReaderConfig toConfig() {
 		validate();
-		try {
-			return new JdbcReaderConfig(getName(), new URL(getUrl()), getUsername(), getPassword(), getQueries());
-		} catch (final MalformedURLException e) {
-			throw new MetricReadException("Failed to parse url \"" + getUrl() +"\": "+e.getMessage(), e);
-		}
+		return new JdbcReaderConfig(getName(), getUrl(), getDriver(), getUsername(), getPassword(), getQueries());
 	}
 
 	public String getUrl() {
@@ -79,5 +75,12 @@ public class JdbcReaderXBean extends ReaderXBean {
 	public void setQueries(final List<String> queries) {
 		this.queries = queries;
 	}
-	
+
+	public String getDriver() {
+		return driver;
+	}
+
+	public void setDriver(final String driver) {
+		this.driver = driver;
+	}
 }

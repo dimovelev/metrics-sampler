@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.writer.MetricWriteException;
 import org.jmxsampler.writer.MetricsWriter;
 
@@ -20,10 +21,11 @@ public class ConsoleMetricsWriter implements MetricsWriter {
 	}
 
 	@Override
-	public void write(final Map<String, Object> metrics) {
-		final String prefix = dateFormat.format(new Date())+" ";
-		for (final Map.Entry<String, Object> entry : metrics.entrySet()) {
-			System.out.println(prefix+entry.getKey()+"=" + entry.getValue());
+	public void write(final Map<String, MetricValue> metrics) {
+		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
+			final MetricValue value = entry.getValue();
+			final String timestampPrefix = dateFormat.format(new Date(value.getTimestamp()))+" ";
+			System.out.println(timestampPrefix + entry.getKey() + "=" + value.getValue());
 		}
 	}
 

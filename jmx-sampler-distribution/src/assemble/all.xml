@@ -19,6 +19,7 @@
 					<include>org.jmxsampler:jmx-sampler-extension-graphite</include>
 					<include>org.jmxsampler:jmx-sampler-extension-jmx</include>
 					<include>org.jmxsampler:jmx-sampler-extension-modqos</include>
+					<include>org.jmxsampler:jmx-sampler-extension-jdbc</include>
 			</includes>
 			<binaries>
 				<outputDirectory>lib</outputDirectory>

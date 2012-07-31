@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Map;
 
+import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.writer.MetricWriteException;
 import org.jmxsampler.writer.MetricsWriter;
 import org.slf4j.Logger;
@@ -64,12 +65,13 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 	}
 
 	@Override
-	public void write(final Map<String, Object> metrics) {
+	public void write(final Map<String, MetricValue> metrics) {
 		assertIsConnected();
-		final long timestamp = System.currentTimeMillis() / 1000;
 		final StringBuilder builder = new StringBuilder();
-		for (final Map.Entry<String, Object> entry : metrics.entrySet()) {
-			final String msg = (config.getPrefix() != null ? config.getPrefix() : "") + entry.getKey() + " " + entry.getValue()+" " + timestamp + "\n";
+		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
+			final MetricValue value = entry.getValue();
+			final long timestamp = value.getTimestamp()/1000;
+			final String msg = (config.getPrefix() != null ? config.getPrefix() : "") + entry.getKey() + " " + value.getValue()+" " + timestamp + "\n";
 			builder.append(msg);
 		}
 		try {

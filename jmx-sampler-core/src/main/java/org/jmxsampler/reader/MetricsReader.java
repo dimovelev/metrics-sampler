@@ -9,7 +9,8 @@ public interface MetricsReader {
 
 	Collection<SourceMetricMetaData> getMetaData() throws MetricReadException;
 	Map<String, String> getTransformationContext();
-	Object readMetric(SourceMetricMetaData metric) throws MetricReadException;
+	MetricValue readMetric(SourceMetricMetaData metric) throws MetricReadException;
 
 	void addListener(MetricReaderListener listener);
+	Map<SourceMetricMetaData, MetricValue> readAllMetrics() throws MetricReadException;
 }

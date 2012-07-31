@@ -3,14 +3,14 @@
   <parent>
     <groupId>org.jmxsampler</groupId>
     <artifactId>jmx-sampler</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3.1-SNAPSHOT</version>
   </parent>
-  <artifactId>jmx-sampler-jdbc</artifactId>
+  <artifactId>jmx-sampler-extension-jdbc</artifactId>
   <dependencies>
   	<dependency>
   		<groupId>org.jmxsampler</groupId>
   		<artifactId>jmx-sampler-core</artifactId>
-  		<version>0.3-SNAPSHOT</version>
+  		<version>0.3.1-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>org.slf4j</groupId>

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jmxsampler</groupId>
 		<artifactId>jmx-sampler</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.3.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>jmx-sampler-extension-graphite</artifactId>
 	<name>Graphite Writer</name>
@@ -12,7 +12,7 @@
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-core</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.3.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
