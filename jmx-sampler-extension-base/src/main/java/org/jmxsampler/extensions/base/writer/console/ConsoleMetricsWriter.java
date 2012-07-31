@@ -13,7 +13,7 @@ import org.jmxsampler.writer.MetricsWriter;
  */
 public class ConsoleMetricsWriter implements MetricsWriter {
 	private final ConsoleWriterConfig config;
-	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd mm:hh:ss");
+	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	public ConsoleMetricsWriter(final ConsoleWriterConfig config) {
 		this.config = config;
