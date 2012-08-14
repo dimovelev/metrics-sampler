@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import org.jmxsampler.reader.BulkMetricsReader;
+import org.jmxsampler.reader.MetaDataMetricsReader;
 import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
@@ -19,8 +21,10 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final RegExpMappingConfig config;
-	private List<MatchingMetric> matchingMetrics;
 	private Map<String, String> readerContext;
+
+	private Collection<MetricName> cachedMetaData;
+	private List<MatchingMetric> cachedMatchingMetrics;
 	
 	public RegExpMetricTransformer(final RegExpMappingConfig config) {
 		this.config = config;
@@ -28,14 +32,16 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 
 	@Override
 	public Map<String, MetricValue> transformMetrics(final MetricsReader reader) {
-		if (matchingMetrics == null) {
-			return transformAll(reader);
+		if (reader instanceof MetaDataMetricsReader) {
+			return transformMatching((MetaDataMetricsReader) reader);
+		} else if (reader instanceof BulkMetricsReader) {
+			return transformAll((BulkMetricsReader) reader);
 		} else {
-			return transformMatching(reader);
+			throw new IllegalArgumentException("Unsupported reader type: " + reader);
 		}
 	}
 	
-	protected Map<String, MetricValue> transformAll(final MetricsReader reader) {
+	protected Map<String, MetricValue> transformAll(final BulkMetricsReader reader) {
 		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
 		final Map<MetricName, MetricValue> metrics = reader.readAllMetrics();
 		for (final Map.Entry<MetricName, MetricValue> entry : metrics.entrySet()) {
@@ -47,7 +53,8 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 		return result;
 	}
 	
-	protected Map<String, MetricValue> transformMatching(final MetricsReader reader) {
+	protected Map<String, MetricValue> transformMatching(final MetaDataMetricsReader reader) {
+		final List<MatchingMetric> matchingMetrics = getMatchingMetrics(reader);
 		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
 		for (final MatchingMetric bean : matchingMetrics) {
 			try {
@@ -61,7 +68,7 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	}
 
 	protected void assertMatchingMetrics() {
-		if (matchingMetrics == null) {
+		if (cachedMatchingMetrics == null) {
 			throw new IllegalStateException("setMetaData not called");
 		}
 	}
@@ -72,18 +79,21 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 		this.readerContext = readerContext;
 	}
 
-	@Override
-	public void setMetaData(final Collection<MetricName> metaData) {
-		matchingMetrics = new LinkedList<MatchingMetric>();
-		for (final MetricName metric : metaData) {
-			final MatchingMetric matchingMetric = match(metric);
-			if (matchingMetric != null) {
-				matchingMetrics.add(matchingMetric);
+	private List<MatchingMetric> getMatchingMetrics(final MetricsReader reader) {
+		final Collection<MetricName> metaData = reader.getMetaData();
+		if (this.cachedMetaData != metaData) {
+			cachedMatchingMetrics = new LinkedList<MatchingMetric>();
+			for (final MetricName metric : metaData) {
+				final MatchingMetric matchingMetric = match(metric);
+				if (matchingMetric != null) {
+					cachedMatchingMetrics.add(matchingMetric);
+				}
+			}
+			if (cachedMatchingMetrics.isEmpty()) {
+				logger.warn(this+" matched no metrics");
 			}
 		}
-		if (matchingMetrics.isEmpty()) {
-			logger.warn(this+" matched no metrics");
-		}
+		return cachedMatchingMetrics;
 	}
 
 	protected MatchingMetric match(final MetricName from) {
@@ -120,18 +130,28 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	}
 
 	@Override
-	public boolean hasMetrics() {
-		assertMatchingMetrics();
-		return !matchingMetrics.isEmpty();
-	}
-
-	@Override
 	public String toString() {
-		return getClass().getSimpleName()+"[name-regexp="+config.getNamePattern()+",description-regexp="+config.getDescriptionPattern()+"]";
+		final StringBuilder result = new StringBuilder();
+		result.append(getClass().getSimpleName()).append('[');
+		boolean needsAnd = false;
+		if (config.hasNameFilter()) {
+			result.append("name =~ /").append(config.getNamePattern()).append('/');
+			needsAnd = true;
+		}
+		if (config.hasDescriptionFilter()) {
+			if (needsAnd) {
+				result.append(" and ");
+			}
+			result.append("description =~ /").append(config.getDescriptionPattern()).append('/');
+			needsAnd = true;
+		}
+		result.append(']');
+		return result.toString();
 	}
 
 	@Override
-	public int getMetricCount() {
+	public int getMetricCount(final MetricsReader reader) {
+		final List<MatchingMetric> matchingMetrics = getMatchingMetrics(reader);
 		return matchingMetrics.size();
 	}
 }

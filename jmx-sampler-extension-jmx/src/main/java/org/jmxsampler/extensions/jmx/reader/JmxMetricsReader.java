@@ -20,7 +20,7 @@ import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 
-import org.jmxsampler.reader.AbstractMetricsReader;
+import org.jmxsampler.reader.MetaDataMetricsReader;
 import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Read metrics from a JMX server. This class is not thread safe and may not be reused in multiple samplers.
  */
-public class JmxMetricsReader extends AbstractMetricsReader {
+public class JmxMetricsReader implements MetaDataMetricsReader {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final JmxReaderConfig config;
@@ -51,7 +51,7 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 	@Override
 	public Collection<MetricName> getMetaData() {
 		assertConnected();
-		return Collections.unmodifiableList(metadata);
+		return metadata;
 	}
 
 	protected void assertConnected() {
@@ -143,8 +143,7 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 			} catch (final IOException e) {
 				throw new MetricReadException("Failed to connect", e);
 			}
-			metadata = readMetaData();
-			notifyOnConnected();
+			metadata = Collections.unmodifiableList(readMetaData());
 		}
 	}
 

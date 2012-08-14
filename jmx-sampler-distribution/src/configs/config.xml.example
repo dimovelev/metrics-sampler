@@ -23,8 +23,7 @@
             <regexp-mapping from-name="java\.lang:type=Threading\.(ThreadCount|TotalStartedThreadCount|PeakThreadCount|DaemonThreadCount)" to-name="${reader.name}.threads.${name[1]}"/>
             <regexp-mapping from-name="java\.lang:type=Compilation\.(TotalCompilationTime)" to-name="${reader.name}.compilation.${name[1]}"/>
             <regexp-mapping from-name="java\.lang:type=OperatingSystem\.(AvailableProcessors|CommittedVirtualMemorySize|FreePhysicalMemorySize|FreeSwapSpaceSize|MaxFileDescriptorCount|OpenFileDescriptorCount|TotalPhysicalMemorySize|TotalSwapSpaceSize)" to-name="${reader.name}.os.${name[1]}"/>
-            <regexp-mapping from-name="java\.lang:name=PS (.+),type=GarbageCollector\.(CollectionCount|CollectionTime)" to-name="${reader.name}.gc.PS${name[1]}.${name[2]}"/>
-            <regexp-mapping from-name="java\.lang:name=PS ([^ ]+),type=GarbageCollector\.(CollectionCount|CollectionTime)" to-name="${reader.name}.gc.${name[1]}.${name[2]}"/>
+            <regexp-mapping from-name="java\.lang:name=(.+),type=GarbageCollector\.(CollectionCount|CollectionTime)" to-name="${reader.name}.gc.${name[1]}.${name[2]}"/>
             <regexp-mapping from-name="java\.lang:name=(.+),type=MemoryPool\.Usage#(.*)" to-name="${reader.name}.memory.${name[1]}.current.${name[2]}"/>
             <regexp-mapping from-name="java\.lang:name=(.+),type=MemoryPool\.PeakUsage#(.*)" to-name="${reader.name}.memory.${name[1]}.peak.${name[2]}"/>
             <regexp-mapping from-name="java\.lang:type=Memory\.HeapMemoryUsage#(.*)" to-name="${reader.name}.memory.heap.current.${name[1]}"/>

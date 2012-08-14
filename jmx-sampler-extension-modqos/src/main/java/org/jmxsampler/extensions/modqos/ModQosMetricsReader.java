@@ -6,8 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,16 +15,15 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jmxsampler.extensions.modqos.ModQosReaderConfig.AuthenticationType;
-import org.jmxsampler.reader.AbstractMetricsReader;
+import org.jmxsampler.reader.BulkMetricsReader;
 import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.SimpleMetricName;
 
-public class ModQosMetricsReader extends AbstractMetricsReader {
+public class ModQosMetricsReader implements BulkMetricsReader {
 	private final ModQosReaderConfig config;
 	private List<String> data;
-	private Collection<MetricName> metadata;
 	private Map<MetricName, MetricValue> values;
 
 	public ModQosMetricsReader(final ModQosReaderConfig config) {
@@ -45,7 +44,6 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 			}
 			reader.close();
 			parseData();
-			notifyOnConnected();
 		} catch (final IOException e) {
 			throw new MetricReadException("Failed to open connection", e);
 		}
@@ -60,7 +58,6 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 	}
 
 	private void parseData() {
-		metadata = new ArrayList<MetricName>(data.size());
 		values = new HashMap<MetricName, MetricValue>();
 		for (final String line : data) {
 			parseModQosLine(line);
@@ -77,7 +74,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 		if (colIdx > 0) {
 			result.append(",metric=").append(cols[3].substring(0, colIdx));
 			final String value = cols[3].substring(colIdx+2);
-			addMetric(result.toString(), value);
+			addValue(result.toString(), value);
 		} else {
 			result.append(",metric=").append(cols[3]);
 			final int pathStartIdx = cols[4].indexOf('[');
@@ -89,14 +86,13 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 			final String limit = cols[4].substring(0, pathStartIdx);
 			final String current = cols[4].substring(colonIdx+2);
 			final String nameBase = result.toString();
-			addMetric(nameBase + ".limit", limit);
-			addMetric(nameBase + ".current", current);
+			addValue(nameBase + ".limit", limit);
+			addValue(nameBase + ".current", current);
 		}
 	}
 
-	protected void addMetric(final String name, final String value) {
+	protected void addValue(final String name, final String value) {
 		final SimpleMetricName metric = new SimpleMetricName(name, null);
-		metadata.add(metric);
 		values.put(metric, new MetricValue(System.currentTimeMillis(), value));
 	}
 
@@ -107,7 +103,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 
 	@Override
 	public Collection<MetricName> getMetaData() throws MetricReadException {
-		return metadata;
+		return values.keySet();
 	}
 
 	@Override
@@ -118,14 +114,12 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 	}
 
 	@Override
-	public MetricValue readMetric(final MetricName metric) throws MetricReadException {
-		return values.get(metric);
-	}
-
-	@Override
 	public String toString() {
 		return getClass().getSimpleName()+"["+config.getName()+"]";
 	}
-	
-	
+
+	@Override
+	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
+		return Collections.unmodifiableMap(values);
+	}
 }

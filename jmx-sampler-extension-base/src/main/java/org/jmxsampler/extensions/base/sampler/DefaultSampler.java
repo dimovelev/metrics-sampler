@@ -1,14 +1,11 @@
 package org.jmxsampler.extensions.base.sampler;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
-import org.jmxsampler.reader.MetricReaderListener;
 import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.MetricsReader;
 import org.jmxsampler.sampler.Sampler;
@@ -27,18 +24,18 @@ public class DefaultSampler implements Sampler {
 	
 	public DefaultSampler(final MetricsReader reader) {
 		this.reader = reader;
-		reader.addListener(new MetricReaderListener() {
-			@Override
-			public void onConnected(final MetricsReader reader) {
-				final Map<String, String> transformationContext = reader.getTransformationContext();
-				final Collection<MetricName> metaData = reader.getMetaData();
-				if (metaData != null) {
-					for (final MetricsTransformer transformer : transformers) {
-						transformer.setMetaData(metaData);
-					}
-				}
-			}
-		});
+//		reader.addListener(new MetricReaderListener() {
+//			@Override
+//			public void onConnected(final MetricsReader reader) {
+//				final Map<String, String> transformationContext = reader.getTransformationContext();
+//				final Collection<MetricName> metaData = reader.getMetaData();
+//				if (metaData != null) {
+//					for (final MetricsTransformer transformer : transformers) {
+//						transformer.setMetaData(metaData);
+//					}
+//				}
+//			}
+//		});
 	}
 
 	public DefaultSampler addWriter(final MetricsWriter writer) {
@@ -112,11 +109,12 @@ public class DefaultSampler implements Sampler {
 		reader.open();
 
 		for (final MetricsTransformer transformer : transformers) {
-			if (!transformer.hasMetrics()) {
-				System.out.println(transformer+" has no metrics");
+			final int count = transformer.getMetricCount(this.reader);
+			if (count == 0) {
+				System.out.println(transformer + " has no metrics");
 				result = false;
 			} else {
-				System.out.println(transformer + " matches " + transformer.getMetricCount()+" metrics");
+				System.out.println(transformer + " matches " + count + " metrics");
 			}
 		}
 

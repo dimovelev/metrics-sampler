@@ -15,6 +15,4 @@ public abstract class ReaderConfig {
 	public String toString() {
 		return getClass().getSimpleName() + "[" + getName() + "]";
 	}
-	
-	
 }

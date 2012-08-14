@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jmxsampler.config.ConfigurationException;
-import org.jmxsampler.reader.AbstractMetricsReader;
+import org.jmxsampler.reader.BulkMetricsReader;
 import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
@@ -19,7 +19,7 @@ import org.jmxsampler.reader.SimpleMetricName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JdbcMetricsReader extends AbstractMetricsReader {
+public class JdbcMetricsReader implements BulkMetricsReader {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final JdbcReaderConfig config;
 	private Connection connection;
@@ -76,10 +76,6 @@ public class JdbcMetricsReader extends AbstractMetricsReader {
 		if (connection == null) {
 			throw new IllegalStateException("Not connected. Call open() first.");
 		}
-	}
-	@Override
-	public Collection<MetricName> getMetaData() throws MetricReadException {
-		return null;
 	}
 
 	@Override
@@ -166,6 +162,9 @@ public class JdbcMetricsReader extends AbstractMetricsReader {
 	public String toString() {
 		return getClass().getSimpleName()+"["+config.getName()+"]";
 	}
-	
-	
+
+	@Override
+	public Collection<MetricName> getMetaData() throws MetricReadException {
+		return readAllMetrics().keySet();
+	}
 }

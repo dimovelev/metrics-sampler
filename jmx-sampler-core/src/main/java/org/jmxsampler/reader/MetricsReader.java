@@ -9,8 +9,4 @@ public interface MetricsReader {
 
 	Collection<MetricName> getMetaData() throws MetricReadException;
 	Map<String, String> getTransformationContext();
-	MetricValue readMetric(MetricName metric) throws MetricReadException;
-
-	void addListener(MetricReaderListener listener);
-	Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException;
 }
