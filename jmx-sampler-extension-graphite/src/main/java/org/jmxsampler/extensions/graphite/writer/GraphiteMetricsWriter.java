@@ -71,7 +71,9 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
 			final MetricValue value = entry.getValue();
 			final long timestamp = value.getTimestamp()/1000;
-			final String msg = (config.getPrefix() != null ? config.getPrefix() : "") + entry.getKey() + " " + value.getValue()+" " + timestamp + "\n";
+			final String name = (config.getPrefix() != null ? config.getPrefix() : "") + entry.getKey();
+			final String graphiteName = name.replaceAll(" ", "_");
+			final String msg = graphiteName + " " + value.getValue()+" " + timestamp + "\n";
 			builder.append(msg);
 		}
 		try {
