@@ -15,14 +15,15 @@ import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
 
 import org.jmxsampler.reader.AbstractMetricsReader;
+import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
-import org.jmxsampler.reader.SourceMetricMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final JmxReaderConfig config;
-	private List<SourceMetricMetaData> metadata;
+	private List<MetricName> metadata;
 	private final Map<String, String> context;
 	private final JmxConnection connection;
 
@@ -48,7 +49,7 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 	}
 
 	@Override
-	public Collection<SourceMetricMetaData> getMetaData() {
+	public Collection<MetricName> getMetaData() {
 		assertConnected();
 		return Collections.unmodifiableList(metadata);
 	}
@@ -59,23 +60,28 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 		}
 	}
 
-	protected List<SourceMetricMetaData> readMetaData() {
+	protected List<MetricName> readMetaData() {
 		logger.debug("Loading metadata from "+config.getUrl());
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
-		final List<SourceMetricMetaData> result = new LinkedList<SourceMetricMetaData>();
+		final List<MetricName> result = new LinkedList<MetricName>();
 		try {
 			final Set<ObjectName> objectNames = serverConnection.queryNames(null, null);
 			for (final ObjectName objectName : objectNames) {
-				final String name = objectName.toString();
 				try {
 	                final MBeanInfo info = serverConnection.getMBeanInfo(objectName);
 	                final MBeanAttributeInfo[] attributes = info.getAttributes();
 	                for(final MBeanAttributeInfo attribute : attributes) {
-	                	final SourceMetricMetaData metadata = new SourceMetricMetaData(name+"."+attribute.getName(), attribute.getDescription());
-	                	result.add(metadata);
+	                	if ("javax.management.openmbean.CompositeData".equals(attribute.getType())) {
+	                		final CompositeType openType = (CompositeType) attribute.getDescriptor().getFieldValue("openType");
+	                		for (final String key : openType.keySet()) {
+			                	result.add(new JmxMetricName(objectName, attribute.getName(), key, openType.getDescription(key)));
+	                		}
+	                	} else {
+		                	result.add(new JmxMetricName(objectName, attribute.getName(), null, attribute.getDescription()));
+	                	}
 	                }
 	            } catch (final Exception e) {
-	            	logger.warn("Failed to read metadata of JMX bean with name \"" + name+"\"");
+	            	logger.warn("Failed to read metadata of JMX bean with name \"" + objectName + "\"");
 	            }
 			}
 		} catch (final IOException e) {
@@ -86,19 +92,25 @@ public class JmxMetricsReader extends AbstractMetricsReader {
 	}
 
 	@Override
-	public MetricValue readMetric(final SourceMetricMetaData metric) {
-		final String name = metric.getName();
-		logger.debug("Reading "+name);
+	public MetricValue readMetric(final MetricName metric) {
+		final JmxMetricName actualMetric = (JmxMetricName) metric;
+		logger.debug("Reading "+metric.getName());
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
-		final int dotIdx = name.lastIndexOf('.');
 		try {
-			final Object value = serverConnection.getAttribute(new ObjectName(name.substring(0, dotIdx)), name.substring(dotIdx+1));
+			final Object value = serverConnection.getAttribute(actualMetric.getObjectName(), actualMetric.getAttributeName());
+			if (actualMetric.isComposite()) {
+				if (value instanceof CompositeDataSupport) {
+					final CompositeDataSupport compositeData = (CompositeDataSupport) value;
+					final Object compositeValue = compositeData.get(actualMetric.getKey());
+					return new MetricValue(System.currentTimeMillis(), compositeValue);
+				} else {
+					logger.warn("Expected a composite value for \"" + actualMetric.getName() + "\" but got "+value);
+				}
+			}
 			return new MetricValue(System.currentTimeMillis(), value);
 		} catch (final AttributeNotFoundException e) {
 			throw new MetricReadException(e);
 		} catch (final InstanceNotFoundException e) {
-			throw new MetricReadException(e);
-		} catch (final MalformedObjectNameException e) {
 			throw new MetricReadException(e);
 		} catch (final MBeanException e) {
 			throw new MetricReadException(e);

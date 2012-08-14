@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.MetricsReader;
-import org.jmxsampler.reader.SourceMetricMetaData;
 import org.jmxsampler.transformer.MetricsTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +37,8 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	
 	protected Map<String, MetricValue> transformAll(final MetricsReader reader) {
 		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
-		final Map<SourceMetricMetaData, MetricValue> metrics = reader.readAllMetrics();
-		for (final Map.Entry<SourceMetricMetaData, MetricValue> entry : metrics.entrySet()) {
+		final Map<MetricName, MetricValue> metrics = reader.readAllMetrics();
+		for (final Map.Entry<MetricName, MetricValue> entry : metrics.entrySet()) {
 			final MatchingMetric metric = match(entry.getKey());
 			if (metric != null) {
 				result.put(metric.getName(), entry.getValue());
@@ -73,10 +73,10 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	}
 
 	@Override
-	public void setMetaData(final Collection<SourceMetricMetaData> metaData) {
+	public void setMetaData(final Collection<MetricName> metaData) {
 		matchingMetrics = new LinkedList<MatchingMetric>();
-		for (final SourceMetricMetaData metricMetaData : metaData) {
-			final MatchingMetric matchingMetric = match(metricMetaData);
+		for (final MetricName metric : metaData) {
+			final MatchingMetric matchingMetric = match(metric);
 			if (matchingMetric != null) {
 				matchingMetrics.add(matchingMetric);
 			}
@@ -86,7 +86,7 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 		}
 	}
 
-	protected MatchingMetric match(final SourceMetricMetaData from) {
+	protected MatchingMetric match(final MetricName from) {
 		Map<String, String> context = null;
 
 		if (config.hasNameFilter()) {
@@ -128,5 +128,10 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName()+"[name-regexp="+config.getNamePattern()+",description-regexp="+config.getDescriptionPattern()+"]";
+	}
+
+	@Override
+	public int getMetricCount() {
+		return matchingMetrics.size();
 	}
 }

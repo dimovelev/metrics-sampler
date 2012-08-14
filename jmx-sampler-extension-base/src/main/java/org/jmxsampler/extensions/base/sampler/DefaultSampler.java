@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricReaderListener;
 import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.MetricsReader;
-import org.jmxsampler.reader.SourceMetricMetaData;
 import org.jmxsampler.sampler.Sampler;
 import org.jmxsampler.transformer.MetricsTransformer;
 import org.jmxsampler.writer.MetricWriteException;
@@ -31,7 +31,7 @@ public class DefaultSampler implements Sampler {
 			@Override
 			public void onConnected(final MetricsReader reader) {
 				final Map<String, String> transformationContext = reader.getTransformationContext();
-				final Collection<SourceMetricMetaData> metaData = reader.getMetaData();
+				final Collection<MetricName> metaData = reader.getMetaData();
 				if (metaData != null) {
 					for (final MetricsTransformer transformer : transformers) {
 						transformer.setMetaData(metaData);
@@ -115,6 +115,8 @@ public class DefaultSampler implements Sampler {
 			if (!transformer.hasMetrics()) {
 				System.out.println(transformer+" has no metrics");
 				result = false;
+			} else {
+				System.out.println(transformer + " matches " + transformer.getMetricCount()+" metrics");
 			}
 		}
 

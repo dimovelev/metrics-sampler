@@ -8,12 +8,12 @@ public abstract class AbstractMetricsReader implements MetricsReader {
 	private final List<MetricReaderListener> listeners = new LinkedList<MetricReaderListener>();
 
 	@Override
-	public MetricValue readMetric(final SourceMetricMetaData metric) throws MetricReadException {
+	public MetricValue readMetric(final MetricName metric) throws MetricReadException {
 		throw new UnsupportedOperationException("Please use readAllMetrics() because the reader always fetches them all and reading them one by one is less performant");
 	}
 
 	@Override
-	public Map<SourceMetricMetaData, MetricValue> readAllMetrics() throws MetricReadException {
+	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
 		throw new UnsupportedOperationException("Please use readMetric() because the reader can only fetch one metric at a time / there are too many metrics");
 	}
 

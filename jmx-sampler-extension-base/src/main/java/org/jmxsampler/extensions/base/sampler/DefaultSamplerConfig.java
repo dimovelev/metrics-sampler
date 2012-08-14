@@ -31,4 +31,11 @@ public class DefaultSamplerConfig extends SamplerConfig {
 	public List<MappingConfig> getMappings() {
 		return Collections.unmodifiableList(mappings);
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "[" + reader + "->" + writers + "]";
+	}
+	
+	
 }

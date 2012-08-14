@@ -5,12 +5,17 @@ import java.io.File;
 import org.jmxsampler.config.Configuration;
 import org.jmxsampler.config.ReaderConfig;
 import org.jmxsampler.config.SamplerConfig;
+import org.jmxsampler.reader.MetricName;
+import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricsReader;
-import org.jmxsampler.reader.SourceMetricMetaData;
 import org.jmxsampler.sampler.Sampler;
 import org.jmxsampler.service.ExtensionsRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Runner {
+	private static final Logger logger = LoggerFactory.getLogger(Runner.class);
+
 	public enum Command {
 		START,
 		CHECK,
@@ -44,12 +49,24 @@ public class Runner {
 			case CHECK:
 				boolean allValid = true;
 				for (final SamplerConfig samplerConfig : config.getSamplers()) {
-					final Sampler sampler = registry.newSampler(samplerConfig);
-					final boolean valid = sampler.check();
-					allValid = allValid && valid;
+					if (!samplerConfig.isDisabled()) {
+						final Sampler sampler = registry.newSampler(samplerConfig);
+						logger.info("Checking "+sampler);
+						try { 
+							final boolean valid = sampler.check();
+							allValid = allValid && valid;
+						} catch (final MetricReadException e) {
+							logger.warn("Sampler threw exception during check", e);
+							allValid = false;
+						}
+					} else {
+						logger.info(samplerConfig + " is disabled and will not be checked");
+					}
 				}
 				if (allValid) {
-					System.out.println("Everything looks alright");
+					logger.info("Everything looks alright");
+				} else {
+					logger.info("There were problems. See the logs.");
 				}
 				break;
 			case METADATA:
@@ -57,7 +74,7 @@ public class Runner {
 					final MetricsReader reader = registry.newReader(readerConfig);
 					reader.open();
 					System.out.println("Reader:"+readerConfig.getName());
-					for(final SourceMetricMetaData item : reader.getMetaData()) {
+					for(final MetricName item : reader.getMetaData()) {
 						System.out.println("\tName:" + item.getName());
 						System.out.println("\tDescription:" + item.getDescription());
 					}

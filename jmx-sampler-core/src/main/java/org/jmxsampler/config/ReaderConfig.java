@@ -10,4 +10,11 @@ public abstract class ReaderConfig {
 	public String getName() {
 		return name;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "[" + getName() + "]";
+	}
+	
+	
 }

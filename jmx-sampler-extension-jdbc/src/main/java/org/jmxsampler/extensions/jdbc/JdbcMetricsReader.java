@@ -12,9 +12,10 @@ import java.util.Properties;
 
 import org.jmxsampler.config.ConfigurationException;
 import org.jmxsampler.reader.AbstractMetricsReader;
+import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
-import org.jmxsampler.reader.SourceMetricMetaData;
+import org.jmxsampler.reader.SimpleMetricName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +78,7 @@ public class JdbcMetricsReader extends AbstractMetricsReader {
 		}
 	}
 	@Override
-	public Collection<SourceMetricMetaData> getMetaData() throws MetricReadException {
+	public Collection<MetricName> getMetaData() throws MetricReadException {
 		return null;
 	}
 
@@ -89,16 +90,16 @@ public class JdbcMetricsReader extends AbstractMetricsReader {
 	}
 
 	@Override
-	public Map<SourceMetricMetaData, MetricValue> readAllMetrics() throws MetricReadException {
+	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
 		assertConnected();
-		final Map<SourceMetricMetaData, MetricValue> result = new HashMap<SourceMetricMetaData, MetricValue>();
+		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
 		for (final String query : config.getQueries()) {
 			readMetricsFromQuery(query, result);
 		}
 		return result;
 	}
 
-	protected void readMetricsFromQuery(final String query, final Map<SourceMetricMetaData, MetricValue> result) {
+	protected void readMetricsFromQuery(final String query, final Map<MetricName, MetricValue> result) {
 		Statement statement = null;
 		try {
 			logger.debug("Executing query {}", query);
@@ -111,7 +112,7 @@ public class JdbcMetricsReader extends AbstractMetricsReader {
 					final int columnCount = resultSet.getMetaData().getColumnCount();
 					final String key = resultSet.getString(1);
 					final String value = resultSet.getString(2);
-					final SourceMetricMetaData metric = new SourceMetricMetaData(key, resultSet.getMetaData().getColumnName(1));
+					final SimpleMetricName metric = new SimpleMetricName(key, resultSet.getMetaData().getColumnName(1));
 					if (columnCount == 2) {
 						logger.debug("Using current timestamp as metric timestamp for "+key);
 						result.put(metric, new MetricValue(System.currentTimeMillis(), value));

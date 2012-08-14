@@ -16,15 +16,16 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.jmxsampler.extensions.modqos.ModQosReaderConfig.AuthenticationType;
 import org.jmxsampler.reader.AbstractMetricsReader;
+import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
-import org.jmxsampler.reader.SourceMetricMetaData;
+import org.jmxsampler.reader.SimpleMetricName;
 
 public class ModQosMetricsReader extends AbstractMetricsReader {
 	private final ModQosReaderConfig config;
 	private List<String> data;
-	private Collection<SourceMetricMetaData> metadata;
-	private Map<SourceMetricMetaData, MetricValue> values;
+	private Collection<MetricName> metadata;
+	private Map<MetricName, MetricValue> values;
 
 	public ModQosMetricsReader(final ModQosReaderConfig config) {
 		this.config = config;
@@ -59,8 +60,8 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 	}
 
 	private void parseData() {
-		metadata = new ArrayList<SourceMetricMetaData>(data.size());
-		values = new HashMap<SourceMetricMetaData, MetricValue>();
+		metadata = new ArrayList<MetricName>(data.size());
+		values = new HashMap<MetricName, MetricValue>();
 		for (final String line : data) {
 			parseModQosLine(line);
 		}
@@ -94,7 +95,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 	}
 
 	protected void addMetric(final String name, final String value) {
-		final SourceMetricMetaData metric = new SourceMetricMetaData(name, null);
+		final SimpleMetricName metric = new SimpleMetricName(name, null);
 		metadata.add(metric);
 		values.put(metric, new MetricValue(System.currentTimeMillis(), value));
 	}
@@ -105,7 +106,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 	}
 
 	@Override
-	public Collection<SourceMetricMetaData> getMetaData() throws MetricReadException {
+	public Collection<MetricName> getMetaData() throws MetricReadException {
 		return metadata;
 	}
 
@@ -117,7 +118,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader {
 	}
 
 	@Override
-	public MetricValue readMetric(final SourceMetricMetaData metric) throws MetricReadException {
+	public MetricValue readMetric(final MetricName metric) throws MetricReadException {
 		return values.get(metric);
 	}
 
