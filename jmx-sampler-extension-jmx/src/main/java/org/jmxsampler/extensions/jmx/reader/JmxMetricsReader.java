@@ -1,8 +1,6 @@
 package org.jmxsampler.extensions.jmx.reader;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +22,7 @@ import org.jmxsampler.reader.MetaDataMetricsReader;
 import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
+import org.jmxsampler.reader.MetricsMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final JmxReaderConfig config;
-	private List<MetricName> metadata;
+	private MetricsMetaData metadata;
 	private final Map<String, String> context;
 	private final JmxConnection connection;
 
@@ -49,7 +48,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	}
 
 	@Override
-	public Collection<MetricName> getMetaData() {
+	public MetricsMetaData getMetaData() {
 		assertConnected();
 		return metadata;
 	}
@@ -143,7 +142,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 			} catch (final IOException e) {
 				throw new MetricReadException("Failed to connect", e);
 			}
-			metadata = Collections.unmodifiableList(readMetaData());
+			metadata = new MetricsMetaData(readMetaData());
 		}
 	}
 
@@ -171,5 +170,8 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 		return getClass().getSimpleName() + "[" + config.getName() + "]";
 	}
 
-
+	@Override
+	public Iterable<MetricName> readNames() {
+		return metadata;
+	}
 }

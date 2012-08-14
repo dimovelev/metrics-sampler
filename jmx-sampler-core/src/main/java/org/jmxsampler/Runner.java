@@ -67,7 +67,7 @@ public class Runner {
 			final MetricsReader reader = registry.newReader(readerConfig);
 			reader.open();
 			System.out.println("Reader: " + readerConfig.getName());
-			for(final MetricName item : reader.getMetaData()) {
+			for(final MetricName item : reader.readNames()) {
 				System.out.println("\tName:" + item.getName());
 				System.out.println("\tDescription:" + item.getDescription());
 			}

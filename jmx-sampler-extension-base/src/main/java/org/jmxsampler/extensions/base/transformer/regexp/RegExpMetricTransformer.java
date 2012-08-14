@@ -1,6 +1,6 @@
 package org.jmxsampler.extensions.base.transformer.regexp;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +12,9 @@ import org.jmxsampler.reader.MetaDataMetricsReader;
 import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
+import org.jmxsampler.reader.MetricsMetaData;
 import org.jmxsampler.reader.MetricsReader;
+import org.jmxsampler.transformer.MatchingMetric;
 import org.jmxsampler.transformer.MetricsTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	private final RegExpMappingConfig config;
 	private Map<String, String> readerContext;
 
-	private Collection<MetricName> cachedMetaData;
+	private MetricsMetaData cachedMetaData;
 	private List<MatchingMetric> cachedMatchingMetrics;
 	
 	public RegExpMetricTransformer(final RegExpMappingConfig config) {
@@ -79,21 +81,26 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 		this.readerContext = readerContext;
 	}
 
-	private List<MatchingMetric> getMatchingMetrics(final MetricsReader reader) {
-		final Collection<MetricName> metaData = reader.getMetaData();
+	private List<MatchingMetric> getMatchingMetrics(final MetaDataMetricsReader reader) {
+		final MetricsMetaData metaData = reader.getMetaData();
 		if (this.cachedMetaData != metaData) {
-			cachedMatchingMetrics = new LinkedList<MatchingMetric>();
-			for (final MetricName metric : metaData) {
-				final MatchingMetric matchingMetric = match(metric);
-				if (matchingMetric != null) {
-					cachedMatchingMetrics.add(matchingMetric);
-				}
-			}
+			this.cachedMatchingMetrics = matchMetrics(metaData);
 			if (cachedMatchingMetrics.isEmpty()) {
 				logger.warn(this+" matched no metrics");
 			}
 		}
 		return cachedMatchingMetrics;
+	}
+
+	private List<MatchingMetric> matchMetrics(final Iterable<MetricName> names) {
+		final List<MatchingMetric> result = new LinkedList<MatchingMetric>();
+		for (final MetricName name : names) {
+			final MatchingMetric matchingMetric = match(name);
+			if (matchingMetric != null) {
+				result.add(matchingMetric);
+			}
+		}
+		return Collections.unmodifiableList(result);
 	}
 
 	protected MatchingMetric match(final MetricName from) {
@@ -151,7 +158,15 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 
 	@Override
 	public int getMetricCount(final MetricsReader reader) {
-		final List<MatchingMetric> matchingMetrics = getMatchingMetrics(reader);
+		Iterable<MetricName> names;
+		if (reader instanceof MetaDataMetricsReader) {
+			names = ((MetaDataMetricsReader) reader).getMetaData();
+		} else if (reader instanceof BulkMetricsReader) {
+			names = ((BulkMetricsReader) reader).readAllMetrics().keySet();
+		} else {
+			throw new IllegalArgumentException("Unsupported metrics reader: " + reader);
+		}
+		final List<MatchingMetric> matchingMetrics = matchMetrics(names); 
 		return matchingMetrics.size();
 	}
 }

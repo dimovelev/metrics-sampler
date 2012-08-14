@@ -1,4 +1,4 @@
-package org.jmxsampler.extensions.base.transformer.regexp;
+package org.jmxsampler.transformer;
 
 import org.jmxsampler.reader.MetricName;
 

@@ -24,18 +24,6 @@ public class DefaultSampler implements Sampler {
 	
 	public DefaultSampler(final MetricsReader reader) {
 		this.reader = reader;
-//		reader.addListener(new MetricReaderListener() {
-//			@Override
-//			public void onConnected(final MetricsReader reader) {
-//				final Map<String, String> transformationContext = reader.getTransformationContext();
-//				final Collection<MetricName> metaData = reader.getMetaData();
-//				if (metaData != null) {
-//					for (final MetricsTransformer transformer : transformers) {
-//						transformer.setMetaData(metaData);
-//					}
-//				}
-//			}
-//		});
 	}
 
 	public DefaultSampler addWriter(final MetricsWriter writer) {
@@ -126,6 +114,4 @@ public class DefaultSampler implements Sampler {
 	public String toString() {
 		return getClass().getSimpleName()+"["+reader+"->"+writers+ "]";
 	}
-
-
 }

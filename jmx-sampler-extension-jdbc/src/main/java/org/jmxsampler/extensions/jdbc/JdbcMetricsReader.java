@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -164,7 +163,7 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 	}
 
 	@Override
-	public Collection<MetricName> getMetaData() throws MetricReadException {
+	public Iterable<MetricName> readNames() throws MetricReadException {
 		return readAllMetrics().keySet();
 	}
 }

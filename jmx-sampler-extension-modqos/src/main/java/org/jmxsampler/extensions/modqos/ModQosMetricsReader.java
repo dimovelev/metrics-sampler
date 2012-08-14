@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -102,7 +101,7 @@ public class ModQosMetricsReader implements BulkMetricsReader {
 	}
 
 	@Override
-	public Collection<MetricName> getMetaData() throws MetricReadException {
+	public Iterable<MetricName> readNames() throws MetricReadException {
 		return values.keySet();
 	}
 
