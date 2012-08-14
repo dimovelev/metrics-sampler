@@ -70,6 +70,12 @@ Version 0.3.1
 * Added JDBC reader support
 * The console output uses the metric's timestamp not the current timestamp
 * The console output has correct time now (hh:mm not mm:hh)
+* Graphite writer replaces spaces with underscores in metric names
+* The check command outputs the number of matched metrics for each transformer
+* Improved example configuration with hotspot and jrockit metrics
+* Support for composite JMX metrics
+* Switched to canonical jmx object names for better compatibility
+* Do not check disabled samplers
 
 Version 0.3
 -----------
