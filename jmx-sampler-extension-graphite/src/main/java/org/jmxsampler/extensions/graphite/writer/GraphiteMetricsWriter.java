@@ -70,10 +70,7 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 		final StringBuilder builder = new StringBuilder();
 		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
 			final MetricValue value = entry.getValue();
-			final long timestamp = value.getTimestamp()/1000;
-			final String name = (config.getPrefix() != null ? config.getPrefix() : "") + entry.getKey();
-			final String graphiteName = name.replaceAll(" ", "_");
-			final String msg = graphiteName + " " + value.getValue()+" " + timestamp + "\n";
+			final String msg = serializeValue(entry.getKey(), value);
 			builder.append(msg);
 		}
 		try {
@@ -83,6 +80,13 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 		} catch (final IOException e) {
 			throw new MetricWriteException(e);
 		}
+	}
+
+	protected String serializeValue(final String name, final MetricValue value) {
+		final long timestamp = value.getTimestamp()/1000;
+		final String prefixedName = (config.getPrefix() != null ? config.getPrefix() : "") + name;
+		final String graphiteName = prefixedName.replaceAll(" ", "_");
+		return graphiteName + " " + value.getValue()+" " + timestamp + "\n";
 	}
 
 	protected void assertIsConnected() {

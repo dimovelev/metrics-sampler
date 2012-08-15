@@ -18,6 +18,4 @@ public class MatchingMetric {
 	public String getName() {
 		return name;
 	}
-
-	
 }

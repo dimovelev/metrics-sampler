@@ -16,12 +16,14 @@ import org.jmxsampler.reader.MetricsMetaData;
 import org.jmxsampler.reader.MetricsReader;
 import org.jmxsampler.transformer.MatchingMetric;
 import org.jmxsampler.transformer.MetricsTransformer;
+import org.jmxsampler.transformer.PlaceholderReplacer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RegExpMetricTransformer implements MetricsTransformer {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-
+	private final PlaceholderReplacer placeholderReplacer = new PlaceholderReplacer();
+	
 	private final RegExpMappingConfig config;
 	private Map<String, String> readerContext;
 
@@ -121,19 +123,31 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 			context = addGroups(descriptionMatcher, "description", context);
 		}
 		context.putAll(readerContext);
-		String name = config.getKeyExpression();
-		for (final Map.Entry<String, String> entry : context.entrySet()) {
-			name = name.replace("${"+entry.getKey()+"}", entry.getValue());
-		}
-		return new MatchingMetric(from, name);
+		final String newName = placeholderReplacer.replacePlaceholders(config.getKeyExpression(), context);
+		return new MatchingMetric(from, newName);
 		
 	}
+
 	private Map<String, String> addGroups(final Matcher matcher, final String prefix, final Map<String, String> context) {
 		final Map<String, String> result = context == null ? new HashMap<String, String>() : context;
 		for (int i=0; i<=matcher.groupCount(); i++) {
 			result.put(prefix+"["+i+"]", matcher.group(i));
 		}
 		return result;
+	}
+
+	@Override
+	public int getMetricCount(final MetricsReader reader) {
+		Iterable<MetricName> names;
+		if (reader instanceof MetaDataMetricsReader) {
+			names = ((MetaDataMetricsReader) reader).getMetaData();
+		} else if (reader instanceof BulkMetricsReader) {
+			names = ((BulkMetricsReader) reader).readAllMetrics().keySet();
+		} else {
+			throw new IllegalArgumentException("Unsupported metrics reader: " + reader);
+		}
+		final List<MatchingMetric> matchingMetrics = matchMetrics(names); 
+		return matchingMetrics.size();
 	}
 
 	@Override
@@ -154,19 +168,5 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 		}
 		result.append(']');
 		return result.toString();
-	}
-
-	@Override
-	public int getMetricCount(final MetricsReader reader) {
-		Iterable<MetricName> names;
-		if (reader instanceof MetaDataMetricsReader) {
-			names = ((MetaDataMetricsReader) reader).getMetaData();
-		} else if (reader instanceof BulkMetricsReader) {
-			names = ((BulkMetricsReader) reader).readAllMetrics().keySet();
-		} else {
-			throw new IllegalArgumentException("Unsupported metrics reader: " + reader);
-		}
-		final List<MatchingMetric> matchingMetrics = matchMetrics(names); 
-		return matchingMetrics.size();
 	}
 }
