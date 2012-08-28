@@ -1,7 +1,7 @@
 #!/bin/bash
 JAVA=java
 BASEDIR=$(dirname $0)
-BASEDIR=$(readlink -e $BASEDIR/..)
+BASEDIR=$(readlink -f $BASEDIR/..)
 LOGCONFIG=$BASEDIR/config/logback.xml
 LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
 CONFIG=$BASEDIR/config/config.xml

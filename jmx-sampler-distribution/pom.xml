@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jmxsampler</groupId>
 		<artifactId>jmx-sampler</artifactId>
-		<version>0.3.1-SNAPSHOT</version>
+		<version>0.3.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>jmx-sampler-distribution</artifactId>
 	<packaging>pom</packaging>
@@ -72,27 +72,27 @@
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-core</artifactId>
-			<version>0.3.1-SNAPSHOT</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-base</artifactId>
-			<version>0.3.1-SNAPSHOT</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-graphite</artifactId>
-			<version>0.3.1-SNAPSHOT</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-jmx</artifactId>
-			<version>0.3.1-SNAPSHOT</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-modqos</artifactId>
-			<version>0.3.1-SNAPSHOT</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-jdbc</artifactId>
-			<version>0.3.1-SNAPSHOT</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

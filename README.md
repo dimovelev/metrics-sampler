@@ -58,9 +58,14 @@ Compatibility
 =============
 * Tested with Hotspot/JRockit JVM 1.6
 * Tested with tomcat 7 and Weblogic Server 12c (provided that wlfullclient.jar is on the classpath)
+* You might need to add -Dsun.lang.ClassLoader.allowArraySyntax=true as JVM parameters in the jmx-sampler.sh script if you are connecting using JVM 1.6 client to a JVM 1.5 server
 
 Changelog
 =========
+
+Version 0.3.2
+-------------
+* Use -f option for readlink for better compatibility
 
 Version 0.3.1
 -------------
