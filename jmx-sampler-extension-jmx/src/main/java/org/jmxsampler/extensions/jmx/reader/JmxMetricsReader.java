@@ -76,7 +76,6 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	                		if (openType == null) {
 		                		final CompositeData data = (CompositeData) serverConnection.getAttribute(objectName, attribute.getName());
 		                		openType = data.getCompositeType();
-		                		System.out.println(openType.keySet());
 	                		}
 	                		for (final String key : openType.keySet()) {
 			                	result.add(new JmxMetricName(objectName, attribute.getName(), key, openType.getDescription(key)));
