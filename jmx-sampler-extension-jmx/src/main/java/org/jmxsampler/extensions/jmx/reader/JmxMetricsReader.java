@@ -15,6 +15,7 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 
@@ -71,7 +72,12 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	                final MBeanAttributeInfo[] attributes = info.getAttributes();
 	                for(final MBeanAttributeInfo attribute : attributes) {
 	                	if ("javax.management.openmbean.CompositeData".equals(attribute.getType())) {
-	                		final CompositeType openType = (CompositeType) attribute.getDescriptor().getFieldValue("openType");
+	                		CompositeType openType = (CompositeType) attribute.getDescriptor().getFieldValue("openType");
+	                		if (openType == null) {
+		                		final CompositeData data = (CompositeData) serverConnection.getAttribute(objectName, attribute.getName());
+		                		openType = data.getCompositeType();
+		                		System.out.println(openType.keySet());
+	                		}
 	                		for (final String key : openType.keySet()) {
 			                	result.add(new JmxMetricName(objectName, attribute.getName(), key, openType.getDescription(key)));
 	                		}
@@ -80,7 +86,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	                	}
 	                }
 	            } catch (final Exception e) {
-	            	logger.warn("Failed to read metadata of JMX bean with name \"" + objectName + "\"");
+	            	logger.warn("Failed to read metadata of JMX bean with name \"" + objectName + "\"", e);
 	            }
 			}
 		} catch (final IOException e) {
