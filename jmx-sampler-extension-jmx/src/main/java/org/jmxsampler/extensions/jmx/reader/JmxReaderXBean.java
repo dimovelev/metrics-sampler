@@ -2,6 +2,13 @@ package org.jmxsampler.extensions.jmx.reader;
 
 import static org.jmxsampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import org.jmxsampler.config.ConfigurationException;
 import org.jmxsampler.config.ReaderConfig;
 import org.jmxsampler.config.loader.xbeans.ReaderXBean;
 
@@ -27,6 +34,9 @@ public class JmxReaderXBean extends ReaderXBean {
 	@XStreamAlias("persistent-connection")
 	private boolean persistentConnection;
 
+	@XStreamAlias("ignore-object-names")
+	private List<IgnoreObjectNameXBean> ignore;
+	
 	public String getUrl() {
 		return url;
 	}
@@ -58,6 +68,12 @@ public class JmxReaderXBean extends ReaderXBean {
 		this.persistentConnection = persistentConnection;
 	}
 
+	public List<IgnoreObjectNameXBean> getIgnore() {
+		return ignore;
+	}
+	public void setIgnore(final List<IgnoreObjectNameXBean> ignore) {
+		this.ignore = ignore;
+	}
 	@Override
 	protected void validate() {
 		super.validate();
@@ -66,6 +82,19 @@ public class JmxReaderXBean extends ReaderXBean {
 	@Override
 	public ReaderConfig toConfig() {
 		validate();
-		return new JmxReaderConfig(getName(), getUrl(), getUsername(), getPassword(), getProviderPackages(), isPersistentConnection());
+		List<Pattern> ignorePatterns;
+		if (ignore != null) {
+			ignorePatterns = new ArrayList<Pattern>(ignore.size());
+			for (final IgnoreObjectNameXBean ignoreObjectName : ignore) {
+				try {
+					ignorePatterns.add(Pattern.compile(ignoreObjectName.getRegexp()));
+				} catch (final PatternSyntaxException e) {
+					throw new ConfigurationException("Pattern "+ignoreObjectName+" cannot compile: " + e.getMessage());
+				}
+			}
+		} else {
+			ignorePatterns = Collections.emptyList();
+		}
+		return new JmxReaderConfig(getName(), getUrl(), getUsername(), getPassword(), getProviderPackages(), isPersistentConnection(), ignorePatterns);
 	}
 }

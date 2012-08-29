@@ -1,5 +1,9 @@
 package org.jmxsampler.extensions.jmx.reader;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.jmxsampler.config.ReaderConfig;
 
 public class JmxReaderConfig extends ReaderConfig {
@@ -8,16 +12,18 @@ public class JmxReaderConfig extends ReaderConfig {
 	private final String password;
 	private final String providerPackages;
 	private final boolean persistentConnection;
-
+	private final List<Pattern> ignoredObjectNames;
+	
 	public JmxReaderConfig(final String name, final String url, final String username,
 			final String password, final String providerPackages,
-			final boolean persistentConnection) {
+			final boolean persistentConnection, final List<Pattern> ignoredObjectNames) {
 		super(name);
 		this.url = url;
 		this.username = username;
 		this.password = password;
 		this.providerPackages = providerPackages;
 		this.persistentConnection = persistentConnection;
+		this.ignoredObjectNames = Collections.unmodifiableList(ignoredObjectNames);
 	}
 
 	public String getUrl() {
@@ -40,4 +46,7 @@ public class JmxReaderConfig extends ReaderConfig {
 		return persistentConnection;
 	}
 
+	public List<Pattern> getIgnoredObjectNames() {
+		return ignoredObjectNames;
+	}
 }

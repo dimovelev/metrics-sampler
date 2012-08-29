@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jmxsampler.extensions.jmx.reader.IgnoreObjectNameXBean;
 import org.jmxsampler.extensions.jmx.reader.JmxReaderXBean;
 import org.jmxsampler.service.Extension;
 import org.jmxsampler.service.LocalObjectFactory;
@@ -19,6 +20,7 @@ public class JmxExtension implements Extension {
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
 		result.add(JmxReaderXBean.class);
+		result.add(IgnoreObjectNameXBean.class);
 		return result;
 	}
 

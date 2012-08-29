@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -67,6 +68,10 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 		try {
 			final Set<ObjectName> objectNames = serverConnection.queryNames(null, null);
 			for (final ObjectName objectName : objectNames) {
+				if (isIgnored(objectName)) {
+					logger.debug("Ignoring " + objectName.getCanonicalName());
+					continue;
+				}
 				try {
 	                final MBeanInfo info = serverConnection.getMBeanInfo(objectName);
 	                final MBeanAttributeInfo[] attributes = info.getAttributes();
@@ -78,14 +83,14 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 				                	result.add(new JmxMetricName(objectName, attribute.getName(), key, compositeType.getDescription(key)));
 		                		}
 	                		} else {
-	                			logger.debug("Could not get composite type for attribute {} of {}", attribute, objectName);
+	                			logger.debug("Could not get composite type for attribute {} of {}", attribute, objectName.getCanonicalName());
 	                		}
 	                	} else {
 		                	result.add(new JmxMetricName(objectName, attribute.getName(), null, attribute.getDescription()));
 	                	}
 	                }
 	            } catch (final Exception e) {
-	            	logger.warn("Failed to read metadata of JMX bean with name \"" + objectName + "\"", e);
+	            	logger.warn("Failed to read metadata of JMX bean with name \"" + objectName.getCanonicalName() + "\"", e);
 	            }
 			}
 		} catch (final IOException e) {
@@ -93,6 +98,16 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 		}
 		logger.debug("Loaded "+result.size()+" attributes");
 		return result;
+	}
+
+	protected boolean isIgnored(final ObjectName objectName) {
+		final String canonicalName = objectName.getCanonicalName();
+		for (final Pattern pattern : config.getIgnoredObjectNames()) {
+			if (pattern.matcher(canonicalName).matches()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected CompositeType getCompositeTypeForAttribute(final MBeanServerConnection serverConnection, final ObjectName objectName,
