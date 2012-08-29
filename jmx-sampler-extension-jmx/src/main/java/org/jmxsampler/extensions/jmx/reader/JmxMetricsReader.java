@@ -72,13 +72,13 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	                final MBeanAttributeInfo[] attributes = info.getAttributes();
 	                for(final MBeanAttributeInfo attribute : attributes) {
 	                	if ("javax.management.openmbean.CompositeData".equals(attribute.getType())) {
-	                		CompositeType openType = (CompositeType) attribute.getDescriptor().getFieldValue("openType");
-	                		if (openType == null) {
-		                		final CompositeData data = (CompositeData) serverConnection.getAttribute(objectName, attribute.getName());
-		                		openType = data.getCompositeType();
-	                		}
-	                		for (final String key : openType.keySet()) {
-			                	result.add(new JmxMetricName(objectName, attribute.getName(), key, openType.getDescription(key)));
+	                		final CompositeType compositeType = getCompositeTypeForAttribute(serverConnection, objectName, attribute);
+	                		if (compositeType != null) {
+		                		for (final String key : compositeType.keySet()) {
+				                	result.add(new JmxMetricName(objectName, attribute.getName(), key, compositeType.getDescription(key)));
+		                		}
+	                		} else {
+	                			logger.debug("Could not get composite type for attribute {} of {}", attribute, objectName);
 	                		}
 	                	} else {
 		                	result.add(new JmxMetricName(objectName, attribute.getName(), null, attribute.getDescription()));
@@ -93,6 +93,20 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 		}
 		logger.debug("Loaded "+result.size()+" attributes");
 		return result;
+	}
+
+	protected CompositeType getCompositeTypeForAttribute(final MBeanServerConnection serverConnection, final ObjectName objectName,
+			final MBeanAttributeInfo attribute) throws MBeanException, AttributeNotFoundException, InstanceNotFoundException,
+			ReflectionException, IOException {
+		final CompositeType result = (CompositeType) attribute.getDescriptor().getFieldValue("openType");
+		if (result != null) {
+			return result;
+		}
+		final CompositeData data = (CompositeData) serverConnection.getAttribute(objectName, attribute.getName());
+		if (data != null) {
+			return data.getCompositeType();
+		}
+		return null;
 	}
 
 	@Override
