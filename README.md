@@ -66,6 +66,9 @@ Changelog
 Version 0.3.2
 -------------
 * Use -f option for readlink for better compatibility
+* Added support for ignoring JMX object names (see config.xml.example)
+* Added support for placeholders definitions - global (directly under configuration) and in the default sampler (see config.xml.example)
+* Added support for mapping of placeholder values using ${fn:map(dictionary_key,placeholder_for_entry_key)} (see config.xml.example) 
 
 Version 0.3.1
 -------------

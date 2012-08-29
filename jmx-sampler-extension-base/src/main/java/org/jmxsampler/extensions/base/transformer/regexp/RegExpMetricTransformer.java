@@ -25,7 +25,7 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	private final PlaceholderReplacer placeholderReplacer = new PlaceholderReplacer();
 	
 	private final RegExpMappingConfig config;
-	private Map<String, String> readerContext;
+	private Map<String, Object> placeholders;
 
 	private MetricsMetaData cachedMetaData;
 	private List<MatchingMetric> cachedMatchingMetrics;
@@ -79,8 +79,8 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 
 	
 	@Override
-	public void setReaderContext(final Map<String, String> readerContext) {
-		this.readerContext = readerContext;
+	public void setPlaceholders(final Map<String, Object> readerContext) {
+		this.placeholders = readerContext;
 	}
 
 	private List<MatchingMetric> getMatchingMetrics(final MetaDataMetricsReader reader) {
@@ -106,7 +106,7 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 	}
 
 	protected MatchingMetric match(final MetricName from) {
-		Map<String, String> context = null;
+		Map<String, Object> context = null;
 
 		if (config.hasNameFilter()) {
 			final Matcher nameMatcher = config.getNamePattern().matcher(from.getName());
@@ -122,14 +122,14 @@ public class RegExpMetricTransformer implements MetricsTransformer {
 			}
 			context = addGroups(descriptionMatcher, "description", context);
 		}
-		context.putAll(readerContext);
+		context.putAll(placeholders);
 		final String newName = placeholderReplacer.replacePlaceholders(config.getKeyExpression(), context);
 		return new MatchingMetric(from, newName);
 		
 	}
 
-	private Map<String, String> addGroups(final Matcher matcher, final String prefix, final Map<String, String> context) {
-		final Map<String, String> result = context == null ? new HashMap<String, String>() : context;
+	private Map<String, Object> addGroups(final Matcher matcher, final String prefix, final Map<String, Object> context) {
+		final Map<String, Object> result = context == null ? new HashMap<String, Object>() : context;
 		for (int i=0; i<=matcher.groupCount(); i++) {
 			result.put(prefix+"["+i+"]", matcher.group(i));
 		}

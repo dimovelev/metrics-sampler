@@ -36,12 +36,12 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 
 	private final JmxReaderConfig config;
 	private MetricsMetaData metadata;
-	private final Map<String, String> context;
+	private final Map<String, Object> placeholders;
 	private final JmxConnection connection;
 
 	public JmxMetricsReader(final JmxReaderConfig config) {
 		this.config = config;
-		context = prepareContext();
+		placeholders = preparePlaceholders();
 		try {
 			this.connection = new JmxConnection(config);
 		} catch (final IOException e) {
@@ -180,8 +180,8 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 		}
 	}
 
-	private Map<String, String> prepareContext() {
-		final Map<String, String> result = new HashMap<String, String>();
+	private Map<String, Object> preparePlaceholders() {
+		final Map<String, Object> result = new HashMap<String, Object>();
 		result.put("reader.name", config.getName());
 		return result;
 	}
@@ -195,8 +195,8 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	}
 
 	@Override
-	public Map<String, String> getTransformationContext() {
-		return context;
+	public Map<String, Object> getPlaceholders() {
+		return placeholders;
 	}
 
 	@Override

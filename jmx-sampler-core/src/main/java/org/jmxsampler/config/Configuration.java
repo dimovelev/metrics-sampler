@@ -8,12 +8,14 @@ public class Configuration {
 	private final Collection<ReaderConfig> readers;
 	private final Collection<WriterConfig> writers;
 	private final Collection<SamplerConfig> samplers;
-
-	public Configuration(final int poolSize, final Collection<ReaderConfig> readers, final Collection<WriterConfig> writers, final Collection<SamplerConfig> samplers) {
+	private final Collection<PlaceholderConfig> placeholders;
+	
+	public Configuration(final int poolSize, final Collection<ReaderConfig> readers, final Collection<WriterConfig> writers, final Collection<SamplerConfig> samplers, final Collection<PlaceholderConfig> placeholders) {
 		this.poolSize = poolSize;
 		this.readers = readers;
 		this.writers = writers;
 		this.samplers = samplers;
+		this.placeholders = placeholders;
 	}
 
 	public int getPoolSize() {
@@ -32,5 +34,7 @@ public class Configuration {
 		return Collections.unmodifiableCollection(samplers);
 	}
 
-
+	public Collection<PlaceholderConfig> getPlaceholders() {
+		return Collections.unmodifiableCollection(placeholders);
+	}
 }

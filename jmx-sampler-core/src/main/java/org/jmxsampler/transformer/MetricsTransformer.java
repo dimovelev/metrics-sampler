@@ -8,7 +8,7 @@ import org.jmxsampler.reader.MetricsReader;
 public interface MetricsTransformer {
 	Map<String, MetricValue> transformMetrics(MetricsReader reader);
 
-	void setReaderContext(Map<String, String> context);
+	void setPlaceholders(Map<String, Object> placeholders);
 	
 	int getMetricCount(MetricsReader reader);
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jmxsampler.config.MappingConfig;
+import org.jmxsampler.config.PlaceholderConfig;
 import org.jmxsampler.config.ReaderConfig;
 import org.jmxsampler.config.SamplerConfig;
 import org.jmxsampler.config.WriterConfig;
@@ -19,7 +20,7 @@ public abstract class SamplerXBean {
 	@XStreamAsAttribute
 	private boolean disabled;
 
-	public abstract SamplerConfig toConfig(Map<String, ReaderConfig> readers, Map<String, WriterConfig> writers, Map<String, List<MappingConfig>> mappingTemplates);
+	public abstract SamplerConfig toConfig(Map<String, ReaderConfig> readers, Map<String, WriterConfig> writers, Map<String, List<MappingConfig>> mappingTemplates, List<PlaceholderConfig> placeholders);
 
 	public int getInterval() {
 		return interval;

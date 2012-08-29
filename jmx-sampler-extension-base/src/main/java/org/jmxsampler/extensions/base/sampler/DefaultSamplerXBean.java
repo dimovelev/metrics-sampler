@@ -8,11 +8,13 @@ import java.util.Map;
 
 import org.jmxsampler.config.ConfigurationException;
 import org.jmxsampler.config.MappingConfig;
+import org.jmxsampler.config.PlaceholderConfig;
 import org.jmxsampler.config.ReaderConfig;
 import org.jmxsampler.config.SamplerConfig;
 import org.jmxsampler.config.WriterConfig;
 import org.jmxsampler.config.loader.xbeans.MappingTemplateRefXBean;
 import org.jmxsampler.config.loader.xbeans.MappingXBean;
+import org.jmxsampler.config.loader.xbeans.PlaceholderXBean;
 import org.jmxsampler.config.loader.xbeans.SamplerXBean;
 import org.jmxsampler.config.loader.xbeans.SimpleMappingXBean;
 
@@ -27,6 +29,8 @@ public class DefaultSamplerXBean extends SamplerXBean {
 	@XStreamAsAttribute
 	private String writers;
 
+	private List<PlaceholderXBean> placeholders;
+	
 	private List<MappingXBean> mappings;
 
 	public String getReader() {
@@ -45,6 +49,14 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		this.writers = writers;
 	}
 
+	public List<PlaceholderXBean> getPlaceholders() {
+		return placeholders;
+	}
+
+	public void setPlaceholders(final List<PlaceholderXBean> placeholders) {
+		this.placeholders = placeholders;
+	}
+
 	public List<MappingXBean> getMappings() {
 		return mappings;
 	}
@@ -59,7 +71,7 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		notEmpty("mappings", "default sampler", getMappings());
 	}
 	@Override
-	public SamplerConfig toConfig(final Map<String, ReaderConfig> readers, final Map<String, WriterConfig> writers, final Map<String, List<MappingConfig>> mappingTemplates) {
+	public SamplerConfig toConfig(final Map<String, ReaderConfig> readers, final Map<String, WriterConfig> writers, final Map<String, List<MappingConfig>> mappingTemplates, final List<PlaceholderConfig> globalPlaceholders) {
 		validate();
 		final ReaderConfig readerConfig = readers.get(getReader());
 		if (readerConfig == null) {
@@ -88,6 +100,15 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		if (mappingConfigs.isEmpty()) {
 			throw new ConfigurationException("Default sampler has no mappings");
 		}
-		return new DefaultSamplerConfig(getInterval(), isDisabled(), readerConfig, writerConfigs, mappingConfigs);
+		
+		final List<PlaceholderConfig> placeholderConfigs = new LinkedList<PlaceholderConfig>();
+		placeholderConfigs.addAll(globalPlaceholders);
+		if (getPlaceholders() != null) {
+			for (final PlaceholderXBean item : getPlaceholders()) {
+				placeholderConfigs.add(item.toConfig());
+			}
+		}
+		
+		return new DefaultSamplerConfig(getInterval(), isDisabled(), readerConfig, writerConfigs, mappingConfigs, placeholderConfigs);
 	}
 }

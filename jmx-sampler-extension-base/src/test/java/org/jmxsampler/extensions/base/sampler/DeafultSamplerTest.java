@@ -4,6 +4,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.LinkedList;
+
+import org.jmxsampler.config.PlaceholderConfig;
 import org.jmxsampler.reader.BulkMetricsReader;
 import org.jmxsampler.transformer.MetricsTransformer;
 import org.jmxsampler.writer.MetricsWriter;
@@ -28,7 +31,7 @@ public class DeafultSamplerTest {
 		transformer1 = mock(MetricsTransformer.class);
 		transformer2 = mock(MetricsTransformer.class);
 		
-		testee = new DefaultSampler(bulkReader);
+		testee = new DefaultSampler(bulkReader, new LinkedList<PlaceholderConfig>());
 		testee.addWriter(writer1);
 		testee.addWriter(writer2);
 		testee.addTransformer(transformer1);

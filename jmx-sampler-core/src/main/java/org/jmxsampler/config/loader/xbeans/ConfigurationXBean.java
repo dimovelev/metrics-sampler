@@ -8,6 +8,7 @@ import java.util.Map;
 import org.jmxsampler.config.Configuration;
 import org.jmxsampler.config.ConfigurationException;
 import org.jmxsampler.config.MappingConfig;
+import org.jmxsampler.config.PlaceholderConfig;
 import org.jmxsampler.config.ReaderConfig;
 import org.jmxsampler.config.SamplerConfig;
 import org.jmxsampler.config.WriterConfig;
@@ -27,6 +28,8 @@ public class ConfigurationXBean {
 
 	private List<SamplerXBean> samplers;
 
+	private List<PlaceholderXBean> placeholders;
+	
 	@XStreamAlias("mapping-templates")
 	private List<MappingTemplateXBean> mappingTemplates;
 
@@ -70,13 +73,29 @@ public class ConfigurationXBean {
 		this.poolSize = poolSize;
 	}
 
+	public List<PlaceholderXBean> getPlaceholders() {
+		return placeholders;
+	}
+
+	public void setPlaceholders(final List<PlaceholderXBean> placeholders) {
+		this.placeholders = placeholders;
+	}
+
 	public Configuration toConfig() {
+		final List<PlaceholderConfig> placeholders = configurePlaceholders(getPlaceholders());
 		final Map<String, ReaderConfig> readers = configureReaders(getReaders());
 		final Map<String, WriterConfig> writers = configureWriters(getWriters());
 		final Map<String, List<MappingConfig>> mappingTemplates = configureMappingTemplates(getMappingTemplates());
-		final List<SamplerConfig> mappers = configureSamplers(getSamplers(), readers, writers, mappingTemplates);
+		final List<SamplerConfig> mappers = configureSamplers(getSamplers(), readers, writers, mappingTemplates, placeholders);
+		return new Configuration(getPoolSize(), readers.values(), writers.values(), mappers, placeholders);
+	}
 
-		return new Configuration(getPoolSize(), readers.values(), writers.values(), mappers);
+	private List<PlaceholderConfig> configurePlaceholders(final List<PlaceholderXBean> items) {
+		final List<PlaceholderConfig> result = new LinkedList<PlaceholderConfig>();
+		for (final PlaceholderXBean item : items) {
+			result.add(item.toConfig());
+		}
+		return result;
 	}
 
 	private Map<String, ReaderConfig> configureReaders(final List<ReaderXBean> list) {
@@ -114,10 +133,10 @@ public class ConfigurationXBean {
 		return result;
 	}
 
-	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, ReaderConfig> readers, final Map<String, WriterConfig> writers, final Map<String, List<MappingConfig>> mappingTemplates) {
+	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, ReaderConfig> readers, final Map<String, WriterConfig> writers, final Map<String, List<MappingConfig>> mappingTemplates, final List<PlaceholderConfig> placeholders) {
 		final List<SamplerConfig>result = new LinkedList<SamplerConfig>();
 		for (final SamplerXBean def : samplers) {
-			result.add(def.toConfig(readers, writers, mappingTemplates));
+			result.add(def.toConfig(readers, writers, mappingTemplates, placeholders));
 		}
 		return result;
 	}

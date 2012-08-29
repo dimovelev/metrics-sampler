@@ -5,20 +5,23 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jmxsampler.transformer.PlaceholderReplacer;
 import org.junit.Before;
 import org.junit.Test;
 
 public class PlaceholderReplacerTest {
-	private Map<String, String> replacements;
+	private Map<String, Object> replacements;
 	private PlaceholderReplacer testee;
 	
 	@Before
 	public void setup() {
-		replacements = new HashMap<String, String>();
+		replacements = new HashMap<String, Object>();
 		replacements.put("first", "FIRST");
 		replacements.put("second", "SECOND");
 		replacements.put("third", "THIRD");
+		final Map<String, String> dict1 = new HashMap<String, String>();
+		dict1.put("FIRST", "THE_FIRST");
+		dict1.put("SECOND", "THE_SECOND");
+		replacements.put("dict1", dict1);
 		
 		testee = new PlaceholderReplacer();
 	}
@@ -77,6 +80,14 @@ public class PlaceholderReplacerTest {
 		final String result = testee.replacePlaceholders(input, replacements);
 		
 		assertEquals("Missing placeholder must not be replaced", input, result);
+	}
+	
+	@Test
+	public void replacePlaceholdersMap() {
+		final String input = "${fn:map(dict1,first)} SECOND THIRD";
+		final String result = testee.replacePlaceholders(input, replacements);
+		
+		assertEquals("Missing placeholder must not be replaced", "THE_FIRST SECOND THIRD", result);
 	}
 
 }

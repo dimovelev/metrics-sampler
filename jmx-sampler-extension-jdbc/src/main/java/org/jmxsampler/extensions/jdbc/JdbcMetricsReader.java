@@ -78,8 +78,8 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 	}
 
 	@Override
-	public Map<String, String> getTransformationContext() {
-		final Map<String, String> result = new HashMap<String, String>();
+	public Map<String, Object> getPlaceholders() {
+		final Map<String, Object> result = new HashMap<String, Object>();
 		result.put("reader.name", config.getName());
 		return result;
 	}

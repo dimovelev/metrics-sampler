@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jmxsampler.config.PlaceholderConfig;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.MetricsReader;
@@ -21,9 +22,12 @@ public class DefaultSampler implements Sampler {
 	private final MetricsReader reader;
 	private final List<MetricsWriter> writers = new LinkedList<MetricsWriter>();
 	private final List<MetricsTransformer> transformers = new LinkedList<MetricsTransformer>();
+
+	private final List<PlaceholderConfig> placeholders;
 	
-	public DefaultSampler(final MetricsReader reader) {
+	public DefaultSampler(final MetricsReader reader, final List<PlaceholderConfig> placeholders) {
 		this.reader = reader;
+		this.placeholders = placeholders;
 	}
 
 	public DefaultSampler addWriter(final MetricsWriter writer) {
@@ -33,7 +37,12 @@ public class DefaultSampler implements Sampler {
 
 	public DefaultSampler addTransformer(final MetricsTransformer transformer) {
 		transformers.add(transformer);
-		transformer.setReaderContext(reader.getTransformationContext());
+		final Map<String, Object> transformerPlaceholders = new HashMap<String, Object>();
+		transformerPlaceholders.putAll(reader.getPlaceholders());
+		for (final PlaceholderConfig placeholder : placeholders) {
+			transformerPlaceholders.put(placeholder.getKey(), placeholder.getValue());
+		}
+		transformer.setPlaceholders(transformerPlaceholders);
 		return this;
 	}
 

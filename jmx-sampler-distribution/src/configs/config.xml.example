@@ -1,6 +1,10 @@
 <configuration pool-size="10">
 	<readers>
- 		<jmx-reader name="wls" url="service:jmx:t3://weblogic.jmxsampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true" />
+ 		<jmx-reader name="wls" url="service:jmx:t3://weblogic.jmxsampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true">
+ 			<ignore-object-names>
+ 				<ignore-object-name regexp="^com\.oracle\.jrockit:type=Flight.+" />
+ 			</ignore-object-names>
+ 		</jmx-reader>
  		<jmx-reader name="tomcat" url="service:jmx:rmi:///jndi/rmi://tomcat.jmxsampler.org:9001/jmxrmi" persistent-connection="true" />
 		<mod-qos-reader name="apache.qos" url="http://apache.jmxsampler.org:8240/qos-viewer?auto" username="user" password="pass" auth="basic"/>
 	</readers>
@@ -8,6 +12,18 @@
 		<console-writer name="console" />
 		<graphite-writer name="graphite" host="graphite.jmxsampler.org" port="2003" />
 	</writers>
+	<placeholders>
+		<dictionary-placeholder key="memory-pools">
+			<entry key="Old Space" value="old" />
+			<entry key="ClassBlock Memory" value="class-blocks" />
+			<entry key="Class Memory" value="classes" />
+			<entry key="Nursery" value="young" />
+		</dictionary-placeholder>
+		<dictionary-placeholder key="usage">
+			<entry key="Usage" value="current" />
+			<entry key="PeakUsage" value="peak" />
+		</dictionary-placeholder>
+	</placeholders>
 	<mapping-templates>
 		<mapping-template name="wls">
 			<regexp-mapping from-name="com\.bea:Name=DataSource_(.+),ServerRuntime=.+,Type=JDBCOracleDataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${reader.name}.jdbc.${name[1]}.${name[2]}" />
@@ -24,8 +40,7 @@
             <regexp-mapping from-name="java\.lang:type=Compilation\.(TotalCompilationTime)" to-name="${reader.name}.compilation.${name[1]}"/>
             <regexp-mapping from-name="java\.lang:type=OperatingSystem\.(AvailableProcessors|CommittedVirtualMemorySize|FreePhysicalMemorySize|FreeSwapSpaceSize|MaxFileDescriptorCount|OpenFileDescriptorCount|TotalPhysicalMemorySize|TotalSwapSpaceSize)" to-name="${reader.name}.os.${name[1]}"/>
             <regexp-mapping from-name="java\.lang:name=(.+),type=GarbageCollector\.(CollectionCount|CollectionTime)" to-name="${reader.name}.gc.${name[1]}.${name[2]}"/>
-            <regexp-mapping from-name="java\.lang:name=(.+),type=MemoryPool\.Usage#(.*)" to-name="${reader.name}.memory.${name[1]}.current.${name[2]}"/>
-            <regexp-mapping from-name="java\.lang:name=(.+),type=MemoryPool\.PeakUsage#(.*)" to-name="${reader.name}.memory.${name[1]}.peak.${name[2]}"/>
+            <regexp-mapping from-name="java\.lang:name=(.+),type=MemoryPool\.(Usage|PeakUsage)#(.*)" to-name="${reader.name}.memory.${fn:map(usage,name[2])}.${fn:map(memory-pools,name[1])}.${name[3]}"/>
             <regexp-mapping from-name="java\.lang:type=Memory\.HeapMemoryUsage#(.*)" to-name="${reader.name}.memory.heap.current.${name[1]}"/>
             <regexp-mapping from-name="java\.lang:type=Memory\.NonHeapMemoryUsage#(.*)" to-name="${reader.name}.memory.nonheap.current.${name[1]}"/>
         </mapping-template>
