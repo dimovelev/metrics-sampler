@@ -12,6 +12,11 @@
 			<email>dimo.velev@gmail.com</email>
 		</developer>
 	</developers>
+	<scm>
+		<connection>scm:git:https://github.com/dimovelev/jmx-sampler.git</connection>
+		<developerConnection>scm:git:https://github.com/dimovelev/jmx-sampler.git</developerConnection>
+		<url>https://github.com/dimovelev/jmx-sampler</url>
+	</scm>
 	<modules>
 		<module>jmx-sampler-core</module>
 		<module>jmx-sampler-extension-base</module>
@@ -37,4 +42,43 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.6.6</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>1.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.0.6</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>1.0.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.6</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.10</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>1.9.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

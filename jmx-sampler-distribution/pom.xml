@@ -72,42 +72,44 @@
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-core</artifactId>
-			<version>0.3.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-base</artifactId>
-			<version>0.3.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-graphite</artifactId>
-			<version>0.3.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-jmx</artifactId>
-			<version>0.3.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-modqos</artifactId>
-			<version>0.3.2-SNAPSHOT</version>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jmxsampler</groupId>
+			<artifactId>jmx-sampler-extension-jdbc</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>1.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.6.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -117,12 +119,6 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jmxsampler</groupId>
-			<artifactId>jmx-sampler-extension-jdbc</artifactId>
-			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
