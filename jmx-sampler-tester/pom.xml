@@ -11,32 +11,32 @@
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-core</artifactId>
-			<version>${project.version}</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-base</artifactId>
-			<version>${project.version}</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-jmx</artifactId>
-			<version>${project.version}</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-graphite</artifactId>
-			<version>${project.version}</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-modqos</artifactId>
-			<version>${project.version}</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-extension-jdbc</artifactId>
-			<version>${project.version}</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

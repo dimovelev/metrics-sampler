@@ -12,7 +12,7 @@
 		<dependency>
 			<groupId>org.jmxsampler</groupId>
 			<artifactId>jmx-sampler-core</artifactId>
-			<version>${project.version}</version>
+			<version>0.3.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
