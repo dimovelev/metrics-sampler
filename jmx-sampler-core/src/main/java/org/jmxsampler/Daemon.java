@@ -32,7 +32,7 @@ public class Daemon {
 				logger.info(sampler + " is disabled and will not be scheduled");
 				continue;
 			}
-			logger.info("Scheduling "+sampler);
+			logger.info("Scheduling {} at fixed rate of {} seconds", sampler, samplerConfig.getInterval());
 	        executor.scheduleAtFixedRate(new Runnable() {
 				@Override
 				public void run() {
