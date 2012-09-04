@@ -10,8 +10,10 @@ LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
 CONFIG=$BASEDIR/config/config.xml
 PIDFILE=$BASEDIR/jmx-sampler.pid
 
-if [ ! -e $BASEDIR/logs ]; then
-        mkdir $BASEDIR/logs
+pushd $BASEDIR
+
+if [ ! -e logs ]; then
+        mkdir logs
 fi
 
 case "$1" in
@@ -20,7 +22,7 @@ case "$1" in
 			echo "PIDFILE $PIDFILE exists"
 			exit 1
 		fi
-		nohup $JAVA -Dlogback.configurationFile=$LOGCONFIG $JAVA_OPTS -cp "${BASEDIR}/lib/*" org.jmxsampler.Runner start $CONFIG &
+		nohup $JAVA -Dlogback.configurationFile=$LOGCONFIG $JAVA_OPTS -cp "lib/*" org.jmxsampler.Runner start $CONFIG  > logs/console.out 2>&1 &
 		echo $! > $PIDFILE
 		echo "Started with pid $!"
 		;;
@@ -46,10 +48,10 @@ case "$1" in
 		fi
 		;;
 	check)
-		$JAVA -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $JAVA_OPTS -cp "${BASEDIR}/lib/*" org.jmxsampler.Runner check $CONFIG
+		$JAVA -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $JAVA_OPTS -cp "lib/*" org.jmxsampler.Runner check $CONFIG
 		;;
 	metadata)
-		$JAVA -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $JAVA_OPTS -cp "${BASEDIR}/lib/*" org.jmxsampler.Runner metadata $CONFIG
+		$JAVA -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $JAVA_OPTS -cp "lib/*" org.jmxsampler.Runner metadata $CONFIG
 		;;
 	*)
 		cat <<EOF
@@ -64,3 +66,4 @@ metadata  Goes through all samplers and outputs the metadata of their readers. U
 EOF
 		;;
 esac
+popd
