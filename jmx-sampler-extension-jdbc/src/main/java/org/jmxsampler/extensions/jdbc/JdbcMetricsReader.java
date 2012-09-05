@@ -35,6 +35,7 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 	protected void connect() {
 		loadJdbcDriver();
 		final Properties props = new Properties();
+		props.putAll(config.getOptions());
 		props.put("user", config.getUsername());
 		props.put("password", config.getPassword());
 		try {

@@ -2,7 +2,9 @@ package org.jmxsampler.extensions.jdbc;
 
 import static org.jmxsampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.jmxsampler.config.ReaderConfig;
 import org.jmxsampler.config.loader.xbeans.ReaderXBean;
@@ -24,10 +26,11 @@ public class JdbcReaderXBean extends ReaderXBean {
 	
 	@XStreamAsAttribute
 	private String driver;
+
+	private JdbcOptionsXBean options;
 	
 	@XStreamImplicit(itemFieldName="query")
 	private List<String> queries;
-	
 	
 	@Override
 	protected void validate() {
@@ -36,12 +39,16 @@ public class JdbcReaderXBean extends ReaderXBean {
 		notEmpty("password", "jdbc-reader", getPassword());
 		notEmpty("url", "jdbc-reader", getUrl());
 		notEmpty("queries", "jdbc-reader", getQueries());
+		if (options != null) {
+			options.validate();
+		}
 	}
 
 	@Override
 	public ReaderConfig toConfig() {
 		validate();
-		return new JdbcReaderConfig(getName(), getUrl(), getDriver(), getUsername(), getPassword(), getQueries());
+		final Map<String, String> jdbcOptions = options != null ? options.toMap() : Collections.<String,String>emptyMap();
+		return new JdbcReaderConfig(getName(), getUrl(), getDriver(), getUsername(), getPassword(), getQueries(), jdbcOptions);
 	}
 
 	public String getUrl() {
@@ -82,5 +89,13 @@ public class JdbcReaderXBean extends ReaderXBean {
 
 	public void setDriver(final String driver) {
 		this.driver = driver;
+	}
+
+	public JdbcOptionsXBean getOptions() {
+		return options;
+	}
+
+	public void setOptions(final JdbcOptionsXBean options) {
+		this.options = options;
 	}
 }
