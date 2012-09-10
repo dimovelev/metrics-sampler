@@ -56,17 +56,15 @@ Check out the following configuration as a quick-start:
 		</selector-groups>
 		<!-- These are the actual active runtime components that sample the date from their input, use the given selectors to determine which metrics are relevant (and rename them) and sends them to the given outputs. An input without a sampler does not do anything. -->
 		<samplers>
+			<!-- template defining common values for weblogic samplers. -->
+			<sampler name="wls" abstract="true" outputs="graphite" interval="10">
+				<selectors>
+					<use-group name="wls" />
+				</selectors>
+			</sampler>
 			<!-- fetch data from wls01 input, use the regular expressions in a group named "wls" to select and rename metrics and send them to graphite every 10 seconds. -->
-			<sampler input="wls01" outputs="graphite" interval="10">
-				<selectors>
-					<use-group name="wls" />
-				</selectors>
-			</sampler>
-			<sampler input="wls02" outputs="graphite" interval="10">
-				<selectors>
-					<use-group name="wls" />
-				</selectors>
-			</sampler>
+			<sampler input="wls01" template="wls" />
+			<sampler input="wls02" template="wls" />
 			<sampler input="tomcat01" outputs="graphite" interval="10">
 				<selectors>
 					<use-group name="tomcat" />
@@ -148,6 +146,7 @@ Version 0.4.0
 -------------
 * Renamed most of the XML configuration elements
 * Added support for input templates
+* Added support for sampler templates
 * Fixed problems with multiple JDBC drivers
 * Renamed to metrics-sampler (from jmx-sampler) as it better reflects the purpose of the application
 * Improved debug logging

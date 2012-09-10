@@ -37,7 +37,10 @@ public final class ValidationUtils {
 		}
 	}
 
-	public static void greaterThanZero(final String name, final String context, final int value) {
+	public static void greaterThanZero(final String name, final String context, final Integer value) {
+		if (value == null) {
+			throw new ConfigurationException("Attribute "+name+" of "+context+" is mandatory");
+		}
 		if (value < 1) {
 			throw new ConfigurationException("Attribute "+name+" of "+context+" with value "+value+" is not a valid number higher than 0");
 		}

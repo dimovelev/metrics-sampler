@@ -24,11 +24,8 @@ public class ConfigurationXBean {
 	private int poolSize;
 
 	private List<InputXBean> inputs;
-
 	private List<OutputXBean> outputs;
-
 	private List<SamplerXBean> samplers;
-
 	private List<PlaceholderXBean> placeholders;
 	
 	@XStreamAlias("selector-groups")
@@ -143,9 +140,14 @@ public class ConfigurationXBean {
 	}
 
 	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final List<Placeholder> placeholders) {
+		final LinkedHashMap<String, SamplerXBean> namedSamplers = TemplatableXBeanUtils.sortByDependency(samplers); 
+
 		final List<SamplerConfig> result = new LinkedList<SamplerConfig>();
 		for (final SamplerXBean def : samplers) {
-			result.add(def.toConfig(inputs, outputs, selectorGroups, placeholders));
+			TemplatableXBeanUtils.applyTemplate(def, namedSamplers);
+			if (def.isInstantiatable()) {
+				result.add(def.toConfig(inputs, outputs, selectorGroups, placeholders));
+			}
 		}
 		return result;
 	}

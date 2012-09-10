@@ -37,6 +37,16 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		return input;
 	}
 
+	@Override
+	public String getName() {
+		final String name = super.getName();
+		if (name == null) {
+			return input;
+		}
+		return name;
+	}
+
+
 	public void setInput(final String input) {
 		this.input = input;
 	}
@@ -66,9 +76,11 @@ public class DefaultSamplerXBean extends SamplerXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("input", "default sampler", getInput());
-		notEmpty("outputs", "default sampler", getOutputs());
-		notEmpty("selectors", "default sampler", getSelectors());
+		if (isInstantiatable()) {
+			notEmpty("input", "default sampler", getInput());
+			notEmpty("outputs", "default sampler", getOutputs());
+			notEmpty("selectors", "default sampler", getSelectors());
+		}
 	}
 	@Override
 	public SamplerConfig toConfig(final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorTemplates, final List<Placeholder> globalPlaceholders) {

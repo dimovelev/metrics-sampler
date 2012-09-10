@@ -16,20 +16,20 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
  * Base class for sampler XBeans.
  */
-public abstract class SamplerXBean {
+public abstract class SamplerXBean extends TemplatableXBean {
 	@XStreamAsAttribute
-	private int interval;
+	private Integer interval;
 
 	@XStreamAsAttribute
 	private boolean disabled;
 
 	public abstract SamplerConfig toConfig(Map<String, InputConfig> inputs, Map<String, OutputConfig> outputs, Map<String, List<SelectorConfig>> selectorGroups, List<Placeholder> placeholders);
 
-	public int getInterval() {
+	public Integer getInterval() {
 		return interval;
 	}
 
-	public void setInterval(final int interval) {
+	public void setInterval(final Integer interval) {
 		this.interval = interval;
 	}
 
@@ -41,7 +41,11 @@ public abstract class SamplerXBean {
 		this.disabled = disabled;
 	}
 
+	@Override
 	protected void validate() {
-		greaterThanZero("interval", "default sampler", getInterval());
+		super.validate();
+		if (isInstantiatable()) {
+			greaterThanZero("interval", "default sampler", getInterval());
+		}
 	}
 }

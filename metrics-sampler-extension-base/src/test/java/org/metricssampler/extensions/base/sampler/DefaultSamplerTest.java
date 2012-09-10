@@ -14,7 +14,7 @@ import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.writer.MetricsWriter;
 
-public class DeafultSamplerTest {
+public class DefaultSamplerTest {
 	private DefaultSampler testee;
 	private BulkMetricsReader bulkReader;
 	private MetricsWriter writer1;
