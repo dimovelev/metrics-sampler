@@ -31,13 +31,13 @@
 	</moduleSets>
 	<dependencySets>
 		<dependencySet>
-			<includes>
-					<include>ch.qos.logback:logback-classic</include>
-					<include>ch.qos.logback:logback-core</include>
-					<include>org.slf4j:slf4j-api</include>
-					<include>commons-codec:commons-codec</include>
-					<include>com.thoughtworks.xstream:xstream</include>
-			</includes>
+<!-- 			<includes> -->
+<!-- 					<include>ch.qos.logback:logback-classic</include> -->
+<!-- 					<include>ch.qos.logback:logback-core</include> -->
+<!-- 					<include>org.slf4j:slf4j-api</include> -->
+<!-- 					<include>commons-codec:commons-codec</include> -->
+<!-- 					<include>com.thoughtworks.xstream:xstream</include> -->
+<!-- 			</includes> -->
 			<outputDirectory>lib</outputDirectory>
 			<directoryMode>700</directoryMode>
 			<fileMode>600</fileMode>
