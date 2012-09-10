@@ -62,11 +62,9 @@ public class PlaceholderReplacer {
 			} else {
 				logger.warn("Function map expects 2 parameters not {}", params.length);
 			}
-			System.out.println("PARAMS: "+params);
 		} else {
 			logger.warn("Unknown function: \"{}\"", name);
 		}
-		System.out.println("XXXX: "+name);
 		// TODO Auto-generated method stub
 		return null;
 	}

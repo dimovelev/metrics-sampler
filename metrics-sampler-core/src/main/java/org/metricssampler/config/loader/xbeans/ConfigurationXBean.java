@@ -93,8 +93,10 @@ public class ConfigurationXBean {
 
 	private List<Placeholder> configurePlaceholders(final List<PlaceholderXBean> items) {
 		final List<Placeholder> result = new LinkedList<Placeholder>();
-		for (final PlaceholderXBean item : items) {
-			result.add(item.toConfig());
+		if (items != null) {
+			for (final PlaceholderXBean item : items) {
+				result.add(item.toConfig());
+			}
 		}
 		return result;
 	}

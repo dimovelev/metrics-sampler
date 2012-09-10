@@ -33,7 +33,6 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 	}
 
 	protected void connect() {
-		loadJdbcDriver();
 		final Properties props = new Properties();
 		props.putAll(config.getOptions());
 		props.put("user", config.getUsername());
@@ -43,15 +42,6 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 			connection = DriverManager.getConnection(config.getUrl(), props);
 		} catch (final SQLException e) {
 			throw new MetricReadException("Failed to connect to DB", e);
-		}
-	}
-
-	protected void loadJdbcDriver() {
-		// WTF: with multiple threads the automatic driver detection did not work that is why we load the driver explicitly
-		try {
-			Class.forName(config.getDriver());
-		} catch (final ClassNotFoundException e) {
-			throw new MetricReadException("Failed to load jdbc driver \"" + config.getDriver() + "\": "+e.getMessage(), e);
 		}
 	}
 

@@ -38,6 +38,7 @@ public class JdbcInputXBean extends InputXBean {
 		notEmpty("username", "jdbc-reader", getUsername());
 		notEmpty("password", "jdbc-reader", getPassword());
 		notEmpty("url", "jdbc-reader", getUrl());
+		notEmpty("driver", "jdbc-reader", getDriver());
 		notEmpty("queries", "jdbc-reader", getQueries());
 		if (options != null) {
 			options.validate();

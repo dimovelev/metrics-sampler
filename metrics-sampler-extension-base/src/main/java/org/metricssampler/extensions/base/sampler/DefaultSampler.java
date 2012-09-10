@@ -60,7 +60,7 @@ public class DefaultSampler implements Sampler {
 
 	@Override
 	public void sample() {
-		logger.debug("Sampling {}", reader.toString());
+		logger.debug("Sampling {}", reader);
 		try {
 			final Map<String, MetricValue> metrics = readMetrics();
 			writeMetrics(metrics);
@@ -69,6 +69,7 @@ public class DefaultSampler implements Sampler {
 		} catch (final MetricWriteException e) {
 			logger.warn("Failed to write metrics", e);
 		}
+		logger.debug("Sampled {}", reader);
 	}
 
 	private void writeMetrics(final Map<String, MetricValue> metrics) {
@@ -87,12 +88,15 @@ public class DefaultSampler implements Sampler {
 	}
 
 	private Map<String, MetricValue> readMetrics() {
+		logger.debug("Opening reader {}", reader);
 		reader.open();
-
+		
+		logger.debug("Reading metrics from {}", reader);
 		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
 		for (final MetricsSelector selector : selectors) {
+			logger.debug("Reading metrics from {} via {}", reader, selector);
 			final Map<String, MetricValue> metrics = selector.readMetrics(reader);
-			logger.debug("Selector " + selector + " returned " + metrics.size() + " metrics");
+			logger.debug("Selector " + selector + " returned " + metrics.size() + " metrics for " + reader);
 			result.putAll(metrics);
 		}
 
