@@ -50,5 +50,11 @@ public class JmxMetricName implements MetricName {
 	public boolean isComposite() {
 		return key != null;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "[" + objectName.getCanonicalName() + "#" + attributeName + "]";
+	}
+	
 	
 }
