@@ -182,7 +182,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 
 	private Map<String, Object> preparePlaceholders() {
 		final Map<String, Object> result = new HashMap<String, Object>();
-		result.put("reader.name", config.getName());
+		result.put("input.name", config.getName());
 		return result;
 	}
 
