@@ -17,7 +17,7 @@ public class JdbcExtension implements Extension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
-		result.add(JdbcReaderXBean.class);
+		result.add(JdbcInputXBean.class);
 		return result;
 	}
 

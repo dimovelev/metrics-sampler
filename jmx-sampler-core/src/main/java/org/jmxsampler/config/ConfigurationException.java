@@ -1,5 +1,8 @@
 package org.jmxsampler.config;
 
+/**
+ * Exception indicating an unrecoverable problem in the application configuration. 
+ */
 public class ConfigurationException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 

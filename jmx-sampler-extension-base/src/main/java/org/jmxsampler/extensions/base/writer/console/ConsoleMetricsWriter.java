@@ -13,10 +13,10 @@ import org.jmxsampler.writer.MetricsWriter;
  * Write metrics to the standard output. This class is not thread safe and should not be used by multiple samplers.
  */
 public class ConsoleMetricsWriter implements MetricsWriter {
-	private final ConsoleWriterConfig config;
+	private final ConsoleOutputConfig config;
 	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-	public ConsoleMetricsWriter(final ConsoleWriterConfig config) {
+	public ConsoleMetricsWriter(final ConsoleOutputConfig config) {
 		this.config = config;
 	}
 

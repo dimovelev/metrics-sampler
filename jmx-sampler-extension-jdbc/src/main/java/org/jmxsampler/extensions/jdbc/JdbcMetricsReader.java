@@ -20,10 +20,10 @@ import org.slf4j.LoggerFactory;
 
 public class JdbcMetricsReader implements BulkMetricsReader {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private final JdbcReaderConfig config;
+	private final JdbcInputConfig config;
 	private Connection connection;
 	 
-	public JdbcMetricsReader(final JdbcReaderConfig config) {
+	public JdbcMetricsReader(final JdbcInputConfig config) {
 		this.config = config;
 	}
 

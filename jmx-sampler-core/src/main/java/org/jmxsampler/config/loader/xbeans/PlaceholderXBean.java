@@ -2,7 +2,7 @@ package org.jmxsampler.config.loader.xbeans;
 
 import static org.jmxsampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
-import org.jmxsampler.config.PlaceholderConfig;
+import org.jmxsampler.config.Placeholder;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -22,5 +22,5 @@ public abstract class PlaceholderXBean {
 		notEmpty("key", "placeholder", getKey());
 	}
 	
-	public abstract PlaceholderConfig toConfig();
+	public abstract Placeholder toConfig();
 }

@@ -8,11 +8,11 @@ import java.util.Map;
 
 import org.jmxsampler.config.Configuration;
 import org.jmxsampler.config.ConfigurationException;
-import org.jmxsampler.config.MappingConfig;
-import org.jmxsampler.config.PlaceholderConfig;
-import org.jmxsampler.config.ReaderConfig;
+import org.jmxsampler.config.InputConfig;
+import org.jmxsampler.config.OutputConfig;
+import org.jmxsampler.config.Placeholder;
 import org.jmxsampler.config.SamplerConfig;
-import org.jmxsampler.config.WriterConfig;
+import org.jmxsampler.config.SelectorConfig;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -23,31 +23,31 @@ public class ConfigurationXBean {
 	@XStreamAsAttribute
 	private int poolSize;
 
-	private List<ReaderXBean> readers;
+	private List<InputXBean> inputs;
 
-	private List<WriterXBean> writers;
+	private List<OutputXBean> outputs;
 
 	private List<SamplerXBean> samplers;
 
 	private List<PlaceholderXBean> placeholders;
 	
-	@XStreamAlias("mapping-templates")
-	private List<MappingTemplateXBean> mappingTemplates;
+	@XStreamAlias("selector-groups")
+	private List<SelectorGroupXBean> selectorGroups;
 
-	public List<ReaderXBean> getReaders() {
-		return readers;
+	public List<InputXBean> getInputs() {
+		return inputs;
 	}
 
-	public void setReaders(final List<ReaderXBean> readers) {
-		this.readers = readers;
+	public void setInputs(final List<InputXBean> inputs) {
+		this.inputs = inputs;
 	}
 
-	public List<WriterXBean> getWriters() {
-		return writers;
+	public List<OutputXBean> getOutputs() {
+		return outputs;
 	}
 
-	public void setWriters(final List<WriterXBean> writers) {
-		this.writers = writers;
+	public void setOutputs(final List<OutputXBean> outputs) {
+		this.outputs = outputs;
 	}
 
 	public List<SamplerXBean> getSamplers() {
@@ -58,12 +58,12 @@ public class ConfigurationXBean {
 		this.samplers = samplers;
 	}
 
-	public List<MappingTemplateXBean> getMappingTemplates() {
-		return mappingTemplates;
+	public List<SelectorGroupXBean> getSelectorGroups() {
+		return selectorGroups;
 	}
 
-	public void setMappingTemplates(final List<MappingTemplateXBean> mappingTemplates) {
-		this.mappingTemplates = mappingTemplates;
+	public void setSelectorTemplates(final List<SelectorGroupXBean> selectorGroups) {
+		this.selectorGroups = selectorGroups;
 	}
 
 	public int getPoolSize() {
@@ -83,16 +83,16 @@ public class ConfigurationXBean {
 	}
 
 	public Configuration toConfig() {
-		final List<PlaceholderConfig> placeholders = configurePlaceholders(getPlaceholders());
-		final Map<String, ReaderConfig> readers = configureReaders(getReaders());
-		final Map<String, WriterConfig> writers = configureWriters(getWriters());
-		final Map<String, List<MappingConfig>> mappingTemplates = configureMappingTemplates(getMappingTemplates());
-		final List<SamplerConfig> mappers = configureSamplers(getSamplers(), readers, writers, mappingTemplates, placeholders);
-		return new Configuration(getPoolSize(), readers.values(), writers.values(), mappers, placeholders);
+		final List<Placeholder> placeholders = configurePlaceholders(getPlaceholders());
+		final Map<String, InputConfig> inputs = configureInputs(getInputs());
+		final Map<String, OutputConfig> outputs = configureOutputs(getOutputs());
+		final Map<String, List<SelectorConfig>> selectorGroups = configureSelectorGroups(getSelectorGroups());
+		final List<SamplerConfig> samplers = configureSamplers(getSamplers(), inputs, outputs, selectorGroups, placeholders);
+		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, placeholders);
 	}
 
-	private List<PlaceholderConfig> configurePlaceholders(final List<PlaceholderXBean> items) {
-		final List<PlaceholderConfig> result = new LinkedList<PlaceholderConfig>();
+	private List<Placeholder> configurePlaceholders(final List<PlaceholderXBean> items) {
+		final List<Placeholder> result = new LinkedList<Placeholder>();
 		for (final PlaceholderXBean item : items) {
 			result.add(item.toConfig());
 		}
@@ -100,16 +100,16 @@ public class ConfigurationXBean {
 	}
 
 	
-	private Map<String, ReaderConfig> configureReaders(final List<ReaderXBean> list) {
-		final LinkedHashMap<String, ReaderXBean> xbeans = TemplatableXBeanUtils.sortByDependency(list); 
+	private Map<String, InputConfig> configureInputs(final List<InputXBean> list) {
+		final LinkedHashMap<String, InputXBean> xbeans = TemplatableXBeanUtils.sortByDependency(list); 
 		
-		final Map<String, ReaderConfig> result = new HashMap<String, ReaderConfig>();
-		for (final ReaderXBean fromItem : xbeans.values()) {
+		final Map<String, InputConfig> result = new HashMap<String, InputConfig>();
+		for (final InputXBean fromItem : xbeans.values()) {
 			TemplatableXBeanUtils.applyTemplate(fromItem, xbeans);
 			if (fromItem.isInstantiatable()) {
-				final ReaderConfig item = fromItem.toConfig();
+				final InputConfig item = fromItem.toConfig();
 				if (result.containsKey(item.getName())) {
-					throw new ConfigurationException("Two readers with the same name "+item.getName());
+					throw new ConfigurationException("Two inputs with the same name "+item.getName());
 				}
 				result.put(item.getName(), item);
 			}
@@ -117,33 +117,33 @@ public class ConfigurationXBean {
 		return result;
 	}
 
-	private Map<String, WriterConfig> configureWriters(final List<WriterXBean> list) {
-		final Map<String, WriterConfig> result = new HashMap<String, WriterConfig>();
-		for (final WriterXBean fromItem : list) {
-			final WriterConfig item = fromItem.toConfig();
+	private Map<String, OutputConfig> configureOutputs(final List<OutputXBean> list) {
+		final Map<String, OutputConfig> result = new HashMap<String, OutputConfig>();
+		for (final OutputXBean fromItem : list) {
+			final OutputConfig item = fromItem.toConfig();
 			if (result.containsKey(item.getName())) {
-				throw new ConfigurationException("Two writers with the same name "+item.getName());
+				throw new ConfigurationException("Two outputs with the same name "+item.getName());
 			}
 			result.put(item.getName(), item);
 		}
 		return result;
 	}
 
-	private Map<String, List<MappingConfig>> configureMappingTemplates(final List<MappingTemplateXBean> items) {
-		final Map<String, List<MappingConfig>> result = new HashMap<String, List<MappingConfig>>();
-		for (final MappingTemplateXBean item : items) {
+	private Map<String, List<SelectorConfig>> configureSelectorGroups(final List<SelectorGroupXBean> items) {
+		final Map<String, List<SelectorConfig>> result = new HashMap<String, List<SelectorConfig>>();
+		for (final SelectorGroupXBean item : items) {
 			if (result.containsKey(item.getName())) {
-				throw new ConfigurationException("Two mapping templates with the same name \""+item.getName() + "\"");
+				throw new ConfigurationException("Two selector groups with the same name \""+item.getName() + "\"");
 			}
 			result.put(item.getName(), item.toConfig());
 		}
 		return result;
 	}
 
-	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, ReaderConfig> readers, final Map<String, WriterConfig> writers, final Map<String, List<MappingConfig>> mappingTemplates, final List<PlaceholderConfig> placeholders) {
-		final List<SamplerConfig>result = new LinkedList<SamplerConfig>();
+	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final List<Placeholder> placeholders) {
+		final List<SamplerConfig> result = new LinkedList<SamplerConfig>();
 		for (final SamplerXBean def : samplers) {
-			result.add(def.toConfig(readers, writers, mappingTemplates, placeholders));
+			result.add(def.toConfig(inputs, outputs, selectorGroups, placeholders));
 		}
 		return result;
 	}

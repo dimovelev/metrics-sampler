@@ -2,7 +2,7 @@ package org.jmxsampler.config.loader.xbeans;
 
 import static org.jmxsampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
-import org.jmxsampler.config.StringPlaceholderConfig;
+import org.jmxsampler.config.StringPlaceholder;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -28,8 +28,8 @@ public class StringPlaceholderXBean extends PlaceholderXBean {
 	}
 
 	@Override
-	public StringPlaceholderConfig toConfig() {
+	public StringPlaceholder toConfig() {
 		validate();
-		return new StringPlaceholderConfig(getKey(), getValue());
+		return new StringPlaceholder(getKey(), getValue());
 	}
 }

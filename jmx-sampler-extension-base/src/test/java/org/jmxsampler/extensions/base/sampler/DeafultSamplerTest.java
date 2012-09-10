@@ -6,9 +6,9 @@ import static org.mockito.Mockito.verify;
 
 import java.util.LinkedList;
 
-import org.jmxsampler.config.PlaceholderConfig;
+import org.jmxsampler.config.Placeholder;
 import org.jmxsampler.reader.BulkMetricsReader;
-import org.jmxsampler.transformer.MetricsTransformer;
+import org.jmxsampler.selector.MetricsSelector;
 import org.jmxsampler.writer.MetricsWriter;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +18,8 @@ public class DeafultSamplerTest {
 	private BulkMetricsReader bulkReader;
 	private MetricsWriter writer1;
 	private MetricsWriter writer2;
-	private MetricsTransformer transformer1;
-	private MetricsTransformer transformer2;
+	private MetricsSelector transformer1;
+	private MetricsSelector transformer2;
 	
 	@Before
 	public void setup() {
@@ -28,14 +28,14 @@ public class DeafultSamplerTest {
 		writer1 = mock(MetricsWriter.class);
 		writer2 = mock(MetricsWriter.class);
 		
-		transformer1 = mock(MetricsTransformer.class);
-		transformer2 = mock(MetricsTransformer.class);
+		transformer1 = mock(MetricsSelector.class);
+		transformer2 = mock(MetricsSelector.class);
 		
-		testee = new DefaultSampler(bulkReader, new LinkedList<PlaceholderConfig>());
+		testee = new DefaultSampler(bulkReader, new LinkedList<Placeholder>());
 		testee.addWriter(writer1);
 		testee.addWriter(writer2);
-		testee.addTransformer(transformer1);
-		testee.addTransformer(transformer2);
+		testee.addSelector(transformer1);
+		testee.addSelector(transformer2);
 	}
 	
 	@Test
@@ -44,8 +44,8 @@ public class DeafultSamplerTest {
 		verify(bulkReader, times(1)).open();
 		verify(bulkReader, times(1)).close();
 
-		verify(transformer1, times(1)).transformMetrics(bulkReader);
-		verify(transformer2, times(1)).transformMetrics(bulkReader);
+		verify(transformer1, times(1)).readMetrics(bulkReader);
+		verify(transformer2, times(1)).readMetrics(bulkReader);
 		
 		verify(writer1, times(1)).open();
 		verify(writer1, times(1)).close();

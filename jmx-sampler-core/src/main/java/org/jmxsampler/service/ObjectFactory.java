@@ -1,17 +1,17 @@
 package org.jmxsampler.service;
 
-import org.jmxsampler.config.MappingConfig;
-import org.jmxsampler.config.ReaderConfig;
+import org.jmxsampler.config.SelectorConfig;
+import org.jmxsampler.config.InputConfig;
 import org.jmxsampler.config.SamplerConfig;
-import org.jmxsampler.config.WriterConfig;
+import org.jmxsampler.config.OutputConfig;
 import org.jmxsampler.reader.MetricsReader;
 import org.jmxsampler.sampler.Sampler;
-import org.jmxsampler.transformer.MetricsTransformer;
+import org.jmxsampler.selector.MetricsSelector;
 import org.jmxsampler.writer.MetricsWriter;
 
 public interface ObjectFactory {
-	MetricsWriter newWriter(WriterConfig config);
-	MetricsReader newReader(ReaderConfig config);
-	MetricsTransformer newTransformer(MappingConfig config);
+	MetricsWriter newWriterForOutput(OutputConfig config);
+	MetricsReader newReaderForInput(InputConfig config);
+	MetricsSelector newSelector(SelectorConfig config);
 	Sampler newSampler(SamplerConfig config);
 }

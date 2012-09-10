@@ -7,46 +7,46 @@ import java.util.List;
 import java.util.Map;
 
 import org.jmxsampler.config.ConfigurationException;
-import org.jmxsampler.config.MappingConfig;
-import org.jmxsampler.config.PlaceholderConfig;
-import org.jmxsampler.config.ReaderConfig;
+import org.jmxsampler.config.InputConfig;
+import org.jmxsampler.config.OutputConfig;
+import org.jmxsampler.config.Placeholder;
 import org.jmxsampler.config.SamplerConfig;
-import org.jmxsampler.config.WriterConfig;
-import org.jmxsampler.config.loader.xbeans.MappingTemplateRefXBean;
-import org.jmxsampler.config.loader.xbeans.MappingXBean;
+import org.jmxsampler.config.SelectorConfig;
 import org.jmxsampler.config.loader.xbeans.PlaceholderXBean;
 import org.jmxsampler.config.loader.xbeans.SamplerXBean;
-import org.jmxsampler.config.loader.xbeans.SimpleMappingXBean;
+import org.jmxsampler.config.loader.xbeans.SelectorGroupRefXBean;
+import org.jmxsampler.config.loader.xbeans.SelectorXBean;
+import org.jmxsampler.config.loader.xbeans.SimpleSelectorXBean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias("default-sampler")
+@XStreamAlias("sampler")
 public class DefaultSamplerXBean extends SamplerXBean {
 	@XStreamAsAttribute
-	private String reader;
+	private String input;
 
 	@XStreamAsAttribute
-	private String writers;
+	private String outputs;
 
 	private List<PlaceholderXBean> placeholders;
 	
-	private List<MappingXBean> mappings;
+	private List<SelectorXBean> selectors;
 
-	public String getReader() {
-		return reader;
+	public String getInput() {
+		return input;
 	}
 
-	public void setReader(final String reader) {
-		this.reader = reader;
+	public void setInput(final String input) {
+		this.input = input;
 	}
 
-	public String getWriters() {
-		return writers;
+	public String getOutputs() {
+		return outputs;
 	}
 
-	public void setWriters(final String writers) {
-		this.writers = writers;
+	public void setOutputs(final String outputs) {
+		this.outputs = outputs;
 	}
 
 	public List<PlaceholderXBean> getPlaceholders() {
@@ -57,58 +57,76 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		this.placeholders = placeholders;
 	}
 
-	public List<MappingXBean> getMappings() {
-		return mappings;
+	public List<SelectorXBean> getSelectors() {
+		return selectors;
 	}
-	public void setMappings(final List<MappingXBean> mappings) {
-		this.mappings = mappings;
+	public void setSelectors(final List<SelectorXBean> selectors) {
+		this.selectors = selectors;
 	}
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("reader", "default sampler", getReader());
-		notEmpty("writers", "default sampler", getWriters());
-		notEmpty("mappings", "default sampler", getMappings());
+		notEmpty("input", "default sampler", getInput());
+		notEmpty("outputs", "default sampler", getOutputs());
+		notEmpty("selectors", "default sampler", getSelectors());
 	}
 	@Override
-	public SamplerConfig toConfig(final Map<String, ReaderConfig> readers, final Map<String, WriterConfig> writers, final Map<String, List<MappingConfig>> mappingTemplates, final List<PlaceholderConfig> globalPlaceholders) {
+	public SamplerConfig toConfig(final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorTemplates, final List<Placeholder> globalPlaceholders) {
 		validate();
-		final ReaderConfig readerConfig = readers.get(getReader());
-		if (readerConfig == null) {
-			throw new ConfigurationException("Reader named \"" + getReader() + "\" not found");
-		}
 
-		final List<WriterConfig> writerConfigs = new LinkedList<WriterConfig>();
-		for (final String name : getWriters().split(",")) {
-			final WriterConfig writer = writers.get(name);
-			if (writer == null) {
-				throw new ConfigurationException("Writer named \"" + name + "\" not found");
-			}
-			writerConfigs.add(writer);
-		}
-
-		final List<MappingConfig> mappingConfigs = new LinkedList<MappingConfig>();
-		for (final MappingXBean item : getMappings()) {
-			if (item instanceof MappingTemplateRefXBean) {
-				mappingConfigs.addAll(((MappingTemplateRefXBean) item).toConfig(mappingTemplates));
-			} else if (item instanceof SimpleMappingXBean) {
-				mappingConfigs.add(((SimpleMappingXBean) item).toConfig());
-			} else {
-				throw new ConfigurationException("Unsupporter mapping: " + item);
-			}
-		}
-		if (mappingConfigs.isEmpty()) {
-			throw new ConfigurationException("Default sampler has no mappings");
-		}
+		final InputConfig inputConfig = configureInput(inputs);
+		final List<OutputConfig> outputConfigs = configureOutputs(outputs);
+		final List<SelectorConfig> selectorConfigs = configureSelectors(selectorTemplates);
+		final List<Placeholder> placeholderConfigs = configurePlaceholders(globalPlaceholders);
 		
-		final List<PlaceholderConfig> placeholderConfigs = new LinkedList<PlaceholderConfig>();
-		placeholderConfigs.addAll(globalPlaceholders);
+		return new DefaultSamplerConfig(getInterval(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, placeholderConfigs);
+	}
+
+	protected List<Placeholder> configurePlaceholders(final List<Placeholder> globalPlaceholders) {
+		final List<Placeholder> result = new LinkedList<Placeholder>();
+		result.addAll(globalPlaceholders);
 		if (getPlaceholders() != null) {
 			for (final PlaceholderXBean item : getPlaceholders()) {
-				placeholderConfigs.add(item.toConfig());
+				result.add(item.toConfig());
 			}
 		}
-		
-		return new DefaultSamplerConfig(getInterval(), isDisabled(), readerConfig, writerConfigs, mappingConfigs, placeholderConfigs);
+		return result;
+	}
+
+	protected List<SelectorConfig> configureSelectors(final Map<String, List<SelectorConfig>> templates) {
+		final List<SelectorConfig> result = new LinkedList<SelectorConfig>();
+		for (final SelectorXBean item : getSelectors()) {
+			if (item instanceof SelectorGroupRefXBean) {
+				result.addAll(((SelectorGroupRefXBean) item).toConfig(templates));
+			} else if (item instanceof SimpleSelectorXBean) {
+				result.add(((SimpleSelectorXBean) item).toConfig());
+			} else {
+				throw new ConfigurationException("Unsupporter selector: " + item);
+			}
+		}
+		if (result.isEmpty()) {
+			throw new ConfigurationException("Default sampler has no selectors");
+		}
+		return result;
+	}
+
+	protected InputConfig configureInput(final Map<String, InputConfig> inputs) {
+		final InputConfig result = inputs.get(getInput());
+		if (result == null) {
+			throw new ConfigurationException("Input named \"" + getInput() + "\" not found");
+		}
+		return result;
+	}
+
+	protected List<OutputConfig> configureOutputs(final Map<String, OutputConfig> outputs) {
+		final List<OutputConfig> result = new LinkedList<OutputConfig>();
+		for (final String name : getOutputs().split(",")) {
+			final OutputConfig output = outputs.get(name);
+			if (output == null) {
+				throw new ConfigurationException("Output named \"" + name + "\" not found");
+			}
+			result.add(output);
+		}
+		return result;
 	}
 }

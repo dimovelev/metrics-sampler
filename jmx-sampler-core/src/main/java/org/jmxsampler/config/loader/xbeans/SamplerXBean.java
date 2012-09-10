@@ -5,14 +5,17 @@ import static org.jmxsampler.config.loader.xbeans.ValidationUtils.greaterThanZer
 import java.util.List;
 import java.util.Map;
 
-import org.jmxsampler.config.MappingConfig;
-import org.jmxsampler.config.PlaceholderConfig;
-import org.jmxsampler.config.ReaderConfig;
+import org.jmxsampler.config.InputConfig;
+import org.jmxsampler.config.OutputConfig;
+import org.jmxsampler.config.Placeholder;
 import org.jmxsampler.config.SamplerConfig;
-import org.jmxsampler.config.WriterConfig;
+import org.jmxsampler.config.SelectorConfig;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+/**
+ * Base class for sampler XBeans.
+ */
 public abstract class SamplerXBean {
 	@XStreamAsAttribute
 	private int interval;
@@ -20,7 +23,7 @@ public abstract class SamplerXBean {
 	@XStreamAsAttribute
 	private boolean disabled;
 
-	public abstract SamplerConfig toConfig(Map<String, ReaderConfig> readers, Map<String, WriterConfig> writers, Map<String, List<MappingConfig>> mappingTemplates, List<PlaceholderConfig> placeholders);
+	public abstract SamplerConfig toConfig(Map<String, InputConfig> inputs, Map<String, OutputConfig> outputs, Map<String, List<SelectorConfig>> selectorGroups, List<Placeholder> placeholders);
 
 	public int getInterval() {
 		return interval;

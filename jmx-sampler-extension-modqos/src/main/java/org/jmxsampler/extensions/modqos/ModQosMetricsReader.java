@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
-import org.jmxsampler.extensions.modqos.ModQosReaderConfig.AuthenticationType;
+import org.jmxsampler.extensions.modqos.ModQosInputConfig.AuthenticationType;
 import org.jmxsampler.reader.BulkMetricsReader;
 import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
@@ -21,11 +21,11 @@ import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.SimpleMetricName;
 
 public class ModQosMetricsReader implements BulkMetricsReader {
-	private final ModQosReaderConfig config;
+	private final ModQosInputConfig config;
 	private List<String> data;
 	private Map<MetricName, MetricValue> values;
 
-	public ModQosMetricsReader(final ModQosReaderConfig config) {
+	public ModQosMetricsReader(final ModQosInputConfig config) {
 		this.config = config;
 	}
 

@@ -28,5 +28,4 @@ public class EntryXBean {
 	public void validate() {
 		notEmpty("key", "entry", getKey());
 	}
-	
 }

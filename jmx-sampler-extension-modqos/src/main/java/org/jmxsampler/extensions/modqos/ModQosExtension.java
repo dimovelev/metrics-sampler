@@ -17,7 +17,7 @@ public class ModQosExtension implements Extension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
-		result.add(ModQosReaderXBean.class);
+		result.add(ModQosInputXBean.class);
 		return result;
 	}
 

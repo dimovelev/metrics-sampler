@@ -1,5 +1,8 @@
 package org.jmxsampler.config;
 
+/**
+ * Base class for sampler configurations.
+ */
 public abstract class SamplerConfig {
 	private final int interval;
 	private final boolean disabled;

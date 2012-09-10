@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jmxsampler.config.DictionaryPlaceholderConfig;
-import org.jmxsampler.config.PlaceholderConfig;
+import org.jmxsampler.config.DictionaryPlaceholder;
+import org.jmxsampler.config.Placeholder;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -24,14 +24,14 @@ public class DictionaryPlaceholderXBean extends PlaceholderXBean {
 	}
 
 	@Override
-	public PlaceholderConfig toConfig() {
+	public Placeholder toConfig() {
 		super.validate();
 		final Map<String, String> map = new HashMap<String, String>();
 		for (final EntryXBean entry : entries) {
 			entry.validate();
 			map.put(entry.getKey(), entry.getValue());
 		}
-		return new DictionaryPlaceholderConfig(getKey(), map);
+		return new DictionaryPlaceholder(getKey(), map);
 	}
 
 }

@@ -1,9 +1,11 @@
 package org.jmxsampler;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
 import org.jmxsampler.config.Configuration;
-import org.jmxsampler.config.ReaderConfig;
+import org.jmxsampler.config.InputConfig;
 import org.jmxsampler.config.SamplerConfig;
 import org.jmxsampler.reader.MetricName;
 import org.jmxsampler.reader.MetricReadException;
@@ -29,7 +31,7 @@ public class Runner {
 		final Command command = Command.valueOf(args[0].toUpperCase());
 		final File configFile = new File(args[1]);
 		if (!configFile.canRead()) {
-			System.err.println("Configuartion file "+configFile.getAbsolutePath()+" not readable");
+			System.err.println("Configuartion file " + configFile.getAbsolutePath() + " not readable");
 			System.exit(2);
 		}
 
@@ -40,11 +42,12 @@ public class Runner {
 	}
 
 	private static void outputHelp() {
-		System.err.println("Usage: <jmx-sampler> [start|check|metadata] <config.xml>");
-		System.err.println();
-		System.err.println("\tstart     start the sampler with the given configuration");
-		System.err.println("\tcheck     check whether each transformation rule matches at least one metric");
-		System.err.println("\tmetadata  dump metadata from all readers (e.g. list all bean and attributes for a JMX reader)");
+		try {
+			final String usage = IOUtils.toString(Runner.class.getResource("usage.txt"));
+			System.out.println(usage);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
 		System.exit(1);
 	}
 
@@ -63,10 +66,10 @@ public class Runner {
 	}
 
 	private static void executeMetadata(final ExtensionsRegistry registry, final Configuration config) {
-		for(final ReaderConfig readerConfig : config.getReaders()) {
-			final MetricsReader reader = registry.newReader(readerConfig);
+		for(final InputConfig input : config.getInputs()) {
+			final MetricsReader reader = registry.newReaderForInput(input);
 			reader.open();
-			System.out.println("Reader: " + readerConfig.getName());
+			System.out.println("Reader: " + input.getName());
 			for(final MetricName item : reader.readNames()) {
 				System.out.println("\tName:" + item.getName());
 				System.out.println("\tDescription:" + item.getDescription());

@@ -1,12 +1,12 @@
 package org.jmxsampler.service;
 
-import org.jmxsampler.config.MappingConfig;
-import org.jmxsampler.config.ReaderConfig;
+import org.jmxsampler.config.InputConfig;
+import org.jmxsampler.config.OutputConfig;
 import org.jmxsampler.config.SamplerConfig;
-import org.jmxsampler.config.WriterConfig;
+import org.jmxsampler.config.SelectorConfig;
 import org.jmxsampler.reader.MetricsReader;
 import org.jmxsampler.sampler.Sampler;
-import org.jmxsampler.transformer.MetricsTransformer;
+import org.jmxsampler.selector.MetricsSelector;
 import org.jmxsampler.writer.MetricsWriter;
 
 /**
@@ -25,53 +25,53 @@ public abstract class AbstractLocalObjectFactory implements LocalObjectFactory {
 	}
 
 	@Override
-	public boolean supportsWriter(final WriterConfig config) {
+	public boolean supportsOutput(final OutputConfig config) {
 		return false;
 	}
 
 	@Override
-	public final MetricsWriter newWriter(final WriterConfig config) {
-		if (!supportsWriter(config)) {
+	public final MetricsWriter newWriterForOutput(final OutputConfig config) {
+		if (!supportsOutput(config)) {
 			throw new IllegalArgumentException("Unsupported writer config: " + config);
 		}
 		return doNewWriter(config);
 	}
 
-	protected MetricsWriter doNewWriter(final WriterConfig config) {
+	protected MetricsWriter doNewWriter(final OutputConfig config) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean supportsReader(final ReaderConfig config) {
+	public boolean supportsInput(final InputConfig config) {
 		return false;
 	}
 
 	@Override
-	public final MetricsReader newReader(final ReaderConfig config) {
-		if (!supportsReader(config)) {
+	public final MetricsReader newReaderForInput(final InputConfig config) {
+		if (!supportsInput(config)) {
 			throw new IllegalArgumentException("Unsupported reader config: " + config);
 		}
 		return doNewReader(config);
 	}
 
-	protected MetricsReader doNewReader(final ReaderConfig config) {
+	protected MetricsReader doNewReader(final InputConfig config) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean supportsTransformer(final MappingConfig config) {
+	public boolean supportsSelector(final SelectorConfig config) {
 		return false;
 	}
 
 	@Override
-	public final MetricsTransformer newTransformer(final MappingConfig config) {
-		if (!supportsTransformer(config)) {
-			throw new IllegalArgumentException("Unsupported mapping config: " + config);
+	public final MetricsSelector newSelector(final SelectorConfig config) {
+		if (!supportsSelector(config)) {
+			throw new IllegalArgumentException("Unsupported selector: " + config);
 		}
-		return doNewTransformer(config);
+		return doNewSelector(config);
 	}
 
-	protected MetricsTransformer doNewTransformer(final MappingConfig config) {
+	protected MetricsSelector doNewSelector(final SelectorConfig config) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jmxsampler.config.PlaceholderConfig;
+import org.jmxsampler.config.Placeholder;
 import org.jmxsampler.reader.MetricReadException;
 import org.jmxsampler.reader.MetricValue;
 import org.jmxsampler.reader.MetricsReader;
 import org.jmxsampler.sampler.Sampler;
-import org.jmxsampler.transformer.MetricsTransformer;
+import org.jmxsampler.selector.MetricsSelector;
 import org.jmxsampler.writer.MetricWriteException;
 import org.jmxsampler.writer.MetricsWriter;
 import org.slf4j.Logger;
@@ -21,11 +21,11 @@ public class DefaultSampler implements Sampler {
 
 	private final MetricsReader reader;
 	private final List<MetricsWriter> writers = new LinkedList<MetricsWriter>();
-	private final List<MetricsTransformer> transformers = new LinkedList<MetricsTransformer>();
+	private final List<MetricsSelector> selectors = new LinkedList<MetricsSelector>();
 
-	private final List<PlaceholderConfig> placeholders;
+	private final List<Placeholder> placeholders;
 	
-	public DefaultSampler(final MetricsReader reader, final List<PlaceholderConfig> placeholders) {
+	public DefaultSampler(final MetricsReader reader, final List<Placeholder> placeholders) {
 		this.reader = reader;
 		this.placeholders = placeholders;
 	}
@@ -35,14 +35,14 @@ public class DefaultSampler implements Sampler {
 		return this;
 	}
 
-	public DefaultSampler addTransformer(final MetricsTransformer transformer) {
-		transformers.add(transformer);
+	public DefaultSampler addSelector(final MetricsSelector selector) {
+		selectors.add(selector);
 		final Map<String, Object> transformerPlaceholders = new HashMap<String, Object>();
 		transformerPlaceholders.putAll(reader.getPlaceholders());
-		for (final PlaceholderConfig placeholder : placeholders) {
+		for (final Placeholder placeholder : placeholders) {
 			transformerPlaceholders.put(placeholder.getKey(), placeholder.getValue());
 		}
-		transformer.setPlaceholders(transformerPlaceholders);
+		selector.setPlaceholders(transformerPlaceholders);
 		return this;
 	}
 
@@ -89,8 +89,8 @@ public class DefaultSampler implements Sampler {
 		reader.open();
 
 		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
-		for (final MetricsTransformer transformer : transformers) {
-			final Map<String, MetricValue> metrics = transformer.transformMetrics(reader);
+		for (final MetricsSelector transformer : selectors) {
+			final Map<String, MetricValue> metrics = transformer.readMetrics(reader);
 			logger.debug("Transformer "+transformer+" returned "+metrics.size()+" metrics");
 			result.putAll(metrics);
 		}
@@ -105,7 +105,7 @@ public class DefaultSampler implements Sampler {
 		boolean result = true;
 		reader.open();
 
-		for (final MetricsTransformer transformer : transformers) {
+		for (final MetricsSelector transformer : selectors) {
 			final int count = transformer.getMetricCount(this.reader);
 			if (count == 0) {
 				System.out.println(transformer + " has no metrics");

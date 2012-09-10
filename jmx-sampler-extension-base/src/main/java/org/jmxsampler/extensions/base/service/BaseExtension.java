@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jmxsampler.extensions.base.sampler.DefaultSamplerXBean;
-import org.jmxsampler.extensions.base.transformer.regexp.RegExpMappingXBean;
-import org.jmxsampler.extensions.base.writer.console.ConsoleWriterXBean;
+import org.jmxsampler.extensions.base.selector.regexp.RegExpSelectorXBean;
+import org.jmxsampler.extensions.base.writer.console.ConsoleOutputXBean;
 import org.jmxsampler.service.Extension;
 import org.jmxsampler.service.LocalObjectFactory;
 
@@ -20,8 +20,8 @@ public class BaseExtension implements Extension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
-		result.add(ConsoleWriterXBean.class);
-		result.add(RegExpMappingXBean.class);
+		result.add(ConsoleOutputXBean.class);
+		result.add(RegExpSelectorXBean.class);
 		result.add(DefaultSamplerXBean.class);
 		return result;
 	}

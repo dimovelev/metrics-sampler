@@ -5,36 +5,39 @@ import java.util.Collections;
 
 public class Configuration {
 	private final int poolSize;
-	private final Collection<ReaderConfig> readers;
-	private final Collection<WriterConfig> writers;
+	private final Collection<InputConfig> inputs;
+	private final Collection<OutputConfig> outputs;
 	private final Collection<SamplerConfig> samplers;
-	private final Collection<PlaceholderConfig> placeholders;
+	private final Collection<Placeholder> placeholders;
 	
-	public Configuration(final int poolSize, final Collection<ReaderConfig> readers, final Collection<WriterConfig> writers, final Collection<SamplerConfig> samplers, final Collection<PlaceholderConfig> placeholders) {
+	public Configuration(final int poolSize, final Collection<InputConfig> inputs, final Collection<OutputConfig> outputs, final Collection<SamplerConfig> samplers, final Collection<Placeholder> placeholders) {
 		this.poolSize = poolSize;
-		this.readers = readers;
-		this.writers = writers;
+		this.inputs = inputs;
+		this.outputs = outputs;
 		this.samplers = samplers;
 		this.placeholders = placeholders;
 	}
 
+	/**
+	 * @return the size of samplers' thread-pool
+	 */
 	public int getPoolSize() {
 		return poolSize;
 	}
 
-	public Collection<ReaderConfig> getReaders() {
-		return Collections.unmodifiableCollection(readers);
+	public Collection<InputConfig> getInputs() {
+		return Collections.unmodifiableCollection(inputs);
 	}
 
-	public Collection<WriterConfig> getWriters() {
-		return Collections.unmodifiableCollection(writers);
+	public Collection<OutputConfig> getOutputs() {
+		return Collections.unmodifiableCollection(outputs);
 	}
 
 	public Collection<SamplerConfig> getSamplers() {
 		return Collections.unmodifiableCollection(samplers);
 	}
 
-	public Collection<PlaceholderConfig> getPlaceholders() {
+	public Collection<Placeholder> getPlaceholders() {
 		return Collections.unmodifiableCollection(placeholders);
 	}
 }
