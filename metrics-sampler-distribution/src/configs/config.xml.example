@@ -15,44 +15,44 @@
 	</outputs>
 	<selector-groups>
 		<selector-group name="wls">
-			<regexp from-name="com\.bea:Name=DataSource_(.+),ServerRuntime=.+,Type=JDBCOracleDataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${reader.name}.jdbc.${name[1]}.${name[2]}" />
-	 		<regexp from-name="com\.bea:Name=JTARuntime,ServerRuntime=.*,Type=JTARuntime\.(.*TotalCount)" to-name="${reader.name}.jta.${name[1]}" />
-			<regexp from-name="com\.bea:Name=ThreadPoolRuntime,ServerRuntime=.*,Type=ThreadPoolRuntime\.(CompletedRequestCount|ExecuteThreadIdleCount|ExecuteThreadTotalCount|HoggingThreadCount|MinThreadsConstraintsCompleted|MinThreadsConstraintsPending|PendingUserRequestCount|QueueLength|SharedCapacityForWorkManagers|StandbyThreadCount|Throughput)" to-name="${reader.name}.threads.${name[1]}"/>
-	 		<regexp from-name="com\.bea:Name=.*,ServerRuntime=.*,Type=JRockitRuntime\.(JvmProcessorLoad|TotalGarbageCollectionCount|TotalGarbageCollectionTime|FreePhysicalMemory|UsedPhysicalMemory|Uptime)" to-name="${reader.name}.jrockit.${name[1]}" />
+			<regexp from-name="com\.bea:Name=DataSource_(.+),ServerRuntime=.+,Type=JDBCOracleDataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${input.name}.jdbc.${name[1]}.${name[2]}" />
+	 		<regexp from-name="com\.bea:Name=JTARuntime,ServerRuntime=.*,Type=JTARuntime\.(.*TotalCount)" to-name="${input.name}.jta.${name[1]}" />
+			<regexp from-name="com\.bea:Name=ThreadPoolRuntime,ServerRuntime=.*,Type=ThreadPoolRuntime\.(CompletedRequestCount|ExecuteThreadIdleCount|ExecuteThreadTotalCount|HoggingThreadCount|MinThreadsConstraintsCompleted|MinThreadsConstraintsPending|PendingUserRequestCount|QueueLength|SharedCapacityForWorkManagers|StandbyThreadCount|Throughput)" to-name="${input.name}.threads.${name[1]}"/>
+	 		<regexp from-name="com\.bea:Name=.*,ServerRuntime=.*,Type=JRockitRuntime\.(JvmProcessorLoad|TotalGarbageCollectionCount|TotalGarbageCollectionTime|FreePhysicalMemory|UsedPhysicalMemory|Uptime)" to-name="${input.name}.jrockit.${name[1]}" />
 		</selector-group>
 		<selector-group name="tomcat">
-			<regexp from-name="Catalina:type=GlobalRequestProcessor,name=.http-bio-9240.\.(requestCount|bytesSent|bytesReceived)" to-name="${reader.name}.http.${name[1]}"/>
+			<regexp from-name="Catalina:type=GlobalRequestProcessor,name=.http-bio-9240.\.(requestCount|bytesSent|bytesReceived)" to-name="${input.name}.http.${name[1]}"/>
 		</selector-group>
         <selector-group name="hotspot">
-            <regexp from-name="java\.lang:type=ClassLoading\.(TotalLoadedClassCount|LoadedClassCount|UnloadedClassCount)" to-name="${reader.name}.classloading.${name[1]}"/>
-            <regexp from-name="java\.lang:type=Threading\.(ThreadCount|TotalStartedThreadCount|PeakThreadCount|DaemonThreadCount)" to-name="${reader.name}.threads.${name[1]}"/>
-            <regexp from-name="java\.lang:type=Compilation\.(TotalCompilationTime)" to-name="${reader.name}.compilation.${name[1]}"/>
-            <regexp from-name="java\.lang:type=OperatingSystem\.(AvailableProcessors|CommittedVirtualMemorySize|FreePhysicalMemorySize|FreeSwapSpaceSize|MaxFileDescriptorCount|OpenFileDescriptorCount|TotalPhysicalMemorySize|TotalSwapSpaceSize)" to-name="${reader.name}.os.${name[1]}"/>
-            <regexp from-name="java\.lang:name=(.+),type=GarbageCollector\.(CollectionCount|CollectionTime)" to-name="${reader.name}.gc.${name[1]}.${name[2]}"/>
-            <regexp from-name="java\.lang:name=(.+),type=MemoryPool\.(Usage|PeakUsage)#(.*)" to-name="${reader.name}.memory.${name[2]}.${name[1]}.${name[3]}"/>
-            <regexp from-name="java\.lang:type=Memory\.HeapMemoryUsage#(.*)" to-name="${reader.name}.memory.heap.current.${name[1]}"/>
-            <regexp from-name="java\.lang:type=Memory\.NonHeapMemoryUsage#(.*)" to-name="${reader.name}.memory.nonheap.current.${name[1]}"/>
+            <regexp from-name="java\.lang:type=ClassLoading\.(TotalLoadedClassCount|LoadedClassCount|UnloadedClassCount)" to-name="${input.name}.classloading.${name[1]}"/>
+            <regexp from-name="java\.lang:type=Threading\.(ThreadCount|TotalStartedThreadCount|PeakThreadCount|DaemonThreadCount)" to-name="${input.name}.threads.${name[1]}"/>
+            <regexp from-name="java\.lang:type=Compilation\.(TotalCompilationTime)" to-name="${input.name}.compilation.${name[1]}"/>
+            <regexp from-name="java\.lang:type=OperatingSystem\.(AvailableProcessors|CommittedVirtualMemorySize|FreePhysicalMemorySize|FreeSwapSpaceSize|MaxFileDescriptorCount|OpenFileDescriptorCount|TotalPhysicalMemorySize|TotalSwapSpaceSize)" to-name="${input.name}.os.${name[1]}"/>
+            <regexp from-name="java\.lang:name=(.+),type=GarbageCollector\.(CollectionCount|CollectionTime)" to-name="${input.name}.gc.${name[1]}.${name[2]}"/>
+            <regexp from-name="java\.lang:name=(.+),type=MemoryPool\.(Usage|PeakUsage)#(.*)" to-name="${input.name}.memory.${name[2]}.${name[1]}.${name[3]}"/>
+            <regexp from-name="java\.lang:type=Memory\.HeapMemoryUsage#(.*)" to-name="${input.name}.memory.heap.current.${name[1]}"/>
+            <regexp from-name="java\.lang:type=Memory\.NonHeapMemoryUsage#(.*)" to-name="${input.name}.memory.nonheap.current.${name[1]}"/>
         </selector-group>
         <selector-group name="jrockit">
-            <regexp from-name="java\.lang:type=ClassLoading\.(TotalLoadedClassCount|LoadedClassCount|UnloadedClassCount)" to-name="${reader.name}.classloading.${name[1]}"/>
-            <regexp from-name="java\.lang:type=Threading\.(ThreadCount|TotalStartedThreadCount|PeakThreadCount|DaemonThreadCount)" to-name="${reader.name}.threads.${name[1]}"/>
-            <regexp from-name="java\.lang:type=Compilation\.(TotalCompilationTime)" to-name="${reader.name}.compilation.${name[1]}"/>
-            <regexp from-name="java\.lang:type=OperatingSystem\.(AvailableProcessors|CommittedVirtualMemorySize|FreePhysicalMemorySize|FreeSwapSpaceSize|MaxFileDescriptorCount|OpenFileDescriptorCount|TotalPhysicalMemorySize|TotalSwapSpaceSize)" to-name="${reader.name}.os.${name[1]}"/>
-            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.oracle\.cls\.memory\.(committed|init|used|max)" to-name="${reader.name}.memory.classloading.current.${name[1]}" />
-            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.oracle\.cls\.memory\.peak\.(committed|used)" to-name="${reader.name}.memory.classloading.peak.${name[1]}" />
-            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.pool\.(heap|nursery)\.peak\.(committed|used)" to-name="${reader.name}.memory.${name[1]}.peak.${name[2]}" />
-            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.pool\.(nursery)\.(committed|init|used|max)" to-name="${reader.name}.memory.${name[1]}.current.${name[2]}" />
-            <regexp from-name="java\.lang:type=Memory\.HeapMemoryUsage#(.*)" to-name="${reader.name}.memory.heap.current.${name[1]}"/>
-            <regexp from-name="java\.lang:type=Memory\.NonHeapMemoryUsage#(.*)" to-name="${reader.name}.memory.nonheap.current.${name[1]}"/>
-            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.total\.oc\.(pauseTime|time)" to-name="${reader.name}.gc.old.${name[1]}" />
-            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.total\.oc\.compaction\.time" to-name="${reader.name}.gc.old.compactionTime" />
-            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.total\.yc\.(pauseTime|time)" to-name="${reader.name}.gc.young.${name[1]}" />
-            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.threads\.sync\.(count|time|stoppedTime)" to-name="${reader.name}.threads.sync.${name[1]}" />
+            <regexp from-name="java\.lang:type=ClassLoading\.(TotalLoadedClassCount|LoadedClassCount|UnloadedClassCount)" to-name="${input.name}.classloading.${name[1]}"/>
+            <regexp from-name="java\.lang:type=Threading\.(ThreadCount|TotalStartedThreadCount|PeakThreadCount|DaemonThreadCount)" to-name="${input.name}.threads.${name[1]}"/>
+            <regexp from-name="java\.lang:type=Compilation\.(TotalCompilationTime)" to-name="${input.name}.compilation.${name[1]}"/>
+            <regexp from-name="java\.lang:type=OperatingSystem\.(AvailableProcessors|CommittedVirtualMemorySize|FreePhysicalMemorySize|FreeSwapSpaceSize|MaxFileDescriptorCount|OpenFileDescriptorCount|TotalPhysicalMemorySize|TotalSwapSpaceSize)" to-name="${input.name}.os.${name[1]}"/>
+            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.oracle\.cls\.memory\.(committed|init|used|max)" to-name="${input.name}.memory.classloading.current.${name[1]}" />
+            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.oracle\.cls\.memory\.peak\.(committed|used)" to-name="${input.name}.memory.classloading.peak.${name[1]}" />
+            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.pool\.(heap|nursery)\.peak\.(committed|used)" to-name="${input.name}.memory.${name[1]}.peak.${name[2]}" />
+            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.pool\.(nursery)\.(committed|init|used|max)" to-name="${input.name}.memory.${name[1]}.current.${name[2]}" />
+            <regexp from-name="java\.lang:type=Memory\.HeapMemoryUsage#(.*)" to-name="${input.name}.memory.heap.current.${name[1]}"/>
+            <regexp from-name="java\.lang:type=Memory\.NonHeapMemoryUsage#(.*)" to-name="${input.name}.memory.nonheap.current.${name[1]}"/>
+            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.total\.oc\.(pauseTime|time)" to-name="${input.name}.gc.old.${name[1]}" />
+            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.total\.oc\.compaction\.time" to-name="${input.name}.gc.old.compactionTime" />
+            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.gc\.total\.yc\.(pauseTime|time)" to-name="${input.name}.gc.young.${name[1]}" />
+            <regexp from-name="oracle\.jrockit\.management:type=PerfCounters\.jrockit\.threads\.sync\.(count|time|stoppedTime)" to-name="${input.name}.threads.sync.${name[1]}" />
         </selector-group>
 		<selector-group name="mod_qos">
-			<regexp from-name=".*,metric=([^,]+),path=/([^.]+)\.(current|limit)" to-name="${reader.name}.${name[2]}.${name[1]}.${name[3]}"/>
-			<regexp from-name=".*,metric=([^,]+)$" to-name="${reader.name}.${name[1]}"/>
-			<regexp from-name=".*,metric=([^,]+)\.(current|limit)" to-name="${reader.name}.${name[1]}.${name[2]}"/>
+			<regexp from-name=".*,metric=([^,]+),path=/([^.]+)\.(current|limit)" to-name="${input.name}.${name[2]}.${name[1]}.${name[3]}"/>
+			<regexp from-name=".*,metric=([^,]+)$" to-name="${input.name}.${name[1]}"/>
+			<regexp from-name=".*,metric=([^,]+)\.(current|limit)" to-name="${input.name}.${name[1]}.${name[2]}"/>
 		</selector-group>
 	</selector-groups>
 	<samplers>
