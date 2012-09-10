@@ -1,11 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jmxsampler</groupId>
-	<artifactId>jmx-sampler</artifactId>
+	<groupId>org.metrics-sampler</groupId>
+	<artifactId>metrics-sampler</artifactId>
 	<version>0.4.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>JMX Sampler</name>
 	<developers>
 		<developer>
 			<name>Dimo Velev</name>
@@ -17,15 +16,18 @@
 		<developerConnection>scm:git:https://github.com/dimovelev/jmx-sampler.git</developerConnection>
 		<url>https://github.com/dimovelev/jmx-sampler</url>
 	</scm>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<modules>
-		<module>jmx-sampler-core</module>
-		<module>jmx-sampler-extension-base</module>
-		<module>jmx-sampler-extension-jmx</module>
-		<module>jmx-sampler-extension-graphite</module>
-		<module>jmx-sampler-extension-modqos</module>
-		<module>jmx-sampler-extension-jdbc</module>
-		<module>jmx-sampler-tester</module>
-		<module>jmx-sampler-distribution</module>
+		<module>metrics-sampler-core</module>
+		<module>metrics-sampler-extension-base</module>
+		<module>metrics-sampler-extension-jmx</module>
+		<module>metrics-sampler-extension-graphite</module>
+		<module>metrics-sampler-extension-modqos</module>
+		<module>metrics-sampler-extension-jdbc</module>
+		<module>metrics-sampler-tester</module>
+		<module>metrics-sampler-distribution</module>
 	</modules>
 	<build>
 		<pluginManagement>

@@ -1,0 +1,140 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.metrics-sampler</groupId>
+		<artifactId>metrics-sampler</artifactId>
+		<version>0.4.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>metrics-sampler-distribution</artifactId>
+	<packaging>pom</packaging>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.3</version>
+					<configuration>
+						<descriptors>
+							<descriptor>src/assemble/bin.xml</descriptor>
+						</descriptors>
+						<archiveBaseDirectory>${project.build.directory}</archiveBaseDirectory>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>distro-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assemble/all.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-dependency-plugin</artifactId> -->
+<!-- 				<version>2.4</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>copy</id> -->
+<!-- 						<phase>package</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>copy</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<artifactItems> -->
+<!-- 								<artifactItem> -->
+<!-- 									<groupId>commons-codec</groupId> -->
+<!-- 									<artifactId>commons-codec</artifactId> -->
+<!-- 									<type>jar</type> -->
+<!-- 									<outputDirectory>${project.build.directory}/deps</outputDirectory> -->
+<!-- 								</artifactItem> -->
+<!-- 							</artifactItems> -->
+<!-- 							other configurations here -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-core</artifactId>
+			<version>0.4.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-extension-base</artifactId>
+			<version>0.4.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-extension-graphite</artifactId>
+			<version>0.4.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-extension-jmx</artifactId>
+			<version>0.4.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-extension-modqos</artifactId>
+			<version>0.4.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-extension-jdbc</artifactId>
+			<version>0.4.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6_g</artifactId>
+			<version>11.2.0.3.0</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+		  <groupId>weblogic</groupId>
+		  <artifactId>wljmxclient</artifactId>
+		  <version>12.1.1</version>
+		  <optional>true</optional>
+		</dependency>
+		<dependency>
+		  <groupId>weblogic</groupId>
+		  <artifactId>wlthint3client</artifactId>
+		  <version>12.1.1</version>
+		  <optional>true</optional>
+		</dependency>
+	</dependencies>
+</project>

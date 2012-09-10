@@ -1,0 +1,62 @@
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+	<id>all</id>
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<moduleSets>
+		<moduleSet>
+			<!-- Enable access to all projects in the current multimodule build! -->
+			<useAllReactorProjects>true</useAllReactorProjects>
+
+			<!-- Now, select which projects to include in this module-set. -->
+			<includes>
+					<include>org.metrics-sampler:metrics-sampler-core</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-base</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-graphite</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-jmx</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-modqos</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-jdbc</include>
+			</includes>
+			<binaries>
+				<outputDirectory>lib</outputDirectory>
+				<unpack>false</unpack>
+				<directoryMode>700</directoryMode>
+				<fileMode>600</fileMode>
+			</binaries>
+		</moduleSet>
+	</moduleSets>
+	<dependencySets>
+		<dependencySet>
+<!-- 			<includes> -->
+<!-- 					<include>ch.qos.logback:logback-classic</include> -->
+<!-- 					<include>ch.qos.logback:logback-core</include> -->
+<!-- 					<include>org.slf4j:slf4j-api</include> -->
+<!-- 					<include>commons-codec:commons-codec</include> -->
+<!-- 					<include>com.thoughtworks.xstream:xstream</include> -->
+<!-- 			</includes> -->
+			<outputDirectory>lib</outputDirectory>
+			<directoryMode>700</directoryMode>
+			<fileMode>600</fileMode>
+		</dependencySet>
+	</dependencySets>
+	<fileSets>
+		<fileSet>
+			<directory>../src/configs</directory>
+			<outputDirectory>config</outputDirectory>
+			<lineEnding>unix</lineEnding>
+			<directoryMode>700</directoryMode>
+			<fileMode>600</fileMode>
+		</fileSet>
+		<fileSet>
+			<directory>../src/scripts/linux</directory>
+			<lineEnding>unix</lineEnding>
+			<outputDirectory>bin</outputDirectory>
+			<directoryMode>700</directoryMode>
+			<fileMode>700</fileMode>
+		</fileSet>
+	</fileSets>
+</assembly>

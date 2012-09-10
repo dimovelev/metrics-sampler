@@ -1,5 +1,0 @@
-Usage: <jmx-sampler> [start|check|metadata] <config.xml>
-
-   start     start the sampler with the given configuration
-   check     check whether each transformation rule matches at least one metric
-   metadata  dump metadata from all inputs (e.g. list all beans and attributes for a JMX input)
