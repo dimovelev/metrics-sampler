@@ -45,8 +45,7 @@ public class JdbcReaderXBean extends ReaderXBean {
 	}
 
 	@Override
-	public ReaderConfig toConfig() {
-		validate();
+	protected ReaderConfig createConfig() {
 		final Map<String, String> jdbcOptions = options != null ? options.toMap() : Collections.<String,String>emptyMap();
 		return new JdbcReaderConfig(getName(), getUrl(), getDriver(), getUsername(), getPassword(), getQueries(), jdbcOptions);
 	}

@@ -1,6 +1,7 @@
 package org.jmxsampler.config.loader.xbeans;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -98,14 +99,20 @@ public class ConfigurationXBean {
 		return result;
 	}
 
+	
 	private Map<String, ReaderConfig> configureReaders(final List<ReaderXBean> list) {
+		final LinkedHashMap<String, ReaderXBean> xbeans = TemplatableXBeanUtils.sortByDependency(list); 
+		
 		final Map<String, ReaderConfig> result = new HashMap<String, ReaderConfig>();
-		for (final ReaderXBean fromItem : list) {
-			final ReaderConfig item = fromItem.toConfig();
-			if (result.containsKey(item.getName())) {
-				throw new ConfigurationException("Two readers with the same name "+item.getName());
+		for (final ReaderXBean fromItem : xbeans.values()) {
+			TemplatableXBeanUtils.applyTemplate(fromItem, xbeans);
+			if (fromItem.isInstantiatable()) {
+				final ReaderConfig item = fromItem.toConfig();
+				if (result.containsKey(item.getName())) {
+					throw new ConfigurationException("Two readers with the same name "+item.getName());
+				}
+				result.put(item.getName(), item);
 			}
-			result.put(item.getName(), item);
 		}
 		return result;
 	}

@@ -75,8 +75,7 @@ public class ModQosReaderXBean extends ReaderXBean {
 	}
 
 	@Override
-	public ReaderConfig toConfig() {
-		validate();
+	protected ReaderConfig createConfig() {
 		try {
 			AuthenticationType authType = AuthenticationType.NONE;
 			if (auth != null && auth.equals("basic")) {

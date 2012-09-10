@@ -32,7 +32,7 @@ public class JmxReaderXBean extends ReaderXBean {
 
 	@XStreamAsAttribute
 	@XStreamAlias("persistent-connection")
-	private boolean persistentConnection;
+	private Boolean persistentConnection;
 
 	@XStreamAlias("ignore-object-names")
 	private List<IgnoreObjectNameXBean> ignore;
@@ -61,10 +61,10 @@ public class JmxReaderXBean extends ReaderXBean {
 	public void setProviderPackages(final String providerPackages) {
 		this.providerPackages = providerPackages;
 	}
-	public boolean isPersistentConnection() {
+	public Boolean getPersistentConnection() {
 		return persistentConnection;
 	}
-	public void setPersistentConnection(final boolean persistentConnection) {
+	public void setPersistentConnection(final Boolean persistentConnection) {
 		this.persistentConnection = persistentConnection;
 	}
 
@@ -79,9 +79,9 @@ public class JmxReaderXBean extends ReaderXBean {
 		super.validate();
 		notEmpty("url", "jmx reader", getUrl());
 	}
+	
 	@Override
-	public ReaderConfig toConfig() {
-		validate();
+	protected ReaderConfig createConfig() {
 		List<Pattern> ignorePatterns;
 		if (ignore != null) {
 			ignorePatterns = new ArrayList<Pattern>(ignore.size());
@@ -95,6 +95,6 @@ public class JmxReaderXBean extends ReaderXBean {
 		} else {
 			ignorePatterns = Collections.emptyList();
 		}
-		return new JmxReaderConfig(getName(), getUrl(), getUsername(), getPassword(), getProviderPackages(), isPersistentConnection(), ignorePatterns);
+		return new JmxReaderConfig(getName(), getUrl(), getUsername(), getPassword(), getProviderPackages(), getPersistentConnection(), ignorePatterns);
 	}
 }
