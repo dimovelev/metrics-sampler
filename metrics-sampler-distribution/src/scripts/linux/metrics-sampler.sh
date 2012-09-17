@@ -7,7 +7,11 @@ BASEDIR=$(dirname $0)
 BASEDIR=$(readlink -f $BASEDIR/..)
 LOGCONFIG=$BASEDIR/config/logback.xml
 LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
-CONFIG=$BASEDIR/config/config.xml
+if [ "$2" == "" ]; then
+	CONFIG="$BASEDIR/config/config.xml"
+else
+	CONFIG="$BASEDIR/config/$2"
+fi
 PIDFILE=$BASEDIR/metrics-sampler.pid
 
 pushd $BASEDIR
@@ -49,6 +53,9 @@ case "$1" in
 		;;
 	check)
 		$JAVA -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $JAVA_OPTS -cp "lib/*" org.metricssampler.Runner check $CONFIG
+		;;
+	test)
+		$JAVA -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $JAVA_OPTS -cp "lib/*" org.metricssampler.Runner test $CONFIG
 		;;
 	metadata)
 		$JAVA -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $JAVA_OPTS -cp "lib/*" org.metricssampler.Runner metadata $CONFIG

@@ -21,7 +21,8 @@ public class Runner {
 	public enum Command {
 		START,
 		CHECK,
-		METADATA
+		METADATA,
+		TEST
 	}
 
 	public static void main(final String[] args) {
@@ -61,6 +62,9 @@ public class Runner {
 				break;
 			case METADATA:
 				executeMetadata(registry, config);
+				break;
+			case TEST:
+				executeTest(registry, config);
 				break;
 		}
 	}
@@ -105,5 +109,20 @@ public class Runner {
 	private static void executeStart(final ExtensionsRegistry registry, final Configuration config) {
 		final Daemon daemon = new Daemon(config, registry);
 		daemon.start();
+	}
+	
+	private static void executeTest(final ExtensionsRegistry registry, final Configuration config) {
+		for (final SamplerConfig samplerConfig : config.getSamplers()) {
+			final Sampler sampler = registry.newSampler(samplerConfig);
+			if (samplerConfig.isDisabled()) {
+				logger.info(sampler + " is disabled and will not be tested");
+				continue;
+			}
+			try {
+				sampler.sample();
+			} catch (final RuntimeException e) {
+				logger.warn("Sampler threw exception. Ignoring", e);
+			}
+		}
 	}
 }
