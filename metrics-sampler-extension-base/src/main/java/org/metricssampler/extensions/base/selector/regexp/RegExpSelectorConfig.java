@@ -1,20 +1,16 @@
 package org.metricssampler.extensions.base.selector.regexp;
 
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.SelectorConfig;
 
 public class RegExpSelectorConfig extends SelectorConfig {
-	private Pattern namePattern;
-	private Pattern descriptionPattern;
+	private final String namePattern;
+	private final String descriptionPattern;
 	private final String keyExpression;
 
 
 	public RegExpSelectorConfig(final String namePattern, final String descriptionPattern, final String keyExpression) {
-		setNamePatternStr(namePattern);
-		setDescriptionPatternStr(descriptionPattern);
+		this.namePattern = namePattern;
+		this.descriptionPattern = descriptionPattern;
 		this.keyExpression = keyExpression;
 	}
 
@@ -22,32 +18,16 @@ public class RegExpSelectorConfig extends SelectorConfig {
 		return namePattern != null;
 	}
 
-	public Pattern getNamePattern() {
+	public String getNamePattern() {
 		return namePattern;
-	}
-
-	protected void setNamePatternStr(final String value) {
-		try {
-			this.namePattern = value != null ? Pattern.compile(value) : null;
-		} catch (final PatternSyntaxException e) {
-			throw new ConfigurationException("Invalid name pattern \""+value+"\": "+e.getMessage(), e);
-		}
 	}
 
 	public boolean hasDescriptionFilter() {
 		return descriptionPattern != null;
 	}
 
-	public Pattern getDescriptionPattern() {
+	public String getDescriptionPattern() {
 		return descriptionPattern;
-	}
-
-	protected void setDescriptionPatternStr(final String value) {
-		try {
-			this.descriptionPattern = value != null ? Pattern.compile(value) : null;
-		} catch (final PatternSyntaxException e) {
-			throw new ConfigurationException("Invalid description pattern \""+value+"\": "+e.getMessage(), e);
-		}
 	}
 
 	public String getKeyExpression() {

@@ -11,6 +11,7 @@ import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
+import org.metricssampler.selector.PlaceholderReplacer;
 import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
@@ -38,9 +39,10 @@ public class DefaultSampler implements Sampler {
 	public DefaultSampler addSelector(final MetricsSelector selector) {
 		selectors.add(selector);
 		final Map<String, Object> transformerPlaceholders = new HashMap<String, Object>();
-		transformerPlaceholders.putAll(reader.getPlaceholders());
+		final Map<String, Object> readerPlaceholders = reader.getPlaceholders();
+		transformerPlaceholders.putAll(readerPlaceholders);
 		for (final Placeholder placeholder : placeholders) {
-			transformerPlaceholders.put(placeholder.getKey(), placeholder.getValue());
+			transformerPlaceholders.put(placeholder.getKey(), PlaceholderReplacer.replace((String)placeholder.getValue(), transformerPlaceholders));
 		}
 		selector.setPlaceholders(transformerPlaceholders);
 		return this;

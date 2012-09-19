@@ -1,6 +1,9 @@
 package org.metricssampler.extensions.jmx;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +22,7 @@ import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
+import javax.management.remote.JMXServiceURL;
 
 import org.metricssampler.reader.MetaDataMetricsReader;
 import org.metricssampler.reader.MetricName;
@@ -181,8 +185,34 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	}
 
 	private Map<String, Object> preparePlaceholders() {
+		final Pattern ipv4Address = Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
 		final Map<String, Object> result = new HashMap<String, Object>();
 		result.put("input.name", config.getName());
+		try {
+			final JMXServiceURL url = new JMXServiceURL(config.getUrl());
+			final String host = url.getHost();
+			if (host != null) {
+				result.put("input.host", host);
+				try {
+					final InetAddress inetAddress = InetAddress.getByName(host);
+					final String hostname = inetAddress.getHostName();
+					result.put("input.fqhn", hostname);
+					final int dotIdx = hostname.indexOf('.');
+					if (dotIdx > 0) {
+						result.put("input.hostname", hostname.substring(0, dotIdx));
+					} else {
+						result.put("input.hostname", hostname);
+					}
+					result.put("input.ip", inetAddress.getHostAddress());
+				} catch (final UnknownHostException e) {
+					// ignore
+				}
+			}
+			System.out.println(result);
+		} catch (final MalformedURLException e) {
+			e.printStackTrace();
+			// ignore
+		}
 		return result;
 	}
 

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetaDataMetricsReader;
@@ -29,6 +30,8 @@ public class RegExpMetricsSelector implements MetricsSelector {
 
 	private MetricsMetaData cachedMetaData;
 	private List<SelectedMetric> cachedSelectedMetrics;
+	private Pattern namePattern;
+	private Pattern descriptionPattern;
 	
 	public RegExpMetricsSelector(final RegExpSelectorConfig config) {
 		this.config = config;
@@ -76,11 +79,34 @@ public class RegExpMetricsSelector implements MetricsSelector {
 			throw new IllegalStateException("setMetaData not called");
 		}
 	}
-
 	
 	@Override
-	public void setPlaceholders(final Map<String, Object> readerContext) {
-		this.placeholders = readerContext;
+	public void setPlaceholders(final Map<String, Object> placeholders) {
+		this.placeholders = placeholders;
+		initializePatterns();
+	}
+
+	protected void initializePatterns() {
+		this.namePattern = createNamePattern();
+		this.descriptionPattern = createDescriptionPattern();
+	}
+
+	protected Pattern createNamePattern() {
+		if (config.hasNameFilter()) {
+			final String pattern = placeholderReplacer.replacePlaceholders(config.getNamePattern(), placeholders);
+			return Pattern.compile(pattern);
+		} else {
+			return null;
+		}
+	}
+
+	protected Pattern createDescriptionPattern() {
+		if (config.hasDescriptionFilter()) {
+			final String pattern = placeholderReplacer.replacePlaceholders(config.getDescriptionPattern(), placeholders);
+			return Pattern.compile(pattern);
+		} else { 
+			return null;
+		}
 	}
 
 	private List<SelectedMetric> getSelectedMetrics(final MetaDataMetricsReader reader) {
@@ -88,7 +114,7 @@ public class RegExpMetricsSelector implements MetricsSelector {
 		if (this.cachedMetaData != metaData) {
 			this.cachedSelectedMetrics = selectMetrics(metaData);
 			if (cachedSelectedMetrics.isEmpty()) {
-				logger.warn(this + " matched no metrics");
+			logger.warn(this + " matched no metrics");
 			}
 		}
 		return cachedSelectedMetrics;
@@ -108,15 +134,15 @@ public class RegExpMetricsSelector implements MetricsSelector {
 	protected SelectedMetric match(final MetricName from) {
 		Map<String, Object> context = null;
 
-		if (config.hasNameFilter()) {
-			final Matcher nameMatcher = config.getNamePattern().matcher(from.getName());
+		if (namePattern != null) {
+			final Matcher nameMatcher = namePattern.matcher(from.getName());
 			if (!nameMatcher.matches()) {
 				return null;
 			}
 			context = addGroups(nameMatcher, "name", context);
 		}
-		if (config.hasDescriptionFilter()) {
-			final Matcher descriptionMatcher = config.getDescriptionPattern().matcher(from.getDescription());
+		if (descriptionPattern != null) {
+			final Matcher descriptionMatcher = descriptionPattern.matcher(from.getDescription());
 			if (!descriptionMatcher.matches()) {
 				return null;
 			}
@@ -155,15 +181,15 @@ public class RegExpMetricsSelector implements MetricsSelector {
 		final StringBuilder result = new StringBuilder();
 		result.append(getClass().getSimpleName()).append('[');
 		boolean needsAnd = false;
-		if (config.hasNameFilter()) {
-			result.append("name =~ /").append(config.getNamePattern()).append('/');
+		if (namePattern != null) {
+			result.append("name =~ /").append(namePattern).append('/');
 			needsAnd = true;
 		}
-		if (config.hasDescriptionFilter()) {
+		if (descriptionPattern != null) {
 			if (needsAnd) {
 				result.append(" and ");
 			}
-			result.append("description =~ /").append(config.getDescriptionPattern()).append('/');
+			result.append("description =~ /").append(descriptionPattern).append('/');
 			needsAnd = true;
 		}
 		result.append(']');

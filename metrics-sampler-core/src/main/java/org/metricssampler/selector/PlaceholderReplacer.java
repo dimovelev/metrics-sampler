@@ -12,6 +12,10 @@ public class PlaceholderReplacer {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
+	public static String replace(final String expression, final Map<String, Object> replacements) {
+		return new PlaceholderReplacer().replacePlaceholders(expression, replacements);
+	}
+	
 	public String replacePlaceholders(final String expression, final Map<String, Object> replacements) {
 		final StringBuilder result = new StringBuilder();
 		int prevIdx = 0;
