@@ -208,7 +208,6 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 					// ignore
 				}
 			}
-			System.out.println(result);
 		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 			// ignore
