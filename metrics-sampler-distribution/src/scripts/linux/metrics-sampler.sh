@@ -69,6 +69,7 @@ start     Starts the application as a daemon in the background.
 stop      Stops a running daemon (if any). This also cleans up the pid file if the application has crashed.
 status    Outputs whether the daemon is running or not.
 check     Goes through all samplers and checks whether each rule matches at least one metric. Everything is logged to STDOUT.
+test      Calls all enabled samplers once and exits.
 metadata  Goes through all samplers and outputs the metadata of their readers. Use it to see what metrics are available and build
           your rules based on that.
 EOF
