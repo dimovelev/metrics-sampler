@@ -1,12 +1,13 @@
 #!/bin/bash
 JAVA=java
 JAVA_OPTS=
-# Uncomment this option if you are running this application with Java >=1.6 and are connecting to a Java 1.5 JMX client.
-#JAVA_OPTS="$JAVA_OPTS -Dsun.lang.ClassLoader.allowArraySyntax=true" 
 BASEDIR=$(dirname $0)
 BASEDIR=$(readlink -f $BASEDIR/..)
 LOGCONFIG=$BASEDIR/config/logback.xml
 LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
+if [ -x $BASEDIR/bin/local.sh ]; then
+	. $BASEDIR/bin/local.sh
+fi
 if [ "$2" == "" ]; then
 	CONFIG="$BASEDIR/config/config.xml"
 else
