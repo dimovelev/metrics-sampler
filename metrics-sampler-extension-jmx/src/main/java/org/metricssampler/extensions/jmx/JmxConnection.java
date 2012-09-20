@@ -34,8 +34,8 @@ public class JmxConnection {
 		if (config.getUsername() != null) {
 			result.put(Context.SECURITY_PRINCIPAL, config.getUsername());
 			result.put(Context.SECURITY_CREDENTIALS, config.getPassword());
-			result.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, config.getProviderPackages());
 		}
+		result.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, config.getProviderPackages());
 		return result;
 	}
 
@@ -64,7 +64,9 @@ public class JmxConnection {
 	protected void establishConnection() throws IOException {
 		logger.debug("Connecting to " + config.getUrl());
 		connector = JMXConnectorFactory.connect(url, environment);
+		logger.debug("Getting MBean server connection");
 		serverConnection = connector.getMBeanServerConnection();
+		logger.debug("Connected");
 	}
 
 	public MBeanServerConnection getServerConnection() {
