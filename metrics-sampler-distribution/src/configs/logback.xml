@@ -5,9 +5,15 @@
 			<pattern>%d %-5level [%X{sampler}] %logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
-
 	<root level="info">
 		<appender-ref ref="FILE" />
 	</root>
-
+	<!-- set to debug to see sampler timings -->
+	<logger name="timings" level="info" additivity="false">
+		<appender-ref ref="FILE" />
+	</logger>
+	<!-- set to debug to see timings for each metric being read (too much for production) -->
+	<logger name="timings.reader" level="info" additivity="false">
+		<appender-ref ref="FILE" />
+	</logger>
 </configuration>

@@ -21,6 +21,7 @@ import org.slf4j.MDC;
 
 public class DefaultSampler implements Sampler {
 	private final Logger logger;
+	private final Logger timingsLogger;
 
 	private final DefaultSamplerConfig config;
 	private final MetricsReader reader;
@@ -34,6 +35,7 @@ public class DefaultSampler implements Sampler {
 		this.reader = reader;
 		this.placeholders = placeholders;
 		logger = LoggerFactory.getLogger("sampler."+this.config.getName());
+		timingsLogger = LoggerFactory.getLogger("timings.sampler");
 	}
 
 	public DefaultSampler addWriter(final MetricsWriter writer) {
@@ -70,9 +72,12 @@ public class DefaultSampler implements Sampler {
 		MDC.put("sampler", config.getName());
 		logger.debug("Sampling");
 		try {
+			final long readStart = System.currentTimeMillis();
 			final Map<String, MetricValue> metrics = readMetrics();
+			final long readEnd = System.currentTimeMillis();
+			timingsLogger.debug("Sampled {} metrics in {} ms", metrics.size(), readEnd-readStart);
 			writeMetrics(metrics);
-			logger.debug("Sampled");
+			timingsLogger.debug("Metrics sent to writers in {} ms", System.currentTimeMillis()-readEnd);
 		} catch (final OpenMetricsReaderException e) {
 			if (!config.isQuiet()) {
 				logger.warn("Failed to open reader", e);

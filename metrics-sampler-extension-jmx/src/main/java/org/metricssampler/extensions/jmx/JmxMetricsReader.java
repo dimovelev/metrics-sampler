@@ -26,10 +26,10 @@ import javax.management.remote.JMXServiceURL;
 
 import org.metricssampler.reader.MetaDataMetricsReader;
 import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsMetaData;
+import org.metricssampler.reader.OpenMetricsReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JmxMetricsReader implements MetaDataMetricsReader {
 	private final Logger logger;
+	private final Logger timingsLogger;
 
 	private final JmxInputConfig config;
 	private MetricsMetaData metadata;
@@ -47,6 +48,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	public JmxMetricsReader(final JmxInputConfig config) {
 		this.config = config;
 		this.logger = LoggerFactory.getLogger("reader." + config.getName());
+		this.timingsLogger = LoggerFactory.getLogger("timings.reader");
 		placeholders = preparePlaceholders();
 		try {
 			this.connection = new JmxConnection(config);
@@ -68,6 +70,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	}
 
 	protected List<MetricName> readMetaData() {
+		final long start = System.currentTimeMillis();
 		logger.debug("Loading metadata from "+config.getUrl());
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
 		final List<MetricName> result = new LinkedList<MetricName>();
@@ -103,6 +106,8 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 			throw new MetricReadException("Failed to establish connection", e);
 		}
 		logger.debug("Loaded "+result.size()+" attributes");
+		final long end = System.currentTimeMillis();
+		timingsLogger.debug("Discovered {} metrics in {} ms", result.size(), end-start);
 		return result;
 	}
 
@@ -136,6 +141,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 		logger.debug("Reading "+metric.getName());
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
 		try {
+			final long start = System.currentTimeMillis();
 			final Object value = serverConnection.getAttribute(actualMetric.getObjectName(), actualMetric.getAttributeName());
 			if (actualMetric.isComposite()) {
 				if (value instanceof CompositeDataSupport) {
@@ -146,6 +152,8 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 					logger.warn("Expected a composite value for \"" + actualMetric.getName() + "\" but got "+value);
 				}
 			}
+			final long end = System.currentTimeMillis();
+			timingsLogger.debug("Read metric {} in {} ms", metric.getName(), end-start);
 			return new MetricValue(System.currentTimeMillis(), value);
 		} catch (final AttributeNotFoundException e) {
 			throw new MetricReadException(e);
@@ -178,6 +186,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	public void open() {
 		if (!connection.isEstablished()) {
 			try {
+				logger.info("Connecting to JMX server");
 				connection.connect();
 			} catch (final IOException e) {
 				throw new OpenMetricsReaderException(e);

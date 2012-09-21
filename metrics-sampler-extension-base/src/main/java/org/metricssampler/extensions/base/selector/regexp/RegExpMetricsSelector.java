@@ -112,15 +112,17 @@ public class RegExpMetricsSelector implements MetricsSelector {
 	private List<SelectedMetric> getSelectedMetrics(final MetaDataMetricsReader reader) {
 		final MetricsMetaData metaData = reader.getMetaData();
 		if (this.cachedMetaData != metaData) {
+			this.cachedMetaData = metaData;
 			this.cachedSelectedMetrics = selectMetrics(metaData);
 			if (cachedSelectedMetrics.isEmpty()) {
-			logger.warn(this + " matched no metrics");
+				logger.warn(this + " matched no metrics");
 			}
 		}
 		return cachedSelectedMetrics;
 	}
 
 	private List<SelectedMetric> selectMetrics(final Iterable<MetricName> names) {
+		logger.debug("Selecting metrics");
 		final List<SelectedMetric> result = new LinkedList<SelectedMetric>();
 		for (final MetricName name : names) {
 			final SelectedMetric metric = match(name);
