@@ -29,6 +29,9 @@ public class DefaultSamplerXBean extends SamplerXBean {
 	@XStreamAsAttribute
 	private String outputs;
 
+	@XStreamAsAttribute
+	private Boolean quiet = false;
+	
 	private List<PlaceholderXBean> placeholders;
 	
 	private List<SelectorXBean> selectors;
@@ -70,9 +73,19 @@ public class DefaultSamplerXBean extends SamplerXBean {
 	public List<SelectorXBean> getSelectors() {
 		return selectors;
 	}
+
 	public void setSelectors(final List<SelectorXBean> selectors) {
 		this.selectors = selectors;
 	}
+
+	public Boolean getQuiet() {
+		return quiet;
+	}
+
+	public void setQuiet(final Boolean quiet) {
+		this.quiet = quiet;
+	}
+
 	@Override
 	protected void validate() {
 		super.validate();
@@ -91,7 +104,7 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		final List<SelectorConfig> selectorConfigs = configureSelectors(selectorTemplates);
 		final List<Placeholder> placeholderConfigs = configurePlaceholders(globalPlaceholders);
 		
-		return new DefaultSamplerConfig(getInterval(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, placeholderConfigs);
+		return new DefaultSamplerConfig(getName(), getInterval(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, placeholderConfigs, getQuiet() != null ? getQuiet() : false);
 	}
 
 	protected List<Placeholder> configurePlaceholders(final List<Placeholder> globalPlaceholders) {

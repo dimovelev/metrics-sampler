@@ -14,17 +14,19 @@ import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JdbcMetricsReader implements BulkMetricsReader {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger;
 	private final JdbcInputConfig config;
 	private Connection connection;
 	 
 	public JdbcMetricsReader(final JdbcInputConfig config) {
 		this.config = config;
+		this.logger = LoggerFactory.getLogger("reader."+config.getName());
 	}
 
 	@Override
@@ -41,7 +43,7 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 			logger.debug("Connecting to {} as {}", config.getUrl(), config.getUsername());
 			connection = DriverManager.getConnection(config.getUrl(), props);
 		} catch (final SQLException e) {
-			throw new MetricReadException("Failed to connect to DB", e);
+			throw new OpenMetricsReaderException(e);
 		}
 	}
 

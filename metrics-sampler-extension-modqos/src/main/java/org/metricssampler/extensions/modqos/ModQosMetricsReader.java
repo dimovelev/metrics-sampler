@@ -18,6 +18,7 @@ import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 
 public class ModQosMetricsReader implements BulkMetricsReader {
@@ -44,7 +45,7 @@ public class ModQosMetricsReader implements BulkMetricsReader {
 			reader.close();
 			parseData();
 		} catch (final IOException e) {
-			throw new MetricReadException("Failed to open connection", e);
+			throw new OpenMetricsReaderException(e);
 		}
 	}
 

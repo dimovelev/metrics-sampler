@@ -26,6 +26,7 @@ import javax.management.remote.JMXServiceURL;
 
 import org.metricssampler.reader.MetaDataMetricsReader;
 import org.metricssampler.reader.MetricName;
+import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsMetaData;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Read metrics from a JMX server. This class is not thread safe and may not be reused in multiple samplers.
  */
 public class JmxMetricsReader implements MetaDataMetricsReader {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger;
 
 	private final JmxInputConfig config;
 	private MetricsMetaData metadata;
@@ -45,6 +46,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 
 	public JmxMetricsReader(final JmxInputConfig config) {
 		this.config = config;
+		this.logger = LoggerFactory.getLogger("reader." + config.getName());
 		placeholders = preparePlaceholders();
 		try {
 			this.connection = new JmxConnection(config);
@@ -178,14 +180,13 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 			try {
 				connection.connect();
 			} catch (final IOException e) {
-				throw new MetricReadException("Failed to connect", e);
+				throw new OpenMetricsReaderException(e);
 			}
 			metadata = new MetricsMetaData(readMetaData());
 		}
 	}
 
 	private Map<String, Object> preparePlaceholders() {
-		final Pattern ipv4Address = Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
 		final Map<String, Object> result = new HashMap<String, Object>();
 		result.put("input.name", config.getName());
 		try {

@@ -4,7 +4,7 @@
 			<pattern>%d %-5level [%X{sampler}] %logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
-	<root level="info">
+	<root level="debug">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

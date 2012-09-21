@@ -2,7 +2,7 @@
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 		<file>logs/metrics-sampler.log</file>
 		<encoder>
-			<pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+			<pattern>%d %-5level [%X{sampler}] %logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
 

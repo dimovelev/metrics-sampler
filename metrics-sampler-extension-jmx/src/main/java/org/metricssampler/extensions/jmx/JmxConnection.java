@@ -18,7 +18,7 @@ public class JmxConnection {
 
 	private final JmxInputConfig config;
 	private final JMXServiceURL url;
-	private final Map<String, String> environment;
+	private final Map<String, Object> environment;
 
 	private JMXConnector connector;
 	private MBeanServerConnection serverConnection;
@@ -29,14 +29,19 @@ public class JmxConnection {
 		environment = constructEnvironment();
 	}
 
-	private Map<String, String> constructEnvironment() {
-		final Map<String, String> result = new HashMap<String, String>();
+	private Map<String, Object> constructEnvironment() {
+		final Map<String, Object> result = new HashMap<String, Object>();
+		result.putAll(config.getConnectionProperties());
 		if (config.getUsername() != null) {
 			result.put(Context.SECURITY_PRINCIPAL, config.getUsername());
 			result.put(Context.SECURITY_CREDENTIALS, config.getPassword());
 		}
 		result.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, config.getProviderPackages());
-		return result;
+		if (config.hasSocketOptions()) {
+			final JmxClientSocketFactory sf = new JmxClientSocketFactory(config.getSocketOptions().getSoTimeout(), config.getSocketOptions().isKeepAlive());
+			result.put("com.sun.jndi.rmi.factory.socket", sf);
+		}
+	    return result;
 	}
 
 	public boolean isEstablished() {

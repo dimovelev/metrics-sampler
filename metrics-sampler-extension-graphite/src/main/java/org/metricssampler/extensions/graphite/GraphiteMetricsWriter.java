@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * Send metrics to graphite. This class is not thread safe and should not be used by multiple samplers.
  */
 public class GraphiteMetricsWriter implements MetricsWriter {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger;
 
 	private final GraphiteOutputConfig config;
 
@@ -26,6 +26,7 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 
 	public GraphiteMetricsWriter(final GraphiteOutputConfig config) {
 		this.config = config;
+		this.logger = LoggerFactory.getLogger("writer."+config.getName());
 	}
 
 	@Override

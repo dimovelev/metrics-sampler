@@ -4,13 +4,18 @@ import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.SocketOptionsConfig;
+import org.metricssampler.config.loader.xbeans.EntryXBean;
 import org.metricssampler.config.loader.xbeans.InputXBean;
+import org.metricssampler.config.loader.xbeans.SocketOptionsXBean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -36,6 +41,12 @@ public class JmxInputXBean extends InputXBean {
 
 	@XStreamAlias("ignore-object-names")
 	private List<IgnoreObjectNameXBean> ignore;
+	
+	@XStreamAlias("connection-properties")
+	private List<EntryXBean> connectionProperties;
+	
+	@XStreamAlias("socket-options")
+	private SocketOptionsXBean socketOptions;
 	
 	public String getUrl() {
 		return url;
@@ -67,12 +78,30 @@ public class JmxInputXBean extends InputXBean {
 	public void setPersistentConnection(final Boolean persistentConnection) {
 		this.persistentConnection = persistentConnection;
 	}
-
 	public List<IgnoreObjectNameXBean> getIgnore() {
 		return ignore;
 	}
 	public void setIgnore(final List<IgnoreObjectNameXBean> ignore) {
 		this.ignore = ignore;
+	}
+	public List<EntryXBean> getEnvironment() {
+		return connectionProperties;
+	}
+	public void setEnvironment(final List<EntryXBean> environment) {
+		this.connectionProperties = environment;
+	}
+	
+	public List<EntryXBean> getConnectionProperties() {
+		return connectionProperties;
+	}
+	public void setConnectionProperties(final List<EntryXBean> connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+	public SocketOptionsXBean getSocketOptions() {
+		return socketOptions;
+	}
+	public void setSocketOptions(final SocketOptionsXBean socketOptions) {
+		this.socketOptions = socketOptions;
 	}
 	@Override
 	protected void validate() {
@@ -95,6 +124,14 @@ public class JmxInputXBean extends InputXBean {
 		} else {
 			ignorePatterns = Collections.emptyList();
 		}
-		return new JmxInputConfig(getName(), getUrl(), getUsername(), getPassword(), getProviderPackages(), getPersistentConnection(), ignorePatterns);
+		final Map<String, String> configConnectionProperties = new HashMap<String, String>();
+		if (connectionProperties != null) {
+			for (final EntryXBean entry : connectionProperties) {
+				configConnectionProperties.put(entry.getKey(), entry.getValue());
+			}
+		}
+		
+		final SocketOptionsConfig soConfig = socketOptions != null ? socketOptions.toConfig() : null;
+		return new JmxInputConfig(getName(), getUrl(), getUsername(), getPassword(), getProviderPackages(), getPersistentConnection(), ignorePatterns, configConnectionProperties, soConfig);
 	}
 }

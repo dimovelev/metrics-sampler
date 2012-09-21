@@ -9,6 +9,7 @@ import org.metricssampler.config.Placeholder;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.selector.PlaceholderReplacer;
@@ -16,19 +17,23 @@ import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 public class DefaultSampler implements Sampler {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger;
 
+	private final DefaultSamplerConfig config;
 	private final MetricsReader reader;
 	private final List<MetricsWriter> writers = new LinkedList<MetricsWriter>();
 	private final List<MetricsSelector> selectors = new LinkedList<MetricsSelector>();
 
 	private final List<Placeholder> placeholders;
 	
-	public DefaultSampler(final MetricsReader reader, final List<Placeholder> placeholders) {
+	public DefaultSampler(final DefaultSamplerConfig config, final MetricsReader reader, final List<Placeholder> placeholders) {
+		this.config = config;
 		this.reader = reader;
 		this.placeholders = placeholders;
+		logger = LoggerFactory.getLogger("sampler."+this.config.getName());
 	}
 
 	public DefaultSampler addWriter(final MetricsWriter writer) {
@@ -62,16 +67,24 @@ public class DefaultSampler implements Sampler {
 
 	@Override
 	public void sample() {
-		logger.debug("Sampling {}", reader);
+		MDC.put("sampler", config.getName());
+		logger.debug("Sampling");
 		try {
 			final Map<String, MetricValue> metrics = readMetrics();
 			writeMetrics(metrics);
+			logger.debug("Sampled");
+		} catch (final OpenMetricsReaderException e) {
+			if (!config.isQuiet()) {
+				logger.warn("Failed to open reader", e);
+			} else {
+				logger.debug("Failed to open reader", e);
+			}
 		} catch (final MetricReadException e) {
 			logger.warn("Failed to read metrics", e);
 		} catch (final MetricWriteException e) {
 			logger.warn("Failed to write metrics", e);
 		}
-		logger.debug("Sampled {}", reader);
+		MDC.remove("sampler");
 	}
 
 	private void writeMetrics(final Map<String, MetricValue> metrics) {

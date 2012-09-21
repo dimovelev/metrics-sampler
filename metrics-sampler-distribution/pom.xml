@@ -118,23 +118,5 @@
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6_g</artifactId>
-			<version>11.2.0.3.0</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-		  <groupId>weblogic</groupId>
-		  <artifactId>wljmxclient</artifactId>
-		  <version>12.1.1</version>
-		  <optional>true</optional>
-		</dependency>
-		<dependency>
-		  <groupId>weblogic</groupId>
-		  <artifactId>wlthint3client</artifactId>
-		  <version>12.1.1</version>
-		  <optional>true</optional>
-		</dependency>
 	</dependencies>
 </project>
