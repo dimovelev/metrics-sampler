@@ -5,6 +5,7 @@ metrics-sampler is a java program which regularly queries metrics from a configu
 Example Configuration
 ---------------------
 Check out the following configuration as a quick-start:
+
 	<!-- pool-size is the number of threads to use for the samplers -->
 	<configuration pool-size="10">
 		<inputs>
