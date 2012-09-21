@@ -148,4 +148,9 @@ public class DefaultSampler implements Sampler {
 	public String toString() {
 		return getClass().getSimpleName()+"["+reader+"->"+writers+ "]";
 	}
+
+	@Override
+	public int getRate() {
+		return config.getInterval();
+	}
 }

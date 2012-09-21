@@ -27,4 +27,9 @@ public class JmxExtension implements Extension {
 		return new JmxObjectFactory();
 	}
 
+	@Override
+	public void initialize() {
+		// do not need to do anything
+	}
+
 }

@@ -5,6 +5,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Helper class that handles the replacement of placeholders within a string. Instances are thread-safe and can be reused.
+ */
 public class PlaceholderReplacer {
 	public static final String START = "${";
 	public static final String END = "}";
@@ -69,7 +72,6 @@ public class PlaceholderReplacer {
 		} else {
 			logger.warn("Unknown function: \"{}\"", name);
 		}
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

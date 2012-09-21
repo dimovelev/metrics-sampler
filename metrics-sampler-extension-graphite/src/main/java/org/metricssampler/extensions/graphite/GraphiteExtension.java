@@ -26,4 +26,8 @@ public class GraphiteExtension implements Extension {
 		return new GraphiteObjectFactory();
 	}
 
+	@Override
+	public void initialize() {
+		// we do not need to do anything
+	}
 }

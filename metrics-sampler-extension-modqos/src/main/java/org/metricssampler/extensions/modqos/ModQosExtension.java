@@ -26,4 +26,9 @@ public class ModQosExtension implements Extension {
 		return new ModQosObjectFactory();
 	}
 
+	@Override
+	public void initialize() {
+		// do not need to do anything
+	}
+
 }

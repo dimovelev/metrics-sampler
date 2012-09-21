@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.metricssampler.config.Configuration;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
@@ -24,18 +25,47 @@ import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExtensionsRegistry implements GlobalObjectFactory {
+public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final List<Class<?>> xbeanClasses = new LinkedList<Class<?>>();
 	private final List<LocalObjectFactory> objectFactories = new LinkedList<LocalObjectFactory>();
 
-	public ExtensionsRegistry() {
+	private Configuration configuration;
+	private List<Sampler> samplers;
+
+	private DefaultBootstrapper() {
+	}
+	
+	public static Bootstrapper bootstrap(final String filename) {
+		final DefaultBootstrapper result = new DefaultBootstrapper();
+		result.initialize();
+		result.loadConfiguration(filename);
+		result.createSamplers();
+		return result;
+	}
+
+	private void initialize() {
 		addDefaultXBeanClasses();
 		
 		final ServiceLoader<Extension> services = ServiceLoader.load(Extension.class);
 		for (final Extension extension : services) {
 			registerExtension(extension);
+		}
+	}
+
+	private void loadConfiguration(final String filename) {
+		final ConfigurationLoader loader = new ConfigurationLoader(xbeanClasses);
+		configuration = loader.load(filename);
+	}
+
+	private void createSamplers() {
+		samplers = new LinkedList<Sampler>();
+		for (final SamplerConfig samplerConfig : configuration.getSamplers()) {
+			if (!samplerConfig.isDisabled()) {
+				final Sampler sampler = newSampler(samplerConfig);
+				samplers.add(sampler);
+			}
 		}
 	}
 
@@ -50,7 +80,8 @@ public class ExtensionsRegistry implements GlobalObjectFactory {
 	}
 
 	private void registerExtension(final Extension extension) {
-		logger.info("Loading extension " + extension.getName());
+		logger.info("Loading extension {}", extension.getName());
+		extension.initialize();
 		xbeanClasses.addAll(extension.getXBeans());
 		final LocalObjectFactory localObjectFactory = extension.getObjectFactory();
 		localObjectFactory.setGlobalFactory(this);
@@ -97,7 +128,13 @@ public class ExtensionsRegistry implements GlobalObjectFactory {
 		throw new ConfigurationException("Unsupported sampler: " + config);
 	}
 
-	public ConfigurationLoader newConfigurationLoader() {
-		return new ConfigurationLoader(xbeanClasses);
+	@Override
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+
+	@Override
+	public Iterable<Sampler> getSamplers() {
+		return samplers;
 	}
 }

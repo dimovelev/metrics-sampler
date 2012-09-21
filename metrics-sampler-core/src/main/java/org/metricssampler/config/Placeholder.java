@@ -1,5 +1,8 @@
 package org.metricssampler.config;
 
+/**
+ * Base class for placeholders.
+ */
 public abstract class Placeholder {
 	private final String key;
 

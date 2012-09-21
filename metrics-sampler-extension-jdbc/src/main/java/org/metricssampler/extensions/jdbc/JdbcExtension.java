@@ -9,13 +9,6 @@ import org.metricssampler.service.Extension;
 import org.metricssampler.service.LocalObjectFactory;
 
 public class JdbcExtension implements Extension {
-	public JdbcExtension() {
-		/**
-		 * WTF: load the drivers in the caller thread
-		 */
-		DriverManager.getDrivers();
-	}
-	
 	@Override
 	public String getName() {
 		return "jdbc";
@@ -31,6 +24,14 @@ public class JdbcExtension implements Extension {
 	@Override
 	public LocalObjectFactory getObjectFactory() {
 		return new JdbcObjectFactory();
+	}
+
+	@Override
+	public void initialize() {
+		/**
+		 * WTF: load the drivers in the caller thread
+		 */
+		DriverManager.getDrivers();
 	}
 
 }

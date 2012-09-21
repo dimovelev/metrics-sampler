@@ -10,6 +10,9 @@ public abstract class OutputConfig {
 		this.name = name;
 	}
 
+	/**
+	 * @return the unique (among all outputs) name of the output
+	 */
 	public String getName() {
 		return name;
 	}

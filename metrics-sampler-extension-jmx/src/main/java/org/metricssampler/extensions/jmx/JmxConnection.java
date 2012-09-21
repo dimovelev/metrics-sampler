@@ -38,7 +38,7 @@ public class JmxConnection {
 		}
 		result.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, config.getProviderPackages());
 		if (config.hasSocketOptions()) {
-			final JmxClientSocketFactory sf = new JmxClientSocketFactory(config.getSocketOptions().getSoTimeout(), config.getSocketOptions().isKeepAlive());
+			final JmxClientSocketFactory sf = new JmxClientSocketFactory(config.getSocketOptions());
 			result.put("com.sun.jndi.rmi.factory.socket", sf);
 		}
 	    return result;

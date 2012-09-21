@@ -3,6 +3,9 @@ package org.metricssampler.config;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * The root configuration of the application
+ */
 public class Configuration {
 	private final int poolSize;
 	private final Collection<InputConfig> inputs;

@@ -10,6 +10,9 @@ public abstract class InputConfig {
 		this.name = name;
 	}
 
+	/**
+	 * @return the unique (among all inputs) name of this input
+	 */
 	public String getName() {
 		return name;
 	}

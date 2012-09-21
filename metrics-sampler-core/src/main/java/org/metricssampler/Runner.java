@@ -4,24 +4,42 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.metricssampler.config.Configuration;
 import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.sampler.Sampler;
-import org.metricssampler.service.ExtensionsRegistry;
+import org.metricssampler.service.Bootstrapper;
+import org.metricssampler.service.DefaultBootstrapper;
+import org.metricssampler.service.GlobalObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The main entry point for the application
+ */
 public class Runner {
 	private static final Logger logger = LoggerFactory.getLogger(Runner.class);
 
 	public enum Command {
+		/**
+		 * Start the application and sample forever
+		 */
 		START,
+		
+		/**
+		 * Check the configuration by fetching metrics from every enabled sampler and check whether each selector returns at least one metric.
+		 */
 		CHECK,
+		
+		/**
+		 * Query the metadata of each enabled sampler and output it. This is useful to know what metrics are available so that you can define your selector regexps. 
+		 */
 		METADATA,
+		
+		/**
+		 * Fetch metrics from each enabled sampler and output them once.
+		 */
 		TEST
 	}
 
@@ -32,14 +50,13 @@ public class Runner {
 		final Command command = Command.valueOf(args[0].toUpperCase());
 		final File configFile = new File(args[1]);
 		if (!configFile.canRead()) {
-			System.err.println("Configuartion file " + configFile.getAbsolutePath() + " not readable");
+			System.err.println("Configuration file " + configFile.getAbsolutePath() + " not readable");
 			System.exit(2);
 		}
 
-		final ExtensionsRegistry registry = new ExtensionsRegistry();
-		final Configuration config = registry.newConfigurationLoader().load(configFile.getAbsolutePath());
+		final Bootstrapper bootrapper = DefaultBootstrapper.bootstrap(configFile.getAbsolutePath());
 
-		executeCommand(command, registry, config);
+		executeCommand(command, bootrapper);
 	}
 
 	private static void outputHelp() {
@@ -52,51 +69,38 @@ public class Runner {
 		System.exit(1);
 	}
 
-	private static void executeCommand(final Command command, final ExtensionsRegistry registry, final Configuration config) {
+	private static void executeCommand(final Command command, final Bootstrapper bootstrapper) {
 		switch (command) {
 			case START:
-				executeStart(registry, config);
+				executeStart(bootstrapper);
 				break;
 			case CHECK:
-				executeCheck(registry, config);
+				executeCheck(bootstrapper);
 				break;
 			case METADATA:
-				executeMetadata(registry, config);
+				executeMetadata(bootstrapper);
 				break;
 			case TEST:
-				executeTest(registry, config);
+				executeTest(bootstrapper);
 				break;
 		}
 	}
 
-	private static void executeMetadata(final ExtensionsRegistry registry, final Configuration config) {
-		for(final InputConfig input : config.getInputs()) {
-			final MetricsReader reader = registry.newReaderForInput(input);
-			reader.open();
-			System.out.println("Reader: " + input.getName());
-			for(final MetricName item : reader.readNames()) {
-				System.out.println("\tName:" + item.getName());
-				System.out.println("\tDescription:" + item.getDescription());
-			}
-			reader.close();
-		}
+	private static void executeStart(final Bootstrapper bootstrapper) {
+		final Daemon daemon = new Daemon(bootstrapper);
+		daemon.start();
 	}
 
-	private static void executeCheck(final ExtensionsRegistry registry, final Configuration config) {
+	private static void executeCheck(final Bootstrapper bootstrapper) {
 		boolean allValid = true;
-		for (final SamplerConfig samplerConfig : config.getSamplers()) {
-			if (!samplerConfig.isDisabled()) {
-				final Sampler sampler = registry.newSampler(samplerConfig);
-				logger.info("Checking "+sampler);
-				try { 
-					final boolean valid = sampler.check();
-					allValid = allValid && valid;
-				} catch (final MetricReadException e) {
-					logger.warn("Sampler threw exception during check", e);
-					allValid = false;
-				}
-			} else {
-				logger.info(samplerConfig + " is disabled and will not be checked");
+		for (final Sampler sampler : bootstrapper.getSamplers()) {
+			logger.info("Checking {}", sampler);
+			try { 
+				final boolean valid = sampler.check();
+				allValid = allValid && valid;
+			} catch (final MetricReadException e) {
+				logger.warn("Sampler threw exception during check", e);
+				allValid = false;
 			}
 		}
 		if (allValid) {
@@ -106,18 +110,22 @@ public class Runner {
 		}
 	}
 
-	private static void executeStart(final ExtensionsRegistry registry, final Configuration config) {
-		final Daemon daemon = new Daemon(config, registry);
-		daemon.start();
+	private static void executeMetadata(final Bootstrapper bootstrapper) {
+		final GlobalObjectFactory factory = (GlobalObjectFactory) bootstrapper;
+		for(final InputConfig input : bootstrapper.getConfiguration().getInputs()) {
+			final MetricsReader reader = factory.newReaderForInput(input);
+			reader.open();
+			System.out.println("Reader: " + input.getName());
+			for(final MetricName item : reader.readNames()) {
+				System.out.println("\tName:" + item.getName());
+				System.out.println("\tDescription:" + item.getDescription());
+			}
+			reader.close();
+		}
 	}
 	
-	private static void executeTest(final ExtensionsRegistry registry, final Configuration config) {
-		for (final SamplerConfig samplerConfig : config.getSamplers()) {
-			final Sampler sampler = registry.newSampler(samplerConfig);
-			if (samplerConfig.isDisabled()) {
-				logger.info(sampler + " is disabled and will not be tested");
-				continue;
-			}
+	private static void executeTest(final Bootstrapper bootstrapper) {
+		for (final Sampler sampler : bootstrapper.getSamplers()) {
 			try {
 				sampler.sample();
 			} catch (final RuntimeException e) {

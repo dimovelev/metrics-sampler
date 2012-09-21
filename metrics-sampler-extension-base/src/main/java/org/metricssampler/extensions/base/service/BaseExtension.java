@@ -31,4 +31,8 @@ public class BaseExtension implements Extension {
 		return new BaseObjectFactory();
 	}
 
+	@Override
+	public void initialize() {
+		// we do not need to do anything
+	}
 }

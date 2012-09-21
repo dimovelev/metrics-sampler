@@ -21,6 +21,9 @@ import org.metricssampler.selector.SelectedMetric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Select metrics using regular expressions and rename them using an expression that can contain placeholders. 
+ */
 public class RegExpMetricsSelector implements MetricsSelector {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final PlaceholderReplacer placeholderReplacer = new PlaceholderReplacer();

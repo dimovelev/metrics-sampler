@@ -1,5 +1,8 @@
 package org.metricssampler.config;
 
+/**
+ * A placeholder denoting a string value.
+ */
 public class StringPlaceholder extends Placeholder {
 	private final String value;
 

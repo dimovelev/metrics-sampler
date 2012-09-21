@@ -8,24 +8,32 @@ Check out the following configuration as a quick-start:
 	<!-- pool-size is the number of threads to use for the samplers -->
 	<configuration pool-size="10">
 		<inputs>
-			<!-- this is an example of a template - its values will be copied to any input that references it using the template attribute. Due to abstract=true it can never be used in a sampler -->
+			<!-- this is an example of a template - its values will be copied to any input that references it using the "template" attribute. Due to abstract=true it can never be used in a sampler 
+			     and does not have to define all mandatory fields -->
 			<jmx name="wls-template" abstract="true" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true">
+				<!-- we can choose to ignore certain object names using a list of regular expressions -->
 				<ignore-object-names>
 					<ignore-object-name regexp="^com\.oracle\.jrockit:type=Flight.+" />
 				</ignore-object-names>
+				<!-- a map of properties to pass to the JMX connector factory. You usually do not need this.
+				<connection-properties>
+					<entry key="jmx.remote.x.request.waiting.timeout" value="100" />
+				</connection-properties>
+				<!-- Using the socket-options you can configure some low level socket options for the RMI connections - most notably the SO_TIMEOUT (in ms) -->
+				<socket-options so-timeout="200" keep-alive="false" />
 			</jmx>
 			
-			<!-- WebLogic JMX server. Username, password etc. come from the template wls-template -->
+			<!-- WebLogic JMX server. Username, password etc. come from the template named "wls-template" -->
 			<jmx name="wls01" url="service:jmx:t3://weblogic1.metrics-sampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" template="wls-template" />
 			<jmx name="wls02" url="service:jmx:t3://weblogic2.metrics-sampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" template="wls-template" />
-
-			<!-- Execute the given query(ies) over JDBC and use the first column as metric name, the second as metric value and the third one as timestamp -->
-			<jdbc name="oracle01" url="jdbc:oracle:thin:@//oracle1.metrics-sampler.org:1521/EXAMPLE" username="user" password="password" driver="oracle.jdbc.OracleDriver">
-				<query>select replace(T2.host_name||'.'||T2.instance_name||'.'||replace(replace(replace(replace(metric_name,'/',''),'%','Perc'),'(',''),')',''),' ','_') as metric, value, (25200 + round((end_time - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400),0))*1000 as dt from gv$sysmetric T1, gv$instance T2 where T1.intsize_csec between 1400 and 1600 and T1.inst_id = T2.INST_ID</query>
-			</jdbc>
 			
 			<!-- Tomcat JMX server -->
 			<jmx name="tomcat01" url="service:jmx:rmi:///jndi/rmi://tomcat.metrics-sampler.org:7001/jmxrmi" persistent-connection="true" />
+
+			<!-- Execute the given query(ies) over JDBC and use the first column as metric name, the second as metric value and the third one as timestamp. You will need to have the JDBC driver in the lib/ directory -->
+			<jdbc name="oracle01" url="jdbc:oracle:thin:@//oracle1.metrics-sampler.org:1521/EXAMPLE" username="user" password="password" driver="oracle.jdbc.OracleDriver">
+				<query>select replace(T2.host_name||'.'||T2.instance_name||'.'||replace(replace(replace(replace(metric_name,'/',''),'%','Perc'),'(',''),')',''),' ','_') as metric, value, (25200 + round((end_time - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400),0))*1000 as dt from gv$sysmetric T1, gv$instance T2 where T1.intsize_csec between 1400 and 1600 and T1.inst_id = T2.INST_ID</query>
+			</jdbc>
 			
 			<!-- Apache mod_qos status page -->
 			<mod-qos name="apache01" url="http://apache1.metrics-sampler.org:80/qos-viewer?auto" username="user" password="pass" auth="basic"/>
@@ -39,45 +47,66 @@ Check out the following configuration as a quick-start:
 		<!-- we define some regular expressions in groups so that we can reuse them later in the samplers -->
 		<selector-groups>
 			<selector-group name="wls">
-				<!-- from-name is a regular expression that is matched against e.g. the JMX Metric Name (consisting of canonical object name # attribute name). to-name is an expression (not a regular expression) that can use placeholders for things like captured groups from the name's regular expression. -->
-				<regexp from-name="com\.bea:Name=DataSource_(.+),ServerRuntime=.+,Type=JDBCOracleDataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${input.name}.jdbc.${name[1]}.${name[2]}" />
-				<regexp from-name="com\.bea:Name=JTARuntime,ServerRuntime=.*,Type=JTARuntime\.(.*TotalCount)" to-name="${input.name}.jta.${name[1]}" />
-				<regexp from-name="com\.bea:Name=ThreadPoolRuntime,ServerRuntime=.*,Type=ThreadPoolRuntime\.(CompletedRequestCount|ExecuteThreadIdleCount|ExecuteThreadTotalCount|HoggingThreadCount|MinThreadsConstraintsCompleted|MinThreadsConstraintsPending|PendingUserRequestCount|QueueLength|SharedCapacityForWorkManagers|StandbyThreadCount|Throughput)" to-name="${input.name}.threads.${name[1]}"/>
-				<regexp from-name="com\.bea:Name=.*,ServerRuntime=.*,Type=JRockitRuntime\.(JvmProcessorLoad|TotalGarbageCollectionCount|TotalGarbageCollectionTime|FreePhysicalMemory|UsedPhysicalMemory|Uptime)" to-name="${input.name}.jrockit.${name[1]}" />
+				<!-- from-name is a regular expression that is matched against e.g. the JMX Metric Name (consisting of canonical object name # attribute name). The string can also contain references to placeholders in the form ${name}. 
+				     to-name is an expression (not a regular expression) that can use placeholders for things like captured groups from the name's regular expression. -->
+				<regexp from-name="com\.bea:Name=DataSource_(.+),ServerRuntime=.+,Type=JDBCOracleDataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${prefix}.jdbc.${name[1]}.${name[2]}" />
+				<regexp from-name="com\.bea:Name=JTARuntime,ServerRuntime=.*,Type=JTARuntime\.(.*TotalCount)" to-name="${prefix}.jta.${name[1]}" />
+				<regexp from-name="com\.bea:Name=ThreadPoolRuntime,ServerRuntime=.*,Type=ThreadPoolRuntime\.(CompletedRequestCount|ExecuteThreadIdleCount|ExecuteThreadTotalCount|HoggingThreadCount|MinThreadsConstraintsCompleted|MinThreadsConstraintsPending|PendingUserRequestCount|QueueLength|SharedCapacityForWorkManagers|StandbyThreadCount|Throughput)" to-name="${prefix}.threads.${name[1]}"/>
+				<regexp from-name="com\.bea:Name=.*,ServerRuntime=.*,Type=JRockitRuntime\.(JvmProcessorLoad|TotalGarbageCollectionCount|TotalGarbageCollectionTime|FreePhysicalMemory|UsedPhysicalMemory|Uptime)" to-name="${prefix}.jrockit.${name[1]}" />
 			</selector-group>
 			<selector-group name="tomcat">
-				<regexp from-name="Catalina:type=GlobalRequestProcessor,name=.http-bio-9240.\.(requestCount|bytesSent|bytesReceived)" to-name="${input.name}.http.${name[1]}"/>
+				<!-- note that you can use placeholders in the from-name too. These must be explictly defined in the sampler (or come from the input reader) -->
+				<regexp from-name="Catalina:type=GlobalRequestProcessor,name=http-${port}.\.(requestCount|bytesSent|bytesReceived)" to-name="${prefix}.http.${name[1]}"/>
 			</selector-group>
 			<selector-group name="mod_qos">
-				<regexp from-name=".*,metric=([^,]+),path=/([^.]+)\.(current|limit)" to-name="${input.name}.${name[2]}.${name[1]}.${name[3]}"/>
-				<regexp from-name=".*,metric=([^,]+)$" to-name="${input.name}.${name[1]}"/>
-				<regexp from-name=".*,metric=([^,]+)\.(current|limit)" to-name="${input.name}.${name[1]}.${name[2]}"/>
+				<regexp from-name=".*,metric=([^,]+),path=/([^.]+)\.(current|limit)" to-name="${prefix}.${name[2]}.${name[1]}.${name[3]}"/>
+				<regexp from-name=".*,metric=([^,]+)$" to-name="${prefix}.${name[1]}"/>
+				<regexp from-name=".*,metric=([^,]+)\.(current|limit)" to-name="${prefix}.${name[1]}.${name[2]}"/>
 			</selector-group>
 		</selector-groups>
-		<!-- These are the actual active runtime components that sample the date from their input, use the given selectors to determine which metrics are relevant (and rename them) and sends them to the given outputs. An input without a sampler does not do anything. -->
+		
+		<!-- These are the actual active runtime components that sample the date from their input, use the given selectors to determine which metrics are relevant (and rename them) and sends them to the given outputs.
+		     An input without a sampler does not do anything. The samplers are scheduled at a constant rate (with the given interval) to a thread pool of the size defined above. -->
 		<samplers>
-			<!-- template defining common values for weblogic samplers. -->
+			<!-- template defining common values for weblogic samplers. If you define any of the attributes / child elements in the samplers that use this template, these values here will be lost (not appended to). -->
 			<sampler name="wls" abstract="true" outputs="graphite" interval="10">
 				<selectors>
 					<use-group name="wls" />
 				</selectors>
+				<!-- these placeholders are added to the one's defined by the input itself (e.g. input.name, input.host, input.fqhn, input.ip, input.hostname, etc.)
+				<placeholders>
+					<string-placeholder key="prefix" value="backend.${input.name}" />
+				</placeholders>
 			</sampler>
 			<!-- fetch data from wls01 input, use the regular expressions in a group named "wls" to select and rename metrics and send them to graphite every 10 seconds. -->
 			<sampler input="wls01" template="wls" />
 			<sampler input="wls02" template="wls" />
 			<sampler input="tomcat01" outputs="graphite" interval="10">
+				<placeholders>
+					<string-placeholder key="prefix" value="frontend.${input.name}" />
+					<string-placeholder key="port" value="8080" />
+				</placeholders>
 				<selectors>
 					<use-group name="tomcat" />
 				</selectors>
 			</sampler>
-			<sampler input="apache01" outputs="graphite" interval="10">
+			<!-- setting quiet to true causes the sampler to log connection problems using debug level - thus preventing the problem to be logged in the standard configuration. This is
+			     useful if the input is a source that is not always available but you want to still get metrics when it is available. -->
+			<sampler input="apache01" outputs="graphite" interval="10" quiet="true">
+				<placeholders>
+					<string-placeholder key="prefix" value="frontend.${input.name}" />
+				</placeholders>
 				<selectors>
 					<use-group name="mod_qos" />
 				</selectors>
 			</sampler>
-			<sampler input="oracle01" outputs="graphite" interval="10">
+			<!-- you can use disabled="true" to disable a sampler without removing / commenting it out -->
+			<sampler input="oracle01" outputs="graphite" interval="10" disabled="true">
+				<placeholders>
+					<string-placeholder key="prefix" value="database.${input.name}" />
+				</placeholders>
 				<selectors>
-					<!-- we can of course specify regular expressions directly -->
+					<!-- we can of course specify regular expressions directly here too. -->
 					<regexp from-name="(.*)" to-name="${name[1]}"/>
 				</selectors>
 			</sampler>
@@ -150,6 +179,11 @@ Version 0.4.0
 * Fixed problems with multiple JDBC drivers
 * Renamed to metrics-sampler (from jmx-sampler) as it better reflects the purpose of the application
 * Improved debug logging
+* Performance logging using "timings" logger in debug level
+* Import local.sh settings from the starter script so that local settings do not get overwritten after an upgrade
+* Added support for low level socket options for the JMX input
+* Added support for placeholders in the name patterns
+* Added some more default placeholders for the JMX input
 
 Version 0.3.2
 -------------
