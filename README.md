@@ -20,8 +20,9 @@ Check out the following configuration as a quick-start:
 				<connection-properties>
 					<entry key="jmx.remote.x.request.waiting.timeout" value="100" />
 				</connection-properties>
-				<!-- Using the socket-options you can configure some low level socket options for the RMI connections - most notably the SO_TIMEOUT (in ms) -->
-				<socket-options so-timeout="200" keep-alive="false" />
+				<!-- Using the socket-options you can configure some low level socket options for the RMI connections - 
+				     most notably the SO_TIMEOUT (in ms) and the socket connection timeout (in ms) -->
+				<socket-options connect-timeout="100" so-timeout="200" keep-alive="false" send-buffer-size="16384" receive-buffer-size="16384" />
 			</jmx>
 			
 			<!-- WebLogic JMX server. Username, password etc. come from the template named "wls-template" -->
