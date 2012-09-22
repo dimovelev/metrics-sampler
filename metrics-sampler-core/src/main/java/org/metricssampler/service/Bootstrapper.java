@@ -6,4 +6,6 @@ import org.metricssampler.sampler.Sampler;
 public interface Bootstrapper {
 	Configuration getConfiguration();
 	Iterable<Sampler> getSamplers();
+	int getShutdownPort();
+	String getShutdownHost();
 }

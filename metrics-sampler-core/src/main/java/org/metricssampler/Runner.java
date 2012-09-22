@@ -1,7 +1,10 @@
 package org.metricssampler;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
 
 import org.apache.commons.io.IOUtils;
 import org.metricssampler.config.InputConfig;
@@ -26,6 +29,11 @@ public class Runner {
 		 * Start the application and sample forever
 		 */
 		START,
+		
+		/**
+		 * Stop the application
+		 */
+		STOP,
 		
 		/**
 		 * Check the configuration by fetching metrics from every enabled sampler and check whether each selector returns at least one metric.
@@ -74,6 +82,9 @@ public class Runner {
 			case START:
 				executeStart(bootstrapper);
 				break;
+			case STOP:
+				executeStop(bootstrapper);
+				break;
 			case CHECK:
 				executeCheck(bootstrapper);
 				break;
@@ -89,6 +100,18 @@ public class Runner {
 	private static void executeStart(final Bootstrapper bootstrapper) {
 		final Daemon daemon = new Daemon(bootstrapper);
 		daemon.start();
+	}
+
+	private static void executeStop(final Bootstrapper bootstrapper) {
+		try {
+			final Socket socket = new Socket(bootstrapper.getShutdownHost(), bootstrapper.getShutdownPort());
+			final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			writer.write("shutdown\n");
+			writer.close();
+			socket.close();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void executeCheck(final Bootstrapper bootstrapper) {

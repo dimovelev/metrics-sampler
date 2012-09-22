@@ -34,6 +34,9 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	private Configuration configuration;
 	private List<Sampler> samplers;
 
+	private String shutdownHost;
+	private int shutdownPort;
+
 	private DefaultBootstrapper() {
 	}
 	
@@ -55,8 +58,20 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	}
 
 	private void loadConfiguration(final String filename) {
+		loadFromEnvironment();
 		final ConfigurationLoader loader = new ConfigurationLoader(xbeanClasses);
 		configuration = loader.load(filename);
+	}
+
+	private void loadFromEnvironment() {
+		shutdownHost = System.getProperty("shutdown.host", "localhost");
+		shutdownPort = 0;
+		try {
+			shutdownPort = Integer.parseInt(System.getProperty("shutdown.port", "undefined"));
+		} catch (final NumberFormatException e) {
+			logger.warn("Please provide a valid shutdown port using -Dshutdown.port");
+			System.exit(-1);
+		}
 	}
 
 	private void createSamplers() {
@@ -136,5 +151,15 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	@Override
 	public Iterable<Sampler> getSamplers() {
 		return samplers;
+	}
+
+	@Override
+	public String getShutdownHost() {
+		return shutdownHost;
+	}
+
+	@Override
+	public int getShutdownPort() {
+		return shutdownPort;
 	}
 }
