@@ -23,6 +23,7 @@ public class ConfigurationXBean {
 	@XStreamAsAttribute
 	private int poolSize;
 
+	private List<IncludeXBean> includes;
 	private List<InputXBean> inputs;
 	private List<OutputXBean> outputs;
 	private List<SamplerXBean> samplers;
@@ -30,6 +31,14 @@ public class ConfigurationXBean {
 	
 	@XStreamAlias("selector-groups")
 	private List<SelectorGroupXBean> selectorGroups;
+
+	public List<IncludeXBean> getIncludes() {
+		return includes;
+	}
+
+	public void setIncludes(final List<IncludeXBean> includes) {
+		this.includes = includes;
+	}
 
 	public List<InputXBean> getInputs() {
 		return inputs;
@@ -147,6 +156,24 @@ public class ConfigurationXBean {
 			TemplatableXBeanUtils.applyTemplate(def, namedSamplers);
 			if (def.isInstantiatable()) {
 				result.add(def.toConfig(inputs, outputs, selectorGroups, placeholders));
+			}
+		}
+		return result;
+	}
+
+	public void include(final ConfigurationXBean includeConfig) {
+		inputs = addAllToList(inputs, includeConfig.getInputs());
+		outputs = addAllToList(outputs, includeConfig.getOutputs());
+		placeholders = addAllToList(placeholders, includeConfig.getPlaceholders());
+		selectorGroups = addAllToList(selectorGroups, includeConfig.getSelectorGroups());
+		samplers = addAllToList(samplers, includeConfig.getSamplers());
+	}
+	
+	private <T> List<T> addAllToList(final List<T> destination, final List<T> source) {
+		final List<T> result = destination != null ? destination : new LinkedList<T>();
+		if (source != null) {
+			for (final T item : source) {
+				result.add(item);
 			}
 		}
 		return result;
