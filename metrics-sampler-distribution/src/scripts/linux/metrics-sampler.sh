@@ -6,6 +6,7 @@ LOGCONFIG=$BASEDIR/config/logback.xml
 LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
 SHUTDOWN_PORT=28111
 JAVA_OPTS="-Dlogback.configurationFile=$LOGCONFIG -Dshutdown.port=$SHUTDOWN_PORT"
+VERSION="${project.version}"
 
 if [ -x $BASEDIR/bin/local.sh ]; then
 	. $BASEDIR/bin/local.sh
@@ -16,7 +17,7 @@ else
 	CONFIG="$BASEDIR/config/$2"
 fi
 
-pushd $BASEDIR
+pushd $BASEDIR > /dev/null
 
 if [ ! -e logs ]; then
         mkdir logs
@@ -42,10 +43,11 @@ case "$1" in
 		;;
 	*)
 		cat <<EOF
-Usage: $0 [start|stop|status|check|metadata]
+metrics-sampler version $VERSION
+Usage: `basename $0` [start|stop|check|test|metadata] [<config.xml>]
 
 start     Starts the application as a daemon in the background.
-stop      Stops a running daemon (if any). This also cleans up the pid file if the application has crashed.
+stop      Stops a running daemon (if any).
 check     Goes through all samplers and checks whether each rule matches at least one metric. Everything is logged to STDOUT.
 test      Calls all enabled samplers once and exits.
 metadata  Goes through all samplers and outputs the metadata of their readers. Use it to see what metrics are available and build
@@ -53,4 +55,4 @@ metadata  Goes through all samplers and outputs the metadata of their readers. U
 EOF
 		;;
 esac
-popd
+popd > /dev/null

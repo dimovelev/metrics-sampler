@@ -5,6 +5,7 @@
 	<id>all</id>
 	<formats>
 		<format>tar.gz</format>
+		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<moduleSets>
@@ -26,21 +27,16 @@
 				<unpack>false</unpack>
 				<directoryMode>700</directoryMode>
 				<fileMode>600</fileMode>
+				<outputFileNameMapping>${module.artifactId}.${module.extension}</outputFileNameMapping>
 			</binaries>
 		</moduleSet>
 	</moduleSets>
 	<dependencySets>
 		<dependencySet>
-<!-- 			<includes> -->
-<!-- 					<include>ch.qos.logback:logback-classic</include> -->
-<!-- 					<include>ch.qos.logback:logback-core</include> -->
-<!-- 					<include>org.slf4j:slf4j-api</include> -->
-<!-- 					<include>commons-codec:commons-codec</include> -->
-<!-- 					<include>com.thoughtworks.xstream:xstream</include> -->
-<!-- 			</includes> -->
 			<outputDirectory>lib</outputDirectory>
 			<directoryMode>700</directoryMode>
 			<fileMode>600</fileMode>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 		</dependencySet>
 	</dependencySets>
 	<fileSets>
@@ -57,6 +53,7 @@
 			<outputDirectory>bin</outputDirectory>
 			<directoryMode>700</directoryMode>
 			<fileMode>700</fileMode>
+			<filtered>true</filtered>
 		</fileSet>
 	</fileSets>
 </assembly>
