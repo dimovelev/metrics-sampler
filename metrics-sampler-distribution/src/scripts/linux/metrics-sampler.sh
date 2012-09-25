@@ -1,13 +1,13 @@
 #!/bin/bash
 JAVA=java
-BASEDIR=$(dirname $0)
-BASEDIR=$(readlink -f $BASEDIR/..)
+BASEDIR="$( cd -P "$( dirname "$0" )" && pwd )"
 LOGCONFIG=$BASEDIR/config/logback.xml
 LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
 CONTROL_PORT=28111
 CONTROL_HOST=localhost
-JAVA_OPTS="-Dlogback.configurationFile=$LOGCONFIG -Dcontrol.host=$CONTROL_HOST -Dcontrol.port=$CONTROL_PORT"
 VERSION="${project.version}"
+CLASSPATH="lib/*"
+JAVA_OPTS="-Dlogback.configurationFile=$LOGCONFIG -Dcontrol.host=$CONTROL_HOST -Dcontrol.port=$CONTROL_PORT -cp $CLASSPATH"
 
 if [ -x $BASEDIR/bin/local.sh ]; then
 	. $BASEDIR/bin/local.sh
@@ -26,11 +26,11 @@ fi
 
 case "$1" in
 	start)
-		nohup $JAVA $JAVA_OPTS -cp "lib/*" org.metricssampler.Runner start $CONFIG  > logs/console.out 2>&1 &
+		nohup $JAVA $JAVA_OPTS org.metricssampler.Start start $CONFIG  > logs/console.out 2>&1 &
 		echo "Started with pid $!"
 		;;
 	stop)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE -cp "lib/*" org.metricssampler.Stop
+		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Stop
 		echo "Stopped"
 		;;
 	restart)
@@ -39,16 +39,17 @@ case "$1" in
 		$0 start $2
 		;;
 	status)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE -cp "lib/*" org.metricssampler.Status
+		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Status
+		echo $?
 		;;
 	check)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE -cp "lib/*" org.metricssampler.Runner check $CONFIG
+		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Check $CONFIG
 		;;
 	test)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE -cp "lib/*" org.metricssampler.Runner test $CONFIG
+		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Test $CONFIG
 		;;
 	metadata)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE -cp "lib/*" org.metricssampler.Runner metadata $CONFIG
+		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Metadata $CONFIG
 		;;
 	*)
 		cat <<EOF

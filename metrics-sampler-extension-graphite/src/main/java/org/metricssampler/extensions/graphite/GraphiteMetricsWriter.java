@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
@@ -50,16 +51,8 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 	@Override
 	public void close() throws MetricWriteException {
 		if (isConnected()) {
-			try {
-				writer.close();
-			} catch (final IOException e) {
-				// Ignore
-			}
-			try {
-				socket.close();
-			} catch (final IOException e) {
-				// Ignore
-			}
+			IOUtils.closeQuietly(writer);
+			IOUtils.closeQuietly(socket);
 			writer = null;
 			socket = null;
 		}

@@ -6,14 +6,14 @@ import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
-public class Stop extends ControlCommand {
+public class Stop extends ControlRunner {
 
 	public static void main(final String[] args) {
-		new Stop().process(args);
+		new Stop().run(args);
 	}
 
 	@Override
-	protected void process(final String host, final int port, final String... args) {
+	protected void run(final String host, final int port, final String... args) {
 		try {
 			final Socket socket = new Socket(host, port);
 			final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));

@@ -8,14 +8,14 @@ import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
-public class Status extends ControlCommand {
+public class Status extends ControlRunner {
 
 	public static void main(final String[] args) {
-		new Status().process(args);
+		new Status().run(args);
 	}
 
 	@Override
-	protected void process(final String host, final int port, final String... args) {
+	protected void run(final String host, final int port, final String... args) {
 		try {
 			final Socket socket = new Socket(host, port);
 			final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));

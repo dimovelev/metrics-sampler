@@ -10,6 +10,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.naming.Context;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +58,8 @@ public class JmxConnection {
 	public void disconnect() {
 		if (serverConnection != null) {
 			serverConnection = null;
-			try {
-				logger.debug("Disconnecting");
-				connector.close();
-			} catch (final IOException e) {
-				// Ignore
-			}
+			logger.debug("Disconnecting");
+			IOUtils.closeQuietly(connector);
 			connector = null;
 		}
 	}
