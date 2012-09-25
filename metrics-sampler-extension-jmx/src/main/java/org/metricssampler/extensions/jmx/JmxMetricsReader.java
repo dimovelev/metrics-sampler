@@ -42,14 +42,14 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 
 	private final JmxInputConfig config;
 	private MetricsMetaData metadata;
-	private final Map<String, Object> placeholders;
+	private final Map<String, Object> variables;
 	private final JmxConnection connection;
 
 	public JmxMetricsReader(final JmxInputConfig config) {
 		this.config = config;
 		this.logger = LoggerFactory.getLogger("reader." + config.getName());
 		this.timingsLogger = LoggerFactory.getLogger("timings.reader");
-		placeholders = preparePlaceholders();
+		variables = prepareVariables();
 		try {
 			this.connection = new JmxConnection(config);
 		} catch (final IOException e) {
@@ -195,7 +195,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 		}
 	}
 
-	private Map<String, Object> preparePlaceholders() {
+	private Map<String, Object> prepareVariables() {
 		final Map<String, Object> result = new HashMap<String, Object>();
 		result.put("input.name", config.getName());
 		try {
@@ -234,8 +234,8 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 	}
 
 	@Override
-	public Map<String, Object> getPlaceholders() {
-		return placeholders;
+	public Map<String, Object> getVariables() {
+		return variables;
 	}
 
 	@Override

@@ -13,18 +13,18 @@
 		<console name="console" />
 		<graphite name="graphite" host="graphite.jmxsampler.org" port="2003" />
 	</outputs>
-	<placeholders>
-		<dictionary-placeholder key="memory-pools">
+	<variables>
+		<dictionary name="memory-pools">
 			<entry key="Old Space" value="old" />
 			<entry key="ClassBlock Memory" value="class-blocks" />
 			<entry key="Class Memory" value="classes" />
 			<entry key="Nursery" value="young" />
-		</dictionary-placeholder>
-		<dictionary-placeholder key="usage">
+		</dictionary>
+		<dictionary name="usage">
 			<entry key="Usage" value="current" />
 			<entry key="PeakUsage" value="peak" />
-		</dictionary-placeholder>
-	</placeholders>
+		</dictionary>
+	</variables>
 	<selector-groups>
 		<selector-group name="wls">
 			<regexp from-name="com\.bea:Name=DataSource_(.+),ServerRuntime=.+,Type=JDBCOracleDataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${input.name}.jdbc.${name[1]}.${name[2]}" />

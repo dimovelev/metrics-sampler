@@ -12,12 +12,12 @@ import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
 import org.metricssampler.config.loader.ConfigurationLoader;
 import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
-import org.metricssampler.config.loader.xbeans.DictionaryPlaceholderXBean;
+import org.metricssampler.config.loader.xbeans.DictionaryVariableXBean;
 import org.metricssampler.config.loader.xbeans.EntryXBean;
-import org.metricssampler.config.loader.xbeans.PlaceholderXBean;
+import org.metricssampler.config.loader.xbeans.VariableXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupXBean;
-import org.metricssampler.config.loader.xbeans.StringPlaceholderXBean;
+import org.metricssampler.config.loader.xbeans.StringVariableXBean;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
@@ -94,9 +94,9 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		xbeanClasses.add(ConfigurationXBean.class);
 		xbeanClasses.add(SelectorGroupXBean.class);
 		xbeanClasses.add(SelectorGroupRefXBean.class);
-		xbeanClasses.add(PlaceholderXBean.class);		
-		xbeanClasses.add(StringPlaceholderXBean.class);		
-		xbeanClasses.add(DictionaryPlaceholderXBean.class);		
+		xbeanClasses.add(VariableXBean.class);		
+		xbeanClasses.add(StringVariableXBean.class);		
+		xbeanClasses.add(DictionaryVariableXBean.class);		
 		xbeanClasses.add(EntryXBean.class);
 	}
 

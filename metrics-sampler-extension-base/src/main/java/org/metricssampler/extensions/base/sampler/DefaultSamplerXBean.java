@@ -9,10 +9,10 @@ import java.util.Map;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.Placeholder;
+import org.metricssampler.config.Variable;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.loader.xbeans.PlaceholderXBean;
+import org.metricssampler.config.loader.xbeans.VariableXBean;
 import org.metricssampler.config.loader.xbeans.SamplerXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
 import org.metricssampler.config.loader.xbeans.SelectorXBean;
@@ -32,7 +32,7 @@ public class DefaultSamplerXBean extends SamplerXBean {
 	@XStreamAsAttribute
 	private Boolean quiet = false;
 	
-	private List<PlaceholderXBean> placeholders;
+	private List<VariableXBean> variables;
 	
 	private List<SelectorXBean> selectors;
 
@@ -62,12 +62,12 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		this.outputs = outputs;
 	}
 
-	public List<PlaceholderXBean> getPlaceholders() {
-		return placeholders;
+	public List<VariableXBean> getVariables() {
+		return variables;
 	}
 
-	public void setPlaceholders(final List<PlaceholderXBean> placeholders) {
-		this.placeholders = placeholders;
+	public void setVariables(final List<VariableXBean> variables) {
+		this.variables = variables;
 	}
 
 	public List<SelectorXBean> getSelectors() {
@@ -96,22 +96,22 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		}
 	}
 	@Override
-	public SamplerConfig toConfig(final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorTemplates, final List<Placeholder> globalPlaceholders) {
+	public SamplerConfig toConfig(final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorTemplates, final List<Variable> globalVariables) {
 		validate();
 
 		final InputConfig inputConfig = configureInput(inputs);
 		final List<OutputConfig> outputConfigs = configureOutputs(outputs);
 		final List<SelectorConfig> selectorConfigs = configureSelectors(selectorTemplates);
-		final List<Placeholder> placeholderConfigs = configurePlaceholders(globalPlaceholders);
+		final List<Variable> variableConfigs = configureVariables(globalVariables);
 		
-		return new DefaultSamplerConfig(getName(), getInterval(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, placeholderConfigs, getQuiet() != null ? getQuiet() : false);
+		return new DefaultSamplerConfig(getName(), getInterval(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, variableConfigs, getQuiet() != null ? getQuiet() : false);
 	}
 
-	protected List<Placeholder> configurePlaceholders(final List<Placeholder> globalPlaceholders) {
-		final List<Placeholder> result = new LinkedList<Placeholder>();
-		result.addAll(globalPlaceholders);
-		if (getPlaceholders() != null) {
-			for (final PlaceholderXBean item : getPlaceholders()) {
+	protected List<Variable> configureVariables(final List<Variable> globalVariables) {
+		final List<Variable> result = new LinkedList<Variable>();
+		result.addAll(globalVariables);
+		if (getVariables() != null) {
+			for (final VariableXBean item : getVariables()) {
 				result.add(item.toConfig());
 			}
 		}

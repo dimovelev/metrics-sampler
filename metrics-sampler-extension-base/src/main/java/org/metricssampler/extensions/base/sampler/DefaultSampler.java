@@ -5,14 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.Placeholder;
+import org.metricssampler.config.Variable;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
-import org.metricssampler.selector.PlaceholderReplacer;
+import org.metricssampler.selector.VariableReplacer;
 import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
@@ -28,12 +28,12 @@ public class DefaultSampler implements Sampler {
 	private final List<MetricsWriter> writers = new LinkedList<MetricsWriter>();
 	private final List<MetricsSelector> selectors = new LinkedList<MetricsSelector>();
 
-	private final List<Placeholder> placeholders;
+	private final List<Variable> variables;
 	
-	public DefaultSampler(final DefaultSamplerConfig config, final MetricsReader reader, final List<Placeholder> placeholders) {
+	public DefaultSampler(final DefaultSamplerConfig config, final MetricsReader reader, final List<Variable> variables) {
 		this.config = config;
 		this.reader = reader;
-		this.placeholders = placeholders;
+		this.variables = variables;
 		logger = LoggerFactory.getLogger("sampler."+this.config.getName());
 		timingsLogger = LoggerFactory.getLogger("timings.sampler");
 	}
@@ -45,13 +45,13 @@ public class DefaultSampler implements Sampler {
 
 	public DefaultSampler addSelector(final MetricsSelector selector) {
 		selectors.add(selector);
-		final Map<String, Object> transformerPlaceholders = new HashMap<String, Object>();
-		final Map<String, Object> readerPlaceholders = reader.getPlaceholders();
-		transformerPlaceholders.putAll(readerPlaceholders);
-		for (final Placeholder placeholder : placeholders) {
-			transformerPlaceholders.put(placeholder.getKey(), PlaceholderReplacer.replace((String)placeholder.getValue(), transformerPlaceholders));
+		final Map<String, Object> transformerVariables = new HashMap<String, Object>();
+		final Map<String, Object> readerVariables = reader.getVariables();
+		transformerVariables.putAll(readerVariables);
+		for (final Variable variable : variables) {
+			transformerVariables.put(variable.getName(), VariableReplacer.replace((String)variable.getValue(), transformerVariables));
 		}
-		selector.setPlaceholders(transformerPlaceholders);
+		selector.setVariables(transformerVariables);
 		return this;
 	}
 

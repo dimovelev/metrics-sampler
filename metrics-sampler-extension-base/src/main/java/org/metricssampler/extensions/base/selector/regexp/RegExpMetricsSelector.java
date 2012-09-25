@@ -16,20 +16,20 @@ import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsMetaData;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.selector.MetricsSelector;
-import org.metricssampler.selector.PlaceholderReplacer;
 import org.metricssampler.selector.SelectedMetric;
+import org.metricssampler.selector.VariableReplacer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Select metrics using regular expressions and rename them using an expression that can contain placeholders. 
+ * Select metrics using regular expressions and rename them using an expression that can contain variables. 
  */
 public class RegExpMetricsSelector implements MetricsSelector {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private final PlaceholderReplacer placeholderReplacer = new PlaceholderReplacer();
+	private final VariableReplacer variableReplacer = new VariableReplacer();
 	
 	private final RegExpSelectorConfig config;
-	private Map<String, Object> placeholders;
+	private Map<String, Object> variables;
 
 	private MetricsMetaData cachedMetaData;
 	private List<SelectedMetric> cachedSelectedMetrics;
@@ -84,8 +84,8 @@ public class RegExpMetricsSelector implements MetricsSelector {
 	}
 	
 	@Override
-	public void setPlaceholders(final Map<String, Object> placeholders) {
-		this.placeholders = placeholders;
+	public void setVariables(final Map<String, Object> variables) {
+		this.variables = variables;
 		initializePatterns();
 	}
 
@@ -96,7 +96,7 @@ public class RegExpMetricsSelector implements MetricsSelector {
 
 	protected Pattern createNamePattern() {
 		if (config.hasNameFilter()) {
-			final String pattern = placeholderReplacer.replacePlaceholders(config.getNamePattern(), placeholders);
+			final String pattern = variableReplacer.replaceVariables(config.getNamePattern(), variables);
 			return Pattern.compile(pattern);
 		} else {
 			return null;
@@ -105,7 +105,7 @@ public class RegExpMetricsSelector implements MetricsSelector {
 
 	protected Pattern createDescriptionPattern() {
 		if (config.hasDescriptionFilter()) {
-			final String pattern = placeholderReplacer.replacePlaceholders(config.getDescriptionPattern(), placeholders);
+			final String pattern = variableReplacer.replaceVariables(config.getDescriptionPattern(), variables);
 			return Pattern.compile(pattern);
 		} else { 
 			return null;
@@ -153,8 +153,8 @@ public class RegExpMetricsSelector implements MetricsSelector {
 			}
 			context = addGroups(descriptionMatcher, "description", context);
 		}
-		context.putAll(placeholders);
-		final String newName = placeholderReplacer.replacePlaceholders(config.getKeyExpression(), context);
+		context.putAll(variables);
+		final String newName = variableReplacer.replaceVariables(config.getKeyExpression(), context);
 		return new SelectedMetric(from, newName);
 		
 	}

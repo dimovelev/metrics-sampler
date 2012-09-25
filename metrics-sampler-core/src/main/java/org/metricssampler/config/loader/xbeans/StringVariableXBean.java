@@ -2,13 +2,13 @@ package org.metricssampler.config.loader.xbeans;
 
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
-import org.metricssampler.config.StringPlaceholder;
+import org.metricssampler.config.StringVariable;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias("string-placeholder")
-public class StringPlaceholderXBean extends PlaceholderXBean {
+@XStreamAlias("string")
+public class StringVariableXBean extends VariableXBean {
 	@XStreamAsAttribute
 	private String value;
 
@@ -24,12 +24,12 @@ public class StringPlaceholderXBean extends PlaceholderXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("value", "string placeholder", getKey());
+		notEmpty("value", "string variable", getName());
 	}
 
 	@Override
-	public StringPlaceholder toConfig() {
+	public StringVariable toConfig() {
 		validate();
-		return new StringPlaceholder(getKey(), getValue());
+		return new StringVariable(getName(), getValue());
 	}
 }

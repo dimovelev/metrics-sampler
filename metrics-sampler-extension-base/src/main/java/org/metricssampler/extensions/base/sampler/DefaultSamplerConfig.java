@@ -5,25 +5,25 @@ import java.util.List;
 
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.Placeholder;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
+import org.metricssampler.config.Variable;
 
 public class DefaultSamplerConfig extends SamplerConfig {
 	private final InputConfig input;
 	private final List<OutputConfig> outputs;
 	private final List<SelectorConfig> selectors;
-	private final List<Placeholder> placeholders;
+	private final List<Variable> variables;
 	private final boolean quiet;
 
 	public DefaultSamplerConfig(final String name, final int interval, final boolean disabled, final InputConfig input,
-			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final List<Placeholder> placeholders,
+			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final List<Variable> variables,
 			final boolean quiet) {
 		super(name, interval, disabled);
 		this.input = input;
 		this.outputs = outputs;
 		this.selectors = selectors;
-		this.placeholders = placeholders;
+		this.variables = variables;
 		this.quiet = quiet;
 	}
 
@@ -39,8 +39,8 @@ public class DefaultSamplerConfig extends SamplerConfig {
 		return Collections.unmodifiableList(selectors);
 	}
 
-	public List<Placeholder> getPlaceholders() {
-		return placeholders;
+	public List<Variable> getVariables() {
+		return Collections.unmodifiableList(variables);
 	}
 
 	@Override

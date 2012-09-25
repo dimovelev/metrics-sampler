@@ -71,7 +71,7 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 	}
 
 	@Override
-	public Map<String, Object> getPlaceholders() {
+	public Map<String, Object> getVariables() {
 		final Map<String, Object> result = new HashMap<String, Object>();
 		result.put("input.name", config.getName());
 		return result;

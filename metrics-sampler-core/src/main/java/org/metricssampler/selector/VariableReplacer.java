@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper class that handles the replacement of placeholders within a string. Instances are thread-safe and can be reused.
+ * Helper class that handles the replacement of variables within a string. Instances are thread-safe and can be reused.
  */
-public class PlaceholderReplacer {
+public class VariableReplacer {
 	public static final String START = "${";
 	public static final String END = "}";
 	public static final String FUNCTION_PREFIX = "fn:";
@@ -16,10 +16,10 @@ public class PlaceholderReplacer {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public static String replace(final String expression, final Map<String, Object> replacements) {
-		return new PlaceholderReplacer().replacePlaceholders(expression, replacements);
+		return new VariableReplacer().replaceVariables(expression, replacements);
 	}
 	
-	public String replacePlaceholders(final String expression, final Map<String, Object> replacements) {
+	public String replaceVariables(final String expression, final Map<String, Object> replacements) {
 		final StringBuilder result = new StringBuilder();
 		int prevIdx = 0;
 		int idx = expression.indexOf(START);
@@ -28,17 +28,17 @@ public class PlaceholderReplacer {
 			prevIdx = idx;
 			idx = expression.indexOf(END, idx);
 			if (idx >= 0) {
-				final String placeholder = expression.substring(prevIdx+START.length(), idx);
+				final String variableName = expression.substring(prevIdx+START.length(), idx);
 				Object newValue = null;
-				if (placeholder.startsWith(FUNCTION_PREFIX)) {
-					newValue = processFunction(placeholder, replacements); 
+				if (variableName.startsWith(FUNCTION_PREFIX)) {
+					newValue = processFunction(variableName, replacements); 
 				} else { 
-					newValue = replacements.get(placeholder);
+					newValue = replacements.get(variableName);
 				}	
 				if (newValue != null) {
 					result.append(newValue);
 				} else {
-					result.append(START).append(placeholder).append(END);
+					result.append(START).append(variableName).append(END);
 				}
 				prevIdx = idx+END.length();
 			} else {
@@ -50,12 +50,12 @@ public class PlaceholderReplacer {
 		return result.toString();
 	}
 
-	protected Object processFunction(final String placeholder, final Map<String, Object> replacements) {
-		final int idxLeftPar = placeholder.indexOf('(');
-		final String name = placeholder.substring(FUNCTION_PREFIX.length(), idxLeftPar);
+	protected Object processFunction(final String variableName, final Map<String, Object> replacements) {
+		final int idxLeftPar = variableName.indexOf('(');
+		final String name = variableName.substring(FUNCTION_PREFIX.length(), idxLeftPar);
 		if ("map".equals(name)) {
-			final int idxRightPar = placeholder.indexOf(")", idxLeftPar);
-			final String paramsSpec = placeholder.substring(idxLeftPar+1, idxRightPar);
+			final int idxRightPar = variableName.indexOf(")", idxLeftPar);
+			final String paramsSpec = variableName.substring(idxLeftPar+1, idxRightPar);
 			final String[] params = paramsSpec.split(",");
 			if (params.length == 2) {
 				@SuppressWarnings("unchecked")
@@ -64,7 +64,7 @@ public class PlaceholderReplacer {
 					final String key = (String) replacements.get(params[1]);
 					return dictionary.get(key);
 				} else {
-					logger.warn("No placeholder named \"{}\" could be found", params[0]);
+					logger.warn("No variable named \"{}\" could be found", params[0]);
 				}
 			} else {
 				logger.warn("Function map expects 2 parameters not {}", params.length);

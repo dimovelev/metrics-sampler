@@ -11,14 +11,14 @@ public class Configuration {
 	private final Collection<InputConfig> inputs;
 	private final Collection<OutputConfig> outputs;
 	private final Collection<SamplerConfig> samplers;
-	private final Collection<Placeholder> placeholders;
+	private final Collection<Variable> variables;
 	
-	public Configuration(final int poolSize, final Collection<InputConfig> inputs, final Collection<OutputConfig> outputs, final Collection<SamplerConfig> samplers, final Collection<Placeholder> placeholders) {
+	public Configuration(final int poolSize, final Collection<InputConfig> inputs, final Collection<OutputConfig> outputs, final Collection<SamplerConfig> samplers, final Collection<Variable> variables) {
 		this.poolSize = poolSize;
 		this.inputs = inputs;
 		this.outputs = outputs;
 		this.samplers = samplers;
-		this.placeholders = placeholders;
+		this.variables = variables;
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class Configuration {
 		return Collections.unmodifiableCollection(samplers);
 	}
 
-	public Collection<Placeholder> getPlaceholders() {
-		return Collections.unmodifiableCollection(placeholders);
+	public Collection<Variable> getVariables() {
+		return Collections.unmodifiableCollection(variables);
 	}
 }

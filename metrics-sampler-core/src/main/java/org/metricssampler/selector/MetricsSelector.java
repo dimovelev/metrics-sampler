@@ -15,7 +15,7 @@ public interface MetricsSelector {
 	 */
 	Map<String, MetricValue> readMetrics(MetricsReader reader);
 
-	void setPlaceholders(Map<String, Object> placeholders);
+	void setVariables(Map<String, Object> variables);
 	
 	/**
 	 * @param reader

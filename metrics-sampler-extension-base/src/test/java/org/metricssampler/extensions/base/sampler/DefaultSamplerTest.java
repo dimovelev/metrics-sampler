@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.metricssampler.config.Placeholder;
+import org.metricssampler.config.Variable;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.writer.MetricsWriter;
@@ -33,7 +33,7 @@ public class DefaultSamplerTest {
 		transformer2 = mock(MetricsSelector.class);
 		
 		config = mock(DefaultSamplerConfig.class);
-		testee = new DefaultSampler(config, bulkReader, new LinkedList<Placeholder>());
+		testee = new DefaultSampler(config, bulkReader, new LinkedList<Variable>());
 		testee.addWriter(writer1);
 		testee.addWriter(writer2);
 		testee.addSelector(transformer1);

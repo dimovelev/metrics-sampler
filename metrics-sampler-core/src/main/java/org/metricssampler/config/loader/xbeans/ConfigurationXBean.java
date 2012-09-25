@@ -10,7 +10,7 @@ import org.metricssampler.config.Configuration;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.Placeholder;
+import org.metricssampler.config.Variable;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
 
@@ -27,7 +27,7 @@ public class ConfigurationXBean {
 	private List<InputXBean> inputs;
 	private List<OutputXBean> outputs;
 	private List<SamplerXBean> samplers;
-	private List<PlaceholderXBean> placeholders;
+	private List<VariableXBean> variables;
 	
 	@XStreamAlias("selector-groups")
 	private List<SelectorGroupXBean> selectorGroups;
@@ -80,27 +80,27 @@ public class ConfigurationXBean {
 		this.poolSize = poolSize;
 	}
 
-	public List<PlaceholderXBean> getPlaceholders() {
-		return placeholders;
+	public List<VariableXBean> getVariables() {
+		return variables;
 	}
 
-	public void setPlaceholders(final List<PlaceholderXBean> placeholders) {
-		this.placeholders = placeholders;
+	public void setVariables(final List<VariableXBean> variables) {
+		this.variables = variables;
 	}
 
 	public Configuration toConfig() {
-		final List<Placeholder> placeholders = configurePlaceholders(getPlaceholders());
+		final List<Variable> variables = configureVariablese(getVariables());
 		final Map<String, InputConfig> inputs = configureInputs(getInputs());
 		final Map<String, OutputConfig> outputs = configureOutputs(getOutputs());
 		final Map<String, List<SelectorConfig>> selectorGroups = configureSelectorGroups(getSelectorGroups());
-		final List<SamplerConfig> samplers = configureSamplers(getSamplers(), inputs, outputs, selectorGroups, placeholders);
-		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, placeholders);
+		final List<SamplerConfig> samplers = configureSamplers(getSamplers(), inputs, outputs, selectorGroups, variables);
+		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, variables);
 	}
 
-	private List<Placeholder> configurePlaceholders(final List<PlaceholderXBean> items) {
-		final List<Placeholder> result = new LinkedList<Placeholder>();
+	private List<Variable> configureVariablese(final List<VariableXBean> items) {
+		final List<Variable> result = new LinkedList<Variable>();
 		if (items != null) {
-			for (final PlaceholderXBean item : items) {
+			for (final VariableXBean item : items) {
 				result.add(item.toConfig());
 			}
 		}
@@ -148,14 +148,14 @@ public class ConfigurationXBean {
 		return result;
 	}
 
-	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final List<Placeholder> placeholders) {
+	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final List<Variable> variables) {
 		final LinkedHashMap<String, SamplerXBean> namedSamplers = TemplatableXBeanUtils.sortByDependency(samplers); 
 
 		final List<SamplerConfig> result = new LinkedList<SamplerConfig>();
 		for (final SamplerXBean def : samplers) {
 			TemplatableXBeanUtils.applyTemplate(def, namedSamplers);
 			if (def.isInstantiatable()) {
-				result.add(def.toConfig(inputs, outputs, selectorGroups, placeholders));
+				result.add(def.toConfig(inputs, outputs, selectorGroups, variables));
 			}
 		}
 		return result;
@@ -164,7 +164,7 @@ public class ConfigurationXBean {
 	public void include(final ConfigurationXBean includeConfig) {
 		inputs = addAllToList(inputs, includeConfig.getInputs());
 		outputs = addAllToList(outputs, includeConfig.getOutputs());
-		placeholders = addAllToList(placeholders, includeConfig.getPlaceholders());
+		variables = addAllToList(variables, includeConfig.getVariables());
 		selectorGroups = addAllToList(selectorGroups, includeConfig.getSelectorGroups());
 		samplers = addAllToList(samplers, includeConfig.getSamplers());
 	}
