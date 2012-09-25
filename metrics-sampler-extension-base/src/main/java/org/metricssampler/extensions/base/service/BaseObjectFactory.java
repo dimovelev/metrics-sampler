@@ -45,7 +45,7 @@ public class BaseObjectFactory extends AbstractLocalObjectFactory {
 	protected Sampler doNewSampler(final SamplerConfig config) {
 		final DefaultSamplerConfig actualConfig = (DefaultSamplerConfig) config;
 		final MetricsReader reader = getGlobalFactory().newReaderForInput(actualConfig.getReader());
-		final DefaultSampler result = new DefaultSampler(actualConfig, reader, actualConfig.getVariables());
+		final DefaultSampler result = new DefaultSampler(actualConfig, reader);
 		for (final OutputConfig writerConfig : actualConfig.getOutputs()) {
 			result.addWriter(getGlobalFactory().newWriterForOutput(writerConfig));
 		}

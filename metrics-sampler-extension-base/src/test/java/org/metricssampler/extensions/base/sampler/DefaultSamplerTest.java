@@ -4,11 +4,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.LinkedList;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.metricssampler.config.Variable;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.writer.MetricsWriter;
@@ -33,7 +30,7 @@ public class DefaultSamplerTest {
 		transformer2 = mock(MetricsSelector.class);
 		
 		config = mock(DefaultSamplerConfig.class);
-		testee = new DefaultSampler(config, bulkReader, new LinkedList<Variable>());
+		testee = new DefaultSampler(config, bulkReader);
 		testee.addWriter(writer1);
 		testee.addWriter(writer2);
 		testee.addSelector(transformer1);

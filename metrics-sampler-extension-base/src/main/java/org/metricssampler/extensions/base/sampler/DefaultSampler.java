@@ -28,14 +28,23 @@ public class DefaultSampler implements Sampler {
 	private final List<MetricsWriter> writers = new LinkedList<MetricsWriter>();
 	private final List<MetricsSelector> selectors = new LinkedList<MetricsSelector>();
 
-	private final List<Variable> variables;
+	private final Map<String, Object> variables;
 	
-	public DefaultSampler(final DefaultSamplerConfig config, final MetricsReader reader, final List<Variable> variables) {
+	public DefaultSampler(final DefaultSamplerConfig config, final MetricsReader reader) {
 		this.config = config;
 		this.reader = reader;
-		this.variables = variables;
+		this.variables = prepareVariables(); 
 		logger = LoggerFactory.getLogger("sampler."+this.config.getName());
 		timingsLogger = LoggerFactory.getLogger("timings.sampler");
+	}
+
+	private Map<String, Object> prepareVariables() {
+		final Map<String, Object> result = new HashMap<String, Object>();
+		result.putAll(reader.getVariables());
+		for (final Variable variable : config.getVariables()) {
+			result.put(variable.getName(), VariableReplacer.replace((String)variable.getValue(), result));
+		}
+		return result;
 	}
 
 	public DefaultSampler addWriter(final MetricsWriter writer) {
@@ -45,13 +54,7 @@ public class DefaultSampler implements Sampler {
 
 	public DefaultSampler addSelector(final MetricsSelector selector) {
 		selectors.add(selector);
-		final Map<String, Object> transformerVariables = new HashMap<String, Object>();
-		final Map<String, Object> readerVariables = reader.getVariables();
-		transformerVariables.putAll(readerVariables);
-		for (final Variable variable : variables) {
-			transformerVariables.put(variable.getName(), VariableReplacer.replace((String)variable.getValue(), transformerVariables));
-		}
-		selector.setVariables(transformerVariables);
+		selector.setVariables(variables);
 		return this;
 	}
 
