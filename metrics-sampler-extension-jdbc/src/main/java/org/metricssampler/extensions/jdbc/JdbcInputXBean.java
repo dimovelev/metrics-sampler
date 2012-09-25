@@ -48,7 +48,7 @@ public class JdbcInputXBean extends InputXBean {
 	@Override
 	protected InputConfig createConfig() {
 		final Map<String, String> jdbcOptions = options != null ? options.toMap() : Collections.<String,String>emptyMap();
-		return new JdbcInputConfig(getName(), getUrl(), getDriver(), getUsername(), getPassword(), getQueries(), jdbcOptions);
+		return new JdbcInputConfig(getName(), getVariablesConfig(), getUrl(), getDriver(), getUsername(), getPassword(), getQueries(), jdbcOptions);
 	}
 
 	public String getUrl() {

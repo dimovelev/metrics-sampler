@@ -5,11 +5,13 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.Variable;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
@@ -23,10 +25,21 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 	private final Logger logger;
 	private final JdbcInputConfig config;
 	private Connection connection;
-	 
+	private final Map<String, Object> variables;
+	
 	public JdbcMetricsReader(final JdbcInputConfig config) {
 		this.config = config;
 		this.logger = LoggerFactory.getLogger("reader."+config.getName());
+		this.variables = prepareVariables();
+	}
+
+	private Map<String, Object> prepareVariables() {
+		final Map<String, Object> result = new HashMap<String, Object>();
+		for (final Variable variable : config.getVariables()) {
+			result.put(variable.getName(), variable.getValue());
+		}
+		result.put("input.name", config.getName());
+		return Collections.unmodifiableMap(result);
 	}
 
 	@Override
@@ -72,9 +85,7 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 
 	@Override
 	public Map<String, Object> getVariables() {
-		final Map<String, Object> result = new HashMap<String, Object>();
-		result.put("input.name", config.getName());
-		return result;
+		return variables;
 	}
 
 	@Override

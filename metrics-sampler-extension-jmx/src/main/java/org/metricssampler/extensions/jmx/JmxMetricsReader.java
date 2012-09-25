@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.remote.JMXServiceURL;
 
+import org.metricssampler.config.Variable;
 import org.metricssampler.reader.MetaDataMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
@@ -197,6 +199,9 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 
 	private Map<String, Object> prepareVariables() {
 		final Map<String, Object> result = new HashMap<String, Object>();
+		for (final Variable variable : config.getVariables()) {
+			result.put(variable.getName(), variable.getValue());
+		}
 		result.put("input.name", config.getName());
 		try {
 			final JMXServiceURL url = new JMXServiceURL(config.getUrl());
@@ -222,7 +227,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 			e.printStackTrace();
 			// ignore
 		}
-		return result;
+		return Collections.unmodifiableMap(result);
 	}
 
 	@Override

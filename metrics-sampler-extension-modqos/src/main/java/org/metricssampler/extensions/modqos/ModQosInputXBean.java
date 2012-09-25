@@ -81,7 +81,7 @@ public class ModQosInputXBean extends InputXBean {
 			if (auth != null && auth.equals("basic")) {
 				authType = AuthenticationType.BASIC;
 			}
-			return new ModQosInputConfig(getName(), new URL(getUrl()), username, password, authType);
+			return new ModQosInputConfig(getName(), getVariablesConfig(), new URL(getUrl()), username, password, authType);
 		} catch (final MalformedURLException e) {
 			throw new ConfigurationException("Invalid URL: "+e.getMessage());
 		}
