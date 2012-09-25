@@ -1,4 +1,4 @@
-<configuration scan="true" scanPeriod="60 seconds">
+<configuration scan="true" scanPeriod="10 seconds">
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 		<file>logs/metrics-sampler.log</file>
 		<encoder>
