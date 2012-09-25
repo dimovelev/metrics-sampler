@@ -1,14 +1,17 @@
 package org.metricssampler;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.IOUtils;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.service.Bootstrapper;
@@ -48,9 +51,11 @@ public class Daemon {
 				while (true) {
 					Socket socket = null;
 					BufferedReader reader = null;
+					BufferedWriter writer = null;
 					try {
 						socket = serverSocket.accept();
 						reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+						writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 						String line;
 						while ( (line = reader.readLine()) != null) {
 							if ("shutdown".equals(line)) {
@@ -64,28 +69,23 @@ public class Daemon {
 									logger.warn("Thread pool failed to gracefully shutdown within 20 seconds. Forcing shtudown");
 								}
 								System.exit(0);
+							} else if ("status".equals(line)) {
+								logger.debug("Status command received. Responding with ok.");
+								writer.write("ok\n");
+								writer.flush();
+								break;
 							} else {
 								logger.warn("Unknown command \"{}\"", line);
 							}
 						}
 						reader.close();
+						writer.close();
 						socket.close();
 					} catch (final IOException e) {
 						logger.warn("Failed to accept connection from client", e);
-						if (reader != null) {
-							try {
-								reader.close();
-							} catch (final IOException e1) {
-								// Ignore
-							}
-						}
-						if (socket != null) {
-							try {
-								socket.close();
-							} catch (final IOException e1) {
-								// Ignore
-							}
-						}
+						IOUtils.closeQuietly(reader);
+						IOUtils.closeQuietly(writer);
+						IOUtils.closeQuietly(socket);
 						continue;
 					}
 				}
@@ -97,11 +97,11 @@ public class Daemon {
 	private void bindControlEndpoint() {
 		try {
 			serverSocket = new ServerSocket();
-			final InetSocketAddress endpoint = new InetSocketAddress(bootstrapper.getShutdownHost(), bootstrapper.getShutdownPort());
+			final InetSocketAddress endpoint = new InetSocketAddress(bootstrapper.getControlHost(), bootstrapper.getControlPort());
 			serverSocket.bind(endpoint);
-			logger.info("Bound control endpoint at {}:{}", bootstrapper.getShutdownHost(), bootstrapper.getShutdownPort());
+			logger.info("Bound control endpoint at {}:{}", bootstrapper.getControlHost(), bootstrapper.getControlPort());
 		} catch (final IOException e) {
-			logger.error("Failed to bind control endpoint at {}:{}", bootstrapper.getShutdownHost(), bootstrapper.getShutdownPort());
+			logger.error("Failed to bind control endpoint at {}:{}", bootstrapper.getControlHost(), bootstrapper.getControlPort());
 		}
 	}
 

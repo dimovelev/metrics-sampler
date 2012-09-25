@@ -34,8 +34,8 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	private Configuration configuration;
 	private List<Sampler> samplers;
 
-	private String shutdownHost;
-	private int shutdownPort;
+	private String controlHost;
+	private int controlPort;
 
 	private DefaultBootstrapper() {
 	}
@@ -45,6 +45,12 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		result.initialize();
 		result.loadConfiguration(filename);
 		result.createSamplers();
+		return result;
+	}
+	
+	public static Bootstrapper bootstrap() {
+		final DefaultBootstrapper result = new DefaultBootstrapper();
+		result.loadFromEnvironment();
 		return result;
 	}
 
@@ -64,12 +70,12 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	}
 
 	private void loadFromEnvironment() {
-		shutdownHost = System.getProperty("shutdown.host", "localhost");
-		shutdownPort = 0;
+		controlHost = System.getProperty("control.host", "localhost");
+		controlPort = 0;
 		try {
-			shutdownPort = Integer.parseInt(System.getProperty("shutdown.port", "undefined"));
+			controlPort = Integer.parseInt(System.getProperty("control.port", "undefined"));
 		} catch (final NumberFormatException e) {
-			logger.warn("Please provide a valid shutdown port using -Dshutdown.port");
+			logger.warn("Please provide a valid shutdown port using -Dcontrol.port");
 			System.exit(-1);
 		}
 	}
@@ -154,12 +160,12 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	}
 
 	@Override
-	public String getShutdownHost() {
-		return shutdownHost;
+	public String getControlHost() {
+		return controlHost;
 	}
 
 	@Override
-	public int getShutdownPort() {
-		return shutdownPort;
+	public int getControlPort() {
+		return controlPort;
 	}
 }
