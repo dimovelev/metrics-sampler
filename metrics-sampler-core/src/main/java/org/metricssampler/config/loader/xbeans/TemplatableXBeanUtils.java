@@ -22,10 +22,10 @@ public class TemplatableXBeanUtils {
 
 	private static <T extends TemplatableXBean> void addDependency(final T item, final LinkedHashMap<String, T> result, final Map<String, T> map) {
 		if (!result.containsKey(item.getName())) {
-			if (item.hasTemplate()) {
-				final T parent = map.get(item.getTemplate());
+			if (item.hasParent()) {
+				final T parent = map.get(item.getParent());
 				if (parent == null) {
-					throw new ConfigurationException("Template named \"" + item.getTemplate() + "\" not found");
+					throw new ConfigurationException("Template named \"" + item.getParent() + "\" not found");
 				}
 				addDependency(parent, result, map);
 			}
@@ -42,15 +42,15 @@ public class TemplatableXBeanUtils {
 	}
 
 	public static <T extends TemplatableXBean> void applyTemplate(final T target, final LinkedHashMap<String, T> xbeans) {
-		if (!target.hasTemplate()) {
+		if (!target.hasParent()) {
 			return;
 		}
 		try {
-			final T template = xbeans.get(target.getTemplate());
+			final T parent = xbeans.get(target.getParent());
 			@SuppressWarnings("unchecked")
-			final Map<String, Object> templateProperties = PropertyUtils.describe(template);
+			final Map<String, Object> templateProperties = PropertyUtils.describe(parent);
 			templateProperties.remove("name");
-			templateProperties.remove("abstract");
+			templateProperties.remove("template");
 			
 			@SuppressWarnings("unchecked")
 			final Map<String, Object> targetProperties = PropertyUtils.describe(target);

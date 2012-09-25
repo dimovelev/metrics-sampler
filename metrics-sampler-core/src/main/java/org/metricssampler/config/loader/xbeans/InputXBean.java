@@ -22,7 +22,7 @@ public abstract class InputXBean extends TemplatableXBean {
 	}
 
 	public InputConfig toConfig() {
-		if (isAbstract()) {
+		if (isTemplate()) {
 			throw new ConfigurationException("Tried to use abstract bean \"" + getName() + "\"");
 		}
 		validate();

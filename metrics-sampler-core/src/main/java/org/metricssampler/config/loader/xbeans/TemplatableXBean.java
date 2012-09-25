@@ -1,6 +1,5 @@
 package org.metricssampler.config.loader.xbeans;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -11,36 +10,35 @@ public abstract class TemplatableXBean extends NamedXBean {
 	 * The name of another named xbean that will be used as template to set default values
 	 */
 	@XStreamAsAttribute
-	private String template;
+	private String parent;
 
 	/**
 	 * <code>true</code> if this xbean is a template. <code>false</code> otherwise.
 	 */
 	@XStreamAsAttribute
-	@XStreamAlias("abstract")
-	private boolean _abstract;
+	private boolean template;
 	
-	public String getTemplate() {
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(final String parent) {
+		this.parent = parent;
+	}
+	
+	public boolean hasParent() {
+		return parent != null;
+	}
+
+	public boolean isTemplate() {
 		return template;
-	}
-
-	public void setTemplate(final String template) {
-		this.template = template;
-	}
-	
-	public boolean hasTemplate() {
-		return template != null;
-	}
-
-	public boolean isAbstract() {
-		return _abstract;
 	}
 	
 	public boolean isInstantiatable() {
-		return !isAbstract();
+		return !isTemplate();
 	}
 	
-	public void setAbstract(final boolean _abstract) {
-		this._abstract = _abstract;
+	public void setTemplate(final boolean template) {
+		this.template = template;
 	}
 }

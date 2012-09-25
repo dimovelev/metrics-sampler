@@ -1,11 +1,11 @@
 <configuration pool-size="10">
 	<inputs>
-		<jmx name="wls-template" abstract="true" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true">
+		<jmx name="wls-template" template="true" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true">
  			<ignore-object-names>
  				<ignore-object-name regexp="^com\.oracle\.jrockit:type=Flight.+" />
  			</ignore-object-names>
 		</jmx>
- 		<jmx name="wls01" url="service:jmx:t3://weblogic1.jmxsampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" template="wls-template" />
+ 		<jmx name="wls01" url="service:jmx:t3://weblogic1.jmxsampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" parent="wls-template" />
  		<jmx name="tomcat01" url="service:jmx:rmi:///jndi/rmi://tomcat.jmxsampler.org:9001/jmxrmi" persistent-connection="true" />
 		<mod-qos name="apache01" url="http://apache.jmxsampler.org:8240/qos-viewer?auto" username="user" password="pass" auth="basic"/>
 	</inputs>
