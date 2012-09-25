@@ -26,7 +26,6 @@
 		<module>metrics-sampler-extension-graphite</module>
 		<module>metrics-sampler-extension-modqos</module>
 		<module>metrics-sampler-extension-jdbc</module>
-		<module>metrics-sampler-tester</module>
 		<module>metrics-sampler-distribution</module>
 	</modules>
 	<build>
