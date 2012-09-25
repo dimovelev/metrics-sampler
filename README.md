@@ -6,7 +6,7 @@ Example Configuration
 ---------------------
 Check out the following configuration as a quick-start:
 
-	<!-- pool-size is the number of threads to use for the samplers -->
+	<!-- pool size is the number of threads to use for the samplers -->
 	<configuration pool-size="10">
 		<inputs>
 			<!-- this is an example of a template - its values will be copied to any input that references it using the "template" attribute. Due to abstract=true it can never be used in a sampler 
@@ -23,9 +23,13 @@ Check out the following configuration as a quick-start:
 				<!-- Using the socket-options you can configure some low level socket options for the RMI connections - 
 				     most notably the SO_TIMEOUT (in ms) and the socket connection timeout (in ms) -->
 				<socket-options connect-timeout="100" so-timeout="200" keep-alive="false" send-buffer-size="16384" receive-buffer-size="16384" />
+				<!-- You can also define variables here -->
+				<variables>
+					<string name="whatever" value="value" /> 
+				</variables>
 			</jmx>
 			
-			<!-- WebLogic JMX server. Username, password etc. come from the template named "wls-template" -->
+			<!-- WebLogic JMX server. Username, password, variables, ignores, etc. are taken from the template named "wls-template" -->
 			<jmx name="wls01" url="service:jmx:t3://weblogic1.metrics-sampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" template="wls-template" />
 			<jmx name="wls02" url="service:jmx:t3://weblogic2.metrics-sampler.org:6001/jndi/weblogic.management.mbeanservers.runtime" template="wls-template" />
 			
@@ -46,19 +50,25 @@ Check out the following configuration as a quick-start:
 			<!-- Send to graphite running on port 2003 -->
 			<graphite name="graphite" host="graphite.metrics-sampler.org" port="2003" />
 		</outputs>
+		
+		<!-- we can also define some global variables that will be available in all samplers (unless overridden) -->
+		<variables>
+			<string name="tomcat.port" value="8080" />
+		</variables>
+		
 		<!-- we define some regular expressions in groups so that we can reuse them later in the samplers -->
 		<selector-groups>
 			<selector-group name="wls">
-				<!-- from-name is a regular expression that is matched against e.g. the JMX Metric Name (consisting of canonical object name # attribute name). The string can also contain references to placeholders in the form ${name}. 
-				     to-name is an expression (not a regular expression) that can use placeholders for things like captured groups from the name's regular expression. -->
+				<!-- from-name is a regular expression that is matched against e.g. the JMX Metric Name (consisting of canonical object name # attribute name). The string can also contain references to variables in the form ${name}. 
+				     to-name is an expression (not a regular expression) that can use variables for things like captured groups from the name's regular expression. -->
 				<regexp from-name="com\.bea:Name=DataSource_(.+),ServerRuntime=.+,Type=JDBCOracleDataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${prefix}.jdbc.${name[1]}.${name[2]}" />
 				<regexp from-name="com\.bea:Name=JTARuntime,ServerRuntime=.*,Type=JTARuntime\.(.*TotalCount)" to-name="${prefix}.jta.${name[1]}" />
 				<regexp from-name="com\.bea:Name=ThreadPoolRuntime,ServerRuntime=.*,Type=ThreadPoolRuntime\.(CompletedRequestCount|ExecuteThreadIdleCount|ExecuteThreadTotalCount|HoggingThreadCount|MinThreadsConstraintsCompleted|MinThreadsConstraintsPending|PendingUserRequestCount|QueueLength|SharedCapacityForWorkManagers|StandbyThreadCount|Throughput)" to-name="${prefix}.threads.${name[1]}"/>
 				<regexp from-name="com\.bea:Name=.*,ServerRuntime=.*,Type=JRockitRuntime\.(JvmProcessorLoad|TotalGarbageCollectionCount|TotalGarbageCollectionTime|FreePhysicalMemory|UsedPhysicalMemory|Uptime)" to-name="${prefix}.jrockit.${name[1]}" />
 			</selector-group>
 			<selector-group name="tomcat">
-				<!-- note that you can use placeholders in the from-name too. These must be explictly defined in the sampler (or come from the input reader) -->
-				<regexp from-name="Catalina:type=GlobalRequestProcessor,name=http-${port}.\.(requestCount|bytesSent|bytesReceived)" to-name="${prefix}.http.${name[1]}"/>
+				<!-- note that you can use variables in the from-name too. These must be explicitly defined in the sampler (or come from the input reader) -->
+				<regexp from-name="Catalina:type=GlobalRequestProcessor,name=http-${tomcat.port}.\.(requestCount|bytesSent|bytesReceived)" to-name="${prefix}.http.${name[1]}"/>
 			</selector-group>
 			<selector-group name="mod_qos">
 				<regexp from-name=".*,metric=([^,]+),path=/([^.]+)\.(current|limit)" to-name="${prefix}.${name[2]}.${name[1]}.${name[3]}"/>
@@ -75,38 +85,43 @@ Check out the following configuration as a quick-start:
 				<selectors>
 					<use-group name="wls" />
 				</selectors>
-				<!-- these placeholders are added to the one's defined by the input itself (e.g. input.name, input.host, input.fqhn, input.ip, input.hostname, etc.)
-				<placeholders>
-					<string-placeholder key="prefix" value="backend.${input.name}" />
-				</placeholders>
+				<!-- these variables are added to the one's defined by the input itself (e.g. input.name, input.host, input.fqhn, input.ip, input.hostname, etc.)
+				<variables>
+					<string name="prefix" value="backend.${input.name}" />
+				</variables>
 			</sampler>
-			<!-- fetch data from wls01 input, use the regular expressions in a group named "wls" to select and rename metrics and send them to graphite every 10 seconds. -->
+			
+			<!-- fetch data from wls01 input, use the regular expressions in a group named "wls" to select and rename metrics and send them to graphite every 10 seconds. If you specify a child its value will replace
+			     the values from the template - e.g. lists of selectors will not be merged -->
 			<sampler input="wls01" template="wls" />
 			<sampler input="wls02" template="wls" />
+			
 			<sampler input="tomcat01" outputs="graphite" interval="10">
-				<placeholders>
-					<string-placeholder key="prefix" value="frontend.${input.name}" />
-					<string-placeholder key="port" value="8080" />
-				</placeholders>
+				<variables>
+					<string name="prefix" value="frontend.${input.name}" />
+					<string name="port" value="8080" />
+				</variables>
 				<selectors>
 					<use-group name="tomcat" />
 				</selectors>
 			</sampler>
+
 			<!-- setting quiet to true causes the sampler to log connection problems using debug level - thus preventing the problem to be logged in the standard configuration. This is
 			     useful if the input is a source that is not always available but you want to still get metrics when it is available. -->
 			<sampler input="apache01" outputs="graphite" interval="10" quiet="true">
-				<placeholders>
-					<string-placeholder key="prefix" value="frontend.${input.name}" />
-				</placeholders>
+				<variables>
+					<string name="prefix" value="frontend.${input.name}" />
+				</variables>
 				<selectors>
 					<use-group name="mod_qos" />
 				</selectors>
 			</sampler>
-			<!-- you can use disabled="true" to disable a sampler without removing / commenting it out -->
+
+			<!-- you can use disabled="true" to disable a sampler without removing / commenting it out. note that it still needs to be valid. -->
 			<sampler input="oracle01" outputs="graphite" interval="10" disabled="true">
-				<placeholders>
-					<string-placeholder key="prefix" value="database.${input.name}" />
-				</placeholders>
+				<variables>
+					<string name="prefix" value="database.${input.name}" />
+				</variables>
 				<selectors>
 					<!-- we can of course specify regular expressions directly here too. -->
 					<regexp from-name="(.*)" to-name="${name[1]}"/>
@@ -131,6 +146,10 @@ Supported Outputs
 * Console (STDOUT)
 * Graphite [http://graphite.wikidot.com]
 
+Variables
+---------
+Variables can be defined in the global context, in the inputs and in the samplers. Additionally there are some variables that are automatically generated by the inputs like input.name. If a variable with the same name is defined in multiple contexts, its value will be taken from the definition in the most specific context - global variables will be overridden by variables defined in the inputs and in the samplers. Variables defined in an input will be overridden by variables defined in the samplers.  
+
 Quick start
 ===========
 1. Download the metrics-sampler-distribution-<version>-all.tar.gz
@@ -140,10 +159,6 @@ Quick start
 5. Run "bin/metrics-sampler.sh check" to verify that each selector of each sampler matches at least one metric
 6. Start the daemon using "bin/metrics-sampler.sh start". Logs are located in logs/metrics-sampler.log and in logs/console.out
 7. You can stop the daemon using "bin/metrics-sampler.sh stop"
-
-Examples Configuration Files
-============================
-* Checkout the metrics-sampler-distribution/src/configs/ for configuration examples that gather JMX metrics from a WebLogic server, a Tomcat server and an apache server from mod_qos's status page and sends them to graphite. Each metric is sampled every 10 seconds.
 
 Extensions
 ==========
@@ -169,56 +184,3 @@ Compatibility
 * Tested with Hotspot/JRockit JVM 1.6
 * Tested with Tomcat 7 and Weblogic Server 12c (provided that wlfullclient.jar (the jmx client and t3 protocol jars) is on the classpath)
 * You might need to add -Dsun.lang.ClassLoader.allowArraySyntax=true as JVM parameter in the metrics-sampler.sh script if you are connecting using JVM 1.6 client to a JVM 1.5 server
-
-Changelog
-=========
-
-Version 0.4.0
--------------
-* Renamed most of the XML configuration elements
-* Added support for input templates
-* Added support for sampler templates
-* Fixed problems with multiple JDBC drivers
-* Renamed to metrics-sampler (from jmx-sampler) as it better reflects the purpose of the application
-* Improved debug logging
-* Performance logging using "timings" logger in debug level
-* Import local.sh settings from the starter script so that local settings do not get overwritten after an upgrade
-* Added support for low level socket options for the JMX input
-* Added support for placeholders in the name patterns
-* Added some more default placeholders for the JMX input
-
-Version 0.3.2
--------------
-* Use -f option for readlink for better compatibility
-* Added support for ignoring JMX object names (see config.xml.example)
-* Added support for placeholders definitions - global (directly under configuration) and in the default sampler (see config.xml.example)
-* Added support for mapping of placeholder values using ${fn:map(dictionary_key,placeholder_for_entry_key)} (see config.xml.example) 
-
-Version 0.3.1
--------------
-* Switched to three number versioning
-* Readers wrap the metric values in a MetricValue object containing a timestamp. This way metrics for older time intervals (than the current time) can be returned.
-* Readers may not know the metadata before actually quering the metrics. In such cases the transformers fetch all metrics through a different method (readAllMetrics()).
-* Added JDBC reader support
-* The console output uses the metric's timestamp not the current timestamp
-* The console output has correct time now (hh:mm not mm:hh)
-* Graphite writer replaces spaces with underscores in metric names
-* The check command outputs the number of matched metrics for each transformer
-* Improved example configuration with hotspot and jrockit metrics
-* Support for composite JMX metrics
-* Switched to canonical jmx object names for better compatibility
-* Do not check disabled samplers
-
-Version 0.3
------------
-* Switched from ant to maven and modularized the readers/writers/etc
-* Implemented a mod_qos reader
-* Added check() method to samplers so that they can check their configurations
-
-Version 0.2
------------
-* Added extension support using java SPI
-
-Version 0.1
------------
-* Initial implementation of a simple jmx reader, graphite writer and regular expression transformations
