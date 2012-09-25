@@ -1,13 +1,13 @@
 #!/bin/bash
 JAVA=java
-BASEDIR="$( cd -P "$( dirname "$0" )" && pwd )"
+BASEDIR="$( cd -P "$( dirname "$0" )/.." && pwd )"
 LOGCONFIG=$BASEDIR/config/logback.xml
 LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
 CONTROL_PORT=28111
 CONTROL_HOST=localhost
 VERSION="${project.version}"
 CLASSPATH="lib/*"
-JAVA_OPTS="-Dlogback.configurationFile=$LOGCONFIG -Dcontrol.host=$CONTROL_HOST -Dcontrol.port=$CONTROL_PORT -cp $CLASSPATH"
+JAVA_OPTS="-Dlogback.configurationFile=$LOGCONFIG -Dcontrol.host=$CONTROL_HOST -Dcontrol.port=$CONTROL_PORT"
 
 if [ -x $BASEDIR/bin/local.sh ]; then
 	. $BASEDIR/bin/local.sh
@@ -26,30 +26,32 @@ fi
 
 case "$1" in
 	start)
-		nohup $JAVA $JAVA_OPTS org.metricssampler.Start start $CONFIG  > logs/console.out 2>&1 &
+		nohup $JAVA -cp "$CLASSPATH" $JAVA_OPTS org.metricssampler.Start $CONFIG  > logs/console.out 2>&1 &
 		echo "Started with pid $!"
 		;;
 	stop)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Stop
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Stop
 		echo "Stopped"
 		;;
 	restart)
-		$0 stop $2
+		$0 stop
 		sleep 2
 		$0 start $2
 		;;
 	status)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Status
-		echo $?
-		;;
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Status
+		echo $MSG
+		RETURN_CODE=$(echo "$MSG" | grep 'Stopped' | wc -l)
+		exit $RETURN_CODE
+ 		;;
 	check)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Check $CONFIG
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Check $CONFIG
 		;;
 	test)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Test $CONFIG
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Test $CONFIG
 		;;
 	metadata)
-		$JAVA $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Metadata $CONFIG
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Metadata $CONFIG
 		;;
 	*)
 		cat <<EOF

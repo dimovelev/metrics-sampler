@@ -14,7 +14,7 @@ public abstract class NormalRunner implements Runner {
 		if (args.length != 1) {
 			outputHelp();
 		}
-		final File configFile = new File(args[1]);
+		final File configFile = new File(args[0]);
 		if (!configFile.canRead()) {
 			System.err.println("Configuration file " + configFile.getAbsolutePath() + " not readable");
 			System.exit(2);
