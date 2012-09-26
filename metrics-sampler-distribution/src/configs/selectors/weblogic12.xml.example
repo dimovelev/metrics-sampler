@@ -1,0 +1,23 @@
+<configuration>
+	<selector-groups>
+		<!-- JTA related metrics -->
+		<selector-group name="weblogic12.jta">
+	 		<regexp from-name="com\.bea:Name=JTARuntime,ServerRuntime=.+,Type=JTARuntime\.(.*TotalCount)" to-name="${prefix}.jta.${name[1]}" />
+	 	</selector-group>
+	 	<!-- Thread pool related metrics -->
+	 	<selector-group name="weblogic12.threads">
+			<regexp from-name="com\.bea:Name=ThreadPoolRuntime,ServerRuntime=.+,Type=ThreadPoolRuntime\.(CompletedRequestCount|ExecuteThreadIdleCount|ExecuteThreadTotalCount|HoggingThreadCount|MinThreadsConstraintsCompleted|MinThreadsConstraintsPending|PendingUserRequestCount|QueueLength|SharedCapacityForWorkManagers|StandbyThreadCount|Throughput)" to-name="${prefix}.threads.${name[1]}"/>
+		</selector-group>
+		<!-- JDBC data source metrics -->
+		<selector-group name="weblogic12.jdbc">
+			<regexp from-name="com\.bea:Name=DataSource_(.+),ServerRuntime=.+,Type=JDBC.*DataSourceRuntime\.(ActiveConnectionsAverageCount|ActiveConnectionsCurrentCount|ActiveConnectionsHighCount|ConnectionDelayTime|ConnectionsTotalCount|CurrCapacity|CurrCapacityHighCount|FailuresToReconnectCount|HighestNumAvailable|HighestNumUnavailable|LeakedConnectionCount|NumAvailable|NumUnavailable|ReserveRequestCountWaitSecondsHighCount|WaitingForConnection.*)" to-name="${prefix}.jdbc.${name[1]}.${name[2]}" />
+		</selector-group>
+		<!-- metrics available only when weblogic is running on a jrockit jvm -->
+		<selector-group name="weblogic12.jrockit">
+			<regexp from-name="com\.bea:Name=.+,ServerRuntime=.+,Type=JRockitRuntime\.(JvmProcessorLoad|TotalGarbageCollectionCount|TotalGarbageCollectionTime|FreePhysicalMemory|UsedPhysicalMemory|Uptime)" to-name="${prefix}.jrockit.${name[1]}" />
+        </selector-group>
+        <selector-group name="weblogic12.jms">
+        	<regexp from-name="com.bea:JMSServerRuntime=.+,Name=.+!(.+)@(.+),ServerRuntime={jms.server},Type=JMSDestinationRuntime\.(MessagesCurrentCount|MessagesPendingCount|MessagesReceivedCount|MessagesHighCount|MessagesDeletedCurrentCount|BytesCurrentCount|BytesPendingCount|BytesReceivedCount|ConsumersCurrentCount|ConsumersHighCount|ConsumersTotalCount)" to-name="${prefix}.jms.${name[1]}.${name[2]}.${name[3]}" />
+       	</selector-group>
+	</selector-groups>
+</configuration>

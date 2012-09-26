@@ -1,0 +1,9 @@
+<configuration>
+	<selector-groups>
+		<selector-group name="mod_qos">
+			<regexp from-name=".*,metric=([^,]+),path=/([^.]+)\.(current|limit)" to-name="${prefix}.qos.${name[2]}.${name[1]}.${name[3]}"/>
+			<regexp from-name=".*,metric=([^,]+)$" to-name="${prefix}.qos.${name[1]}"/>
+			<regexp from-name=".*,metric=([^,]+)\.(current|limit)" to-name="${input.name}.qos.${name[1]}.${name[2]}"/>
+		</selector-group>
+	</selector-groups>
+</configuration>

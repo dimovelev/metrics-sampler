@@ -1,0 +1,8 @@
+<configuration>
+	<selector-groups>
+		<!-- Apache Tomcat global HTTP request counters -->
+		<selector-group name="tomcat.http.global">
+			<regexp from-name="Catalina:type=GlobalRequestProcessor,name=.http-.*-{tomcat.port}.\.(requestCount|bytesSent|bytesReceived)" to-name="${prefix}.http.${name[1]}"/>
+		</selector-group>
+	</selector-groups>
+</configuration>

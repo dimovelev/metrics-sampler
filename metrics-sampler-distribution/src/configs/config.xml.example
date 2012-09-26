@@ -1,4 +1,7 @@
 <configuration pool-size="10">
+	<includes>
+		<include location="selectors/*.xml" />
+	</includes>
 	<inputs>
 		<jmx name="wls-template" template="true" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true">
  			<ignore-object-names>
