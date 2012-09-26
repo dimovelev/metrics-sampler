@@ -1,5 +1,6 @@
 package org.metricssampler;
 
+import org.metricssampler.daemon.Daemon;
 import org.metricssampler.service.Bootstrapper;
 
 public class Start extends NormalRunner {

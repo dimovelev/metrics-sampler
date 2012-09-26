@@ -29,7 +29,7 @@ public class DefaultSampler implements Sampler {
 	private final List<MetricsSelector> selectors = new LinkedList<MetricsSelector>();
 
 	private final Map<String, Object> variables;
-	
+
 	public DefaultSampler(final DefaultSamplerConfig config, final MetricsReader reader) {
 		this.config = config;
 		this.reader = reader;
@@ -73,6 +73,11 @@ public class DefaultSampler implements Sampler {
 	@Override
 	public void sample() {
 		MDC.put("sampler", config.getName());
+		doSample();
+		MDC.remove("sampler");
+	}
+
+	private void doSample() {
 		logger.debug("Sampling");
 		try {
 			final long readStart = System.currentTimeMillis();
@@ -92,7 +97,6 @@ public class DefaultSampler implements Sampler {
 		} catch (final MetricWriteException e) {
 			logger.warn("Failed to write metrics", e);
 		}
-		MDC.remove("sampler");
 	}
 
 	private void writeMetrics(final Map<String, MetricValue> metrics) {
@@ -150,6 +154,11 @@ public class DefaultSampler implements Sampler {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName()+"["+reader+"->"+writers+ "]";
+	}
+
+	@Override
+	public String getName() {
+		return config.getName();
 	}
 
 	@Override
