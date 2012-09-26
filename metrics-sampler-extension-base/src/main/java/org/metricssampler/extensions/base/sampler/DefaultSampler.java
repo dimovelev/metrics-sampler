@@ -17,7 +17,6 @@ import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 public class DefaultSampler implements Sampler {
 	private final Logger logger;
@@ -72,12 +71,6 @@ public class DefaultSampler implements Sampler {
 
 	@Override
 	public void sample() {
-		MDC.put("sampler", config.getName());
-		doSample();
-		MDC.remove("sampler");
-	}
-
-	private void doSample() {
 		logger.debug("Sampling");
 		try {
 			final long readStart = System.currentTimeMillis();
