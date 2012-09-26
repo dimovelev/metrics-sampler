@@ -10,9 +10,9 @@ import org.metricssampler.config.Configuration;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.Variable;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
+import org.metricssampler.config.Variable;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -89,7 +89,7 @@ public class ConfigurationXBean {
 	}
 
 	public Configuration toConfig() {
-		final List<Variable> variables = configureVariablese(getVariables());
+		final List<Variable> variables = configureVariables(getVariables());
 		final Map<String, InputConfig> inputs = configureInputs(getInputs());
 		final Map<String, OutputConfig> outputs = configureOutputs(getOutputs());
 		final Map<String, List<SelectorConfig>> selectorGroups = configureSelectorGroups(getSelectorGroups());
@@ -97,7 +97,7 @@ public class ConfigurationXBean {
 		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, variables);
 	}
 
-	private List<Variable> configureVariablese(final List<VariableXBean> items) {
+	private List<Variable> configureVariables(final List<VariableXBean> items) {
 		final List<Variable> result = new LinkedList<Variable>();
 		if (items != null) {
 			for (final VariableXBean item : items) {
@@ -138,12 +138,18 @@ public class ConfigurationXBean {
 	}
 
 	private Map<String, List<SelectorConfig>> configureSelectorGroups(final List<SelectorGroupXBean> items) {
-		final Map<String, List<SelectorConfig>> result = new HashMap<String, List<SelectorConfig>>();
+		final Map<String, SelectorGroupXBean> groups = new HashMap<String, SelectorGroupXBean>(items.size());
+		
 		for (final SelectorGroupXBean item : items) {
-			if (result.containsKey(item.getName())) {
+			if (groups.containsKey(item.getName())) {
 				throw new ConfigurationException("Two selector groups with the same name \""+item.getName() + "\"");
 			}
-			result.put(item.getName(), item.toConfig());
+			groups.put(item.getName(), item);
+		}
+		
+		final Map<String, List<SelectorConfig>> result = new HashMap<String, List<SelectorConfig>>();
+		for (final SelectorGroupXBean item : groups.values()) {
+			result.put(item.getName(), item.toConfig(groups));
 		}
 		return result;
 	}
