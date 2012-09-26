@@ -2,7 +2,11 @@
 	<selector-groups>
 		<!-- Apache Tomcat global HTTP request counters -->
 		<selector-group name="tomcat.http.global">
-			<regexp from-name="Catalina:type=GlobalRequestProcessor,name=.http-.*-{tomcat.port}.\.(requestCount|bytesSent|bytesReceived)" to-name="${prefix}.http.${name[1]}"/>
+			<regexp from-name="Catalina:name=.*http.*-${tomcat.port}.*,type=GlobalRequestProcessor\.(requestCount|bytesSent|bytesReceived)" to-name="${prefix}.http.${name[1]}"/>
 		</selector-group>
+		<!-- Apache HTTP thread pool -->
+		<selector-group name="tomcat.threads">
+			<regexp from-name="Catalina:name=.*http.*-${tomcat.port}.*,type=ThreadPool\.(maxThreads|currentThreadsBusy|currentThreadCount|backlog|acceptorThreadCount)" to-name="${prefix}.threads.${name[1]}" />
+		</selector-group>		
 	</selector-groups>
 </configuration>
