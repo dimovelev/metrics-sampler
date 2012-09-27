@@ -2,7 +2,6 @@ package org.metricssampler.extensions.base.sampler;
 
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -102,16 +101,9 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		final InputConfig inputConfig = configureInput(inputs);
 		final List<OutputConfig> outputConfigs = configureOutputs(outputs);
 		final List<SelectorConfig> selectorConfigs = configureSelectors(selectorTemplates);
-		final Map<String, Object> variableConfigs = configureVariables(globalVariables);
+		final Map<String, Object> samplerVariables = VariableXBean.toMap(getVariables());
 		
-		return new DefaultSamplerConfig(getName(), getInterval(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, variableConfigs, getQuiet() != null ? getQuiet() : false);
-	}
-
-	protected Map<String, Object> configureVariables(final Map<String, Object> globalVariables) {
-		final Map<String, Object> result = new HashMap<String, Object>();
-		result.putAll(globalVariables);
-		result.putAll(VariableXBean.toMap(getVariables()));
-		return result;
+		return new DefaultSamplerConfig(getName(), getInterval(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, getQuiet() != null ? getQuiet() : false);
 	}
 
 	protected List<SelectorConfig> configureSelectors(final Map<String, List<SelectorConfig>> templates) {

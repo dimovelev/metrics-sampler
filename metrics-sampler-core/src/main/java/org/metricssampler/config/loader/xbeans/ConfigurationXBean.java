@@ -88,12 +88,12 @@ public class ConfigurationXBean {
 	}
 
 	public Configuration toConfig() {
-		final Map<String, Object> variables = VariableXBean.toMap(getVariables());
+		final Map<String, Object> globalVariables = VariableXBean.toMap(getVariables());
 		final Map<String, InputConfig> inputs = configureInputs(getInputs());
 		final Map<String, OutputConfig> outputs = configureOutputs(getOutputs());
 		final Map<String, List<SelectorConfig>> selectorGroups = configureSelectorGroups(getSelectorGroups());
-		final List<SamplerConfig> samplers = configureSamplers(getSamplers(), inputs, outputs, selectorGroups, variables);
-		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, variables);
+		final List<SamplerConfig> samplers = configureSamplers(getSamplers(), inputs, outputs, selectorGroups, globalVariables);
+		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, globalVariables);
 	}
 
 	private Map<String, InputConfig> configureInputs(final List<InputXBean> list) {
@@ -142,14 +142,14 @@ public class ConfigurationXBean {
 		return result;
 	}
 
-	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final Map<String, Object> variables) {
+	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final Map<String, Object> globalVariables) {
 		final LinkedHashMap<String, SamplerXBean> namedSamplers = TemplatableXBeanUtils.sortByDependency(samplers); 
 
 		final List<SamplerConfig> result = new LinkedList<SamplerConfig>();
 		for (final SamplerXBean def : samplers) {
 			TemplatableXBeanUtils.applyTemplate(def, namedSamplers);
 			if (def.isInstantiatable()) {
-				result.add(def.toConfig(inputs, outputs, selectorGroups, variables));
+				result.add(def.toConfig(inputs, outputs, selectorGroups, globalVariables));
 			}
 		}
 		return result;

@@ -23,6 +23,6 @@ public class StringVariableXBean extends VariableXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("value", "string variable", getValue());
+		notEmpty("value", "string variable", value);
 	}
 }

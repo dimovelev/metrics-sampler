@@ -41,9 +41,9 @@ public class DefaultSampler implements Sampler {
 
 	private Map<String, Object> prepareVariables() {
 		final Map<String, Object> result = new HashMap<String, Object>();
+		result.putAll(config.getGlobalVariables());
 		result.putAll(reader.getVariables());
 		result.putAll(config.getVariables());
-		
 		return result;
 	}
 

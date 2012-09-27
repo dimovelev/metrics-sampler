@@ -16,20 +16,23 @@ public class DefaultSamplerConfig extends SamplerConfig {
 	private final List<OutputConfig> outputs;
 	private final List<SelectorConfig> selectors;
 	private final Map<String, Object> variables;
+	private final Map<String, Object> globalVariables;
 	private final boolean quiet;
 
 	public DefaultSamplerConfig(final String name, final int interval, final boolean disabled, final InputConfig input,
 			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final Map<String, Object> variables,
-			final boolean quiet) {
-		super(name, interval, disabled);
+			final Map<String, Object> globalVariables, final boolean quiet) {
+		super(name, interval, disabled, globalVariables);
 		checkArgumentNotNull(input, "input");
 		checkArgumentNotNull(outputs, "outputs");
 		checkArgumentNotNull(selectors, "selectors");
 		checkArgumentNotNull(variables, "variables");
+		checkArgumentNotNull(globalVariables, "globalVariables");
 		this.input = input;
 		this.outputs = outputs;
 		this.selectors = selectors;
 		this.variables = Collections.unmodifiableMap(variables);
+		this.globalVariables = Collections.unmodifiableMap(globalVariables);
 		this.quiet = quiet;
 	}
 
@@ -47,6 +50,11 @@ public class DefaultSamplerConfig extends SamplerConfig {
 
 	public Map<String, Object> getVariables() {
 		return variables;
+	}
+
+	@Override
+	public Map<String, Object> getGlobalVariables() {
+		return globalVariables;
 	}
 
 	@Override

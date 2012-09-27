@@ -49,6 +49,9 @@ public class Configuration {
 		return Collections.unmodifiableCollection(samplers);
 	}
 
+	/**
+	 * @return an unmodifiable map of the global variables
+	 */
 	public Map<String, Object> getVariables() {
 		return variables;
 	}

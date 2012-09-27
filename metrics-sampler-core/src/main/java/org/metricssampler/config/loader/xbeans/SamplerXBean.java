@@ -22,7 +22,7 @@ public abstract class SamplerXBean extends TemplatableXBean {
 	@XStreamAsAttribute
 	private boolean disabled;
 
-	public abstract SamplerConfig toConfig(Map<String, InputConfig> inputs, Map<String, OutputConfig> outputs, Map<String, List<SelectorConfig>> selectorGroups, Map<String, Object> variables);
+	public abstract SamplerConfig toConfig(Map<String, InputConfig> inputs, Map<String, OutputConfig> outputs, Map<String, List<SelectorConfig>> selectorGroups, Map<String, Object> globalVariables);
 
 	public Integer getInterval() {
 		return interval;
@@ -44,7 +44,7 @@ public abstract class SamplerXBean extends TemplatableXBean {
 	protected void validate() {
 		super.validate();
 		if (isInstantiatable()) {
-			greaterThanZero("interval", "default sampler", getInterval());
+			greaterThanZero("interval", "sampler", getInterval());
 		}
 	}
 }
