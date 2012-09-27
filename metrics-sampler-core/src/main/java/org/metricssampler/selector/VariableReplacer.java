@@ -1,7 +1,12 @@
 package org.metricssampler.selector;
 
-import java.util.Map;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.metricssampler.config.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,13 +17,48 @@ public class VariableReplacer {
 	public static final String START = "${";
 	public static final String END = "}";
 	public static final String FUNCTION_PREFIX = "fn:";
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	public static final int MAX_RESOLVE_ITERATIONS = 50;
+	
+	private static final Logger logger = LoggerFactory.getLogger(VariableReplacer.class);
 
 	public static String replace(final String expression, final Map<String, Object> replacements) {
+		checkNotNull(expression, "expression may not be null");
 		return new VariableReplacer().replaceVariables(expression, replacements);
 	}
 	
+	/**
+	 * Go through all string variables and resolve any variables used in the string value. Variables that cannot be resolved remain unchanged.
+	 * 
+	 * @param variables
+	 * @return a new map with as much variables resolved as possible
+	 */
+	public static Map<String, Object> resolve(final Map<String, Object> variables) {
+		final Map<String, Object> result = new HashMap<String, Object>();
+		result.putAll(variables);
+		boolean replaced = true;
+		int iterations = 0;
+		while (replaced && iterations < MAX_RESOLVE_ITERATIONS) {
+			replaced = false;
+			for (final Entry<String, Object> entry : result.entrySet()) {
+				if (entry.getValue() instanceof String) {
+					final String oldValue = (String) entry.getValue();
+					if (oldValue == null) {
+						throw new ConfigurationException("Variable \"" + entry.getKey() + "\" has null value");
+					}
+					final String newValue = VariableReplacer.replace(oldValue, result);
+					if (!oldValue.equals(newValue)) {
+						replaced = true;
+						entry.setValue(newValue);
+					}
+				}
+			}
+			iterations++;
+		}
+		if (iterations == MAX_RESOLVE_ITERATIONS) {
+			logger.warn("Reached the maximal number of iterations while resolving variables. You probably have a variable reference cycle.");
+		}
+		return result;
+	}
 	public String replaceVariables(final String expression, final Map<String, Object> replacements) {
 		final StringBuilder result = new StringBuilder();
 		int prevIdx = 0;

@@ -85,7 +85,7 @@ public class RegExpMetricsSelector implements MetricsSelector {
 	
 	@Override
 	public void setVariables(final Map<String, Object> variables) {
-		this.variables = variables;
+		this.variables = VariableReplacer.resolve(variables);
 		initializePatterns();
 	}
 

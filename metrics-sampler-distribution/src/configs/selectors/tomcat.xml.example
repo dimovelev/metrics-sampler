@@ -1,5 +1,10 @@
 <configuration>
 	<selector-groups>
+		<!-- all tomcat metrics. requires "prefix" and "tomcat.port" variables. -->
+		<selector-group name="tomcat.all">
+			<use-group name="tomcat.http.global" />
+			<use-group name="tomcat.threads" />
+		</selector-group>
 		<!-- Apache Tomcat global HTTP request counters -->
 		<selector-group name="tomcat.http.global">
 			<regexp from-name="Catalina:name=.*http.*-${tomcat.port}.*,type=GlobalRequestProcessor\.(requestCount|bytesSent|bytesReceived)" to-name="${prefix}.http.${name[1]}"/>

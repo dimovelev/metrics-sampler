@@ -1,5 +1,13 @@
 <configuration>
 	<selector-groups>
+		<!-- all weblogic12 metrics. requires "prefix" and "jms.server" variables -->
+        <selector-group name="weblogic12.all">
+        	<use-group name="weblogic12.jta" />
+        	<use-group name="weblogic12.threads" />
+        	<use-group name="weblogic12.jdbc" />
+        	<use-group name="weblogic12.jrockit" />
+        	<use-group name="weblogic12.jms" />
+        </selector-group>
 		<!-- JTA related metrics -->
 		<selector-group name="weblogic12.jta">
 	 		<regexp from-name="com\.bea:Name=JTARuntime,ServerRuntime=.+,Type=JTARuntime\.(.*TotalCount)" to-name="${prefix}.jta.${name[1]}" />

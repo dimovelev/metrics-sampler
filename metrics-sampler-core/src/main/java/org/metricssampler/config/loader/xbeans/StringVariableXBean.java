@@ -24,7 +24,7 @@ public class StringVariableXBean extends VariableXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("value", "string variable", getName());
+		notEmpty("value", "string variable", getValue());
 	}
 
 	@Override

@@ -142,8 +142,12 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	@Override
 	public Sampler newSampler(final SamplerConfig config) {
 		for (final LocalObjectFactory factory : objectFactories) {
-			if (factory.supportsSampler(config)) {
-				return factory.newSampler(config);
+			try {
+				if (factory.supportsSampler(config)) {
+					return factory.newSampler(config);
+				}
+			} catch (final RuntimeException e) {
+				throw new ConfigurationException("Failed to create sampler \"" + config.getName() + "\"", e);
 			}
 		}
 		throw new ConfigurationException("Unsupported sampler: " + config);

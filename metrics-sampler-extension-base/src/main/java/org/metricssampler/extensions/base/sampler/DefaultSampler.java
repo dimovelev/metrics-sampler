@@ -12,7 +12,6 @@ import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
-import org.metricssampler.selector.VariableReplacer;
 import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
@@ -41,8 +40,9 @@ public class DefaultSampler implements Sampler {
 		final Map<String, Object> result = new HashMap<String, Object>();
 		result.putAll(reader.getVariables());
 		for (final Variable variable : config.getVariables()) {
-			result.put(variable.getName(), VariableReplacer.replace((String)variable.getValue(), result));
+			result.put(variable.getName(), variable.getValue());
 		}
+		
 		return result;
 	}
 

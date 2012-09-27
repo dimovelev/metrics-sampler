@@ -34,9 +34,11 @@ case "$1" in
 		echo "Stopped"
 		;;
 	restart)
+		popd > /dev/null
 		$0 stop
 		sleep 2
 		$0 start $2
+		exit
 		;;
 	status)
 		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE org.metricssampler.Status

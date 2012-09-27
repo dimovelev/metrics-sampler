@@ -27,6 +27,19 @@ public class VariableReplacerTest {
 	}
 	
 	@Test
+	public void resolveCycle() {
+		final Map<String, Object> cycleVariables = new HashMap<String, Object>();
+		cycleVariables.put("first", "${second}");
+		cycleVariables.put("second", "${third}");
+		cycleVariables.put("third", "${first}");
+		final Map<String, Object> result = VariableReplacer.resolve(cycleVariables);
+		assertEquals(3, result.size());
+		assertEquals("${first}", result.get("first"));
+		assertEquals("${first}", result.get("second"));
+		assertEquals("${first}", result.get("third"));
+	}
+	
+	@Test
 	public void replaceVariablesNone() {
 		final String input = "this is the first test without variables";
 		final String result = testee.replaceVariables(input, replacements);
