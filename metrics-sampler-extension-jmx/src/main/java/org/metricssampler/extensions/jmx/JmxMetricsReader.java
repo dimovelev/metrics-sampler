@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,38 +23,60 @@ import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.remote.JMXServiceURL;
 
+import org.metricssampler.reader.AbstractMetricsReader;
 import org.metricssampler.reader.MetaDataMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsMetaData;
 import org.metricssampler.reader.OpenMetricsReaderException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Read metrics from a JMX server. This class is not thread safe and may not be reused in multiple samplers.
  */
-public class JmxMetricsReader implements MetaDataMetricsReader {
-	private final Logger logger;
-	private final Logger timingsLogger;
-
+public class JmxMetricsReader extends AbstractMetricsReader implements MetaDataMetricsReader {
 	private final JmxInputConfig config;
 	private MetricsMetaData metadata;
-	private final Map<String, Object> variables;
 	private final JmxConnection connection;
 
 	public JmxMetricsReader(final JmxInputConfig config) {
+		super(config);
 		this.config = config;
-		this.logger = LoggerFactory.getLogger("reader." + config.getName());
-		this.timingsLogger = LoggerFactory.getLogger("timings.reader");
-		variables = prepareVariables();
 		try {
 			this.connection = new JmxConnection(config);
 		} catch (final IOException e) {
 			throw new MetricReadException(e);
 		}
 	}
+
+	@Override
+	protected void defineCustomVariables(final Map<String, Object> variables) {
+		try {
+			final JMXServiceURL url = new JMXServiceURL(config.getUrl());
+			final String host = url.getHost();
+			if (host != null) {
+				variables.put("input.host", host);
+				try {
+					final InetAddress inetAddress = InetAddress.getByName(host);
+					final String hostname = inetAddress.getHostName();
+					variables.put("input.fqhn", hostname);
+					final int dotIdx = hostname.indexOf('.');
+					if (dotIdx > 0) {
+						variables.put("input.hostname", hostname.substring(0, dotIdx));
+					} else {
+						variables.put("input.hostname", hostname);
+					}
+					variables.put("input.ip", inetAddress.getHostAddress());
+				} catch (final UnknownHostException e) {
+					// ignore
+				}
+			}
+		} catch (final MalformedURLException e) {
+			e.printStackTrace();
+			// ignore
+		}
+	}
+
 
 	@Override
 	public MetricsMetaData getMetaData() {
@@ -196,53 +216,12 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 		}
 	}
 
-	private Map<String, Object> prepareVariables() {
-		final Map<String, Object> result = new HashMap<String, Object>();
-		result.putAll(config.getVariables());
-		result.put("input.name", config.getName());
-		try {
-			final JMXServiceURL url = new JMXServiceURL(config.getUrl());
-			final String host = url.getHost();
-			if (host != null) {
-				result.put("input.host", host);
-				try {
-					final InetAddress inetAddress = InetAddress.getByName(host);
-					final String hostname = inetAddress.getHostName();
-					result.put("input.fqhn", hostname);
-					final int dotIdx = hostname.indexOf('.');
-					if (dotIdx > 0) {
-						result.put("input.hostname", hostname.substring(0, dotIdx));
-					} else {
-						result.put("input.hostname", hostname);
-					}
-					result.put("input.ip", inetAddress.getHostAddress());
-				} catch (final UnknownHostException e) {
-					// ignore
-				}
-			}
-		} catch (final MalformedURLException e) {
-			e.printStackTrace();
-			// ignore
-		}
-		return Collections.unmodifiableMap(result);
-	}
-
 	@Override
 	public void close() throws MetricReadException {
 		if (connection.isEstablished() && !config.isPersistentConnection()) {
 			connection.disconnect();
 			metadata = null;
 		}
-	}
-
-	@Override
-	public Map<String, Object> getVariables() {
-		return variables;
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "[" + config.getName() + "]";
 	}
 
 	@Override

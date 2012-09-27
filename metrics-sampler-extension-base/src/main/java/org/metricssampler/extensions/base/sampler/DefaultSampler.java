@@ -2,6 +2,7 @@ package org.metricssampler.extensions.base.sampler;
 
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class DefaultSampler implements Sampler {
 		this.config = config;
 		this.reader = reader;
 		this.variables = prepareVariables(); 
-		logger = LoggerFactory.getLogger("sampler."+this.config.getName());
+		logger = LoggerFactory.getLogger("sampler." + this.config.getName());
 		timingsLogger = LoggerFactory.getLogger("timings.sampler");
 	}
 
@@ -44,7 +45,9 @@ public class DefaultSampler implements Sampler {
 		result.putAll(config.getGlobalVariables());
 		result.putAll(reader.getVariables());
 		result.putAll(config.getVariables());
-		return result;
+		result.put("sampler.name", getName());
+		result.put("sampler.interval", config.getInterval());
+		return Collections.unmodifiableMap(result);
 	}
 
 	public DefaultSampler addWriter(final MetricsWriter writer) {

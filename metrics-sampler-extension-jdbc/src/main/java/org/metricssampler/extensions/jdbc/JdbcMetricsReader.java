@@ -5,38 +5,26 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.reader.AbstractMetricsReader;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class JdbcMetricsReader implements BulkMetricsReader {
-	private final Logger logger;
+public class JdbcMetricsReader extends AbstractMetricsReader implements BulkMetricsReader {
 	private final JdbcInputConfig config;
 	private Connection connection;
-	private final Map<String, Object> variables;
 	
 	public JdbcMetricsReader(final JdbcInputConfig config) {
+		super(config);
 		this.config = config;
-		this.logger = LoggerFactory.getLogger("reader."+config.getName());
-		this.variables = prepareVariables();
-	}
-
-	private Map<String, Object> prepareVariables() {
-		final Map<String, Object> result = new HashMap<String, Object>();
-		result.putAll(config.getVariables());
-		result.put("input.name", config.getName());
-		return Collections.unmodifiableMap(result);
 	}
 
 	@Override
@@ -81,11 +69,6 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 	}
 
 	@Override
-	public Map<String, Object> getVariables() {
-		return variables;
-	}
-
-	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
 		assertConnected();
 		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
@@ -117,6 +100,7 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 						final long timestamp = resultSet.getLong(3);
 						result.put(metric, new MetricValue(timestamp, value));
 					} else {
+						closeQuietly(resultSet);
 						throw new ConfigurationException("Query must return either 2 (name, value) or 3 columns (name, value, timestamp)");
 					}
 				}
@@ -156,11 +140,6 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 	protected void reconnect() {
 		disconnect();
 		connect();
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName()+"["+config.getName()+"]";
 	}
 
 	@Override

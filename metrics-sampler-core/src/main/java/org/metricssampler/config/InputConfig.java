@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public abstract class InputConfig extends NamedConfig {
 	private final Map<String, Object> variables;
-	
+
 	public InputConfig(final String name, final Map<String, Object> variables) {
 		super(name);
 		checkArgumentNotNull(variables, "variables");
@@ -18,7 +18,8 @@ public abstract class InputConfig extends NamedConfig {
 	}
 
 	/**
-	 * @return an unmodifiable map of variables by their name
+	 * @return an unmodifiable map of variables by their name. This map must only contains the variables defined in the configuration file
+	 *         and nothing else.
 	 */
 	public Map<String, Object> getVariables() {
 		return variables;

@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.metricssampler.extensions.modqos.ModQosInputConfig.AuthenticationType;
+import org.metricssampler.reader.AbstractMetricsReader;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
@@ -21,22 +22,19 @@ import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 
-public class ModQosMetricsReader implements BulkMetricsReader {
+public class ModQosMetricsReader extends AbstractMetricsReader implements BulkMetricsReader {
 	private final ModQosInputConfig config;
 	private List<String> data;
 	private Map<MetricName, MetricValue> values;
-	private final Map<String, Object> variables;
 
 	public ModQosMetricsReader(final ModQosInputConfig config) {
+		super(config);
 		this.config = config;
-		this.variables = prepareVariables();
 	}
-	
-	private Map<String, Object> prepareVariables() {
-		final Map<String, Object> result = new HashMap<String, Object>();
-		result.putAll(config.getVariables());
-		result.put("input.name", config.getName());
-		return Collections.unmodifiableMap(result);
+
+	@Override
+	protected void defineCustomVariables(final Map<String, Object> variables) {
+		variables.put("reader.host", config.getUrl().getHost());
 	}
 
 	@Override
@@ -107,22 +105,12 @@ public class ModQosMetricsReader implements BulkMetricsReader {
 
 	@Override
 	public void close() {
-		// the connection is closed by open()
+		// the connection is closed already by open()
 	}
 
 	@Override
 	public Iterable<MetricName> readNames() throws MetricReadException {
 		return values.keySet();
-	}
-
-	@Override
-	public Map<String, Object> getVariables() {
-		return variables;
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName()+"["+config.getName()+"]";
 	}
 
 	@Override
