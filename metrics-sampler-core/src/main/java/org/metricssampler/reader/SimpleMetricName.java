@@ -1,10 +1,12 @@
 package org.metricssampler.reader;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 public class SimpleMetricName implements MetricName {
 	private final String name;
 	private final String description;
 	
 	public SimpleMetricName(final String name, final String description) {
+		checkArgumentNotNullNorEmpty(name, "name");
 		this.name = name;
 		this.description = description;
 	}
@@ -21,6 +23,6 @@ public class SimpleMetricName implements MetricName {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName()+"[name="+name+"]";
+		return getClass().getSimpleName() + "[" + name + "]";
 	}
 }

@@ -1,5 +1,7 @@
 package org.metricssampler.config.loader;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
+
 import java.io.File;
 import java.util.Collection;
 
@@ -18,10 +20,12 @@ public class ConfigurationLoader {
 	private final Collection<Class<?>> xbeanClasses;
 
 	public ConfigurationLoader(final Collection<Class<?>> xbeanClasses) {
+		checkArgumentNotNullNorEmpty(xbeanClasses, "xbeanClasses");
 		this.xbeanClasses = xbeanClasses;
 	}
 
 	public Configuration load(final String filename) {
+		checkArgumentNotNullNorEmpty(filename, "filename");
 		final XStream xstream = createXStream();
 		final ConfigurationXBean result = loadFile(filename, xstream);
 		return result.toConfig();
@@ -40,7 +44,7 @@ public class ConfigurationLoader {
 		return result;
 	}
 
-	private void include(final File basedir, final String location, final XStream xstream, final ConfigurationXBean result) {
+	protected void include(final File basedir, final String location, final XStream xstream, final ConfigurationXBean result) {
 		FileGlobProcessor.visitMatching(basedir, location, new MatchingFileVisitor() {
 			@Override
 			public void visit(final File file) {

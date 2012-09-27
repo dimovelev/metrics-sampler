@@ -1,5 +1,8 @@
 package org.metricssampler.extensions.jmx;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
+
 import javax.management.ObjectName;
 
 import org.metricssampler.reader.MetricName;
@@ -13,17 +16,22 @@ public class JmxMetricName implements MetricName {
 	private final String name;
 	
 	public JmxMetricName(final ObjectName objectName, final String attributeName, final String key, final String description) {
+		checkArgumentNotNull(objectName, "objectName");
+		checkArgumentNotNullNorEmpty(attributeName, "attributeName");
 		this.objectName = objectName;
 		this.attributeName = attributeName;
 		this.key = key;
 		this.description = description;
-		final StringBuilder name = new StringBuilder();
-		name.append(objectName.getCanonicalName()).append('.').append(attributeName);
+		this.name = generateName(objectName, attributeName, key);
+	}
+
+	private String generateName(final ObjectName objectName, final String attributeName, final String key) {
+		final StringBuilder result = new StringBuilder(objectName.getCanonicalName());
+		result.append('.').append(attributeName);
 		if (key != null) {
-			name.append('#').append(key);
+			result.append('#').append(key);
 		}
-		
-		this.name = name.toString();
+		return result.toString();
 	}
 	
 	@Override
@@ -53,7 +61,7 @@ public class JmxMetricName implements MetricName {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "[" + objectName.getCanonicalName() + "#" + attributeName + "]";
+		return  getClass().getSimpleName() + "[" + name + "]";
 	}
 	
 	
