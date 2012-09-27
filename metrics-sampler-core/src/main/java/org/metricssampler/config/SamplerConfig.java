@@ -1,24 +1,18 @@
 package org.metricssampler.config;
+import static org.metricssampler.util.Preconditions.checkArgument;
 
 /**
  * Base class for sampler configurations.
  */
-public abstract class SamplerConfig {
-	private final String name;
+public abstract class SamplerConfig extends NamedConfig {
 	private final int interval;
 	private final boolean disabled;
 
 	public SamplerConfig(final String name, final int interval, final boolean disabled) {
-		this.name = name;
+		super(name);
+		checkArgument(interval > 0, "interval must be greater than 0 seconds");
 		this.interval = interval;
 		this.disabled = disabled;
-	}
-
-	/**
-	 * @return the unique (among all samplers) name of the sampler.
-	 */
-	public String getName() {
-		return name;
 	}
 
 	/**

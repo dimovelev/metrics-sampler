@@ -1,24 +1,11 @@
 package org.metricssampler.config;
 
+
 /**
  * Base class for output configurations.
  */
-public abstract class OutputConfig {
-	private final String name;
-
+public abstract class OutputConfig extends NamedConfig {
 	public OutputConfig(final String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @return the unique (among all outputs) name of the output
-	 */
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "[" + getName() + "]";
+		super(name);
 	}
 }

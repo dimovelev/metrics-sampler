@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.base.sampler;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +31,8 @@ public class DefaultSampler implements Sampler {
 	private final Map<String, Object> variables;
 
 	public DefaultSampler(final DefaultSamplerConfig config, final MetricsReader reader) {
+		checkArgumentNotNull(config, "config");
+		checkArgumentNotNull(reader, "reader");
 		this.config = config;
 		this.reader = reader;
 		this.variables = prepareVariables(); 
@@ -47,11 +51,13 @@ public class DefaultSampler implements Sampler {
 	}
 
 	public DefaultSampler addWriter(final MetricsWriter writer) {
+		checkArgumentNotNull(writer, "writer");
 		writers.add(writer);
 		return this;
 	}
 
 	public DefaultSampler addSelector(final MetricsSelector selector) {
+		checkArgumentNotNull(selector, "selector");
 		selectors.add(selector);
 		selector.setVariables(variables);
 		return this;

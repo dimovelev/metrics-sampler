@@ -1,13 +1,13 @@
 package org.metricssampler.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 public class StringVariable extends Variable {
 	private final String value;
 
 	public StringVariable(final String name, final String value) {
 		super(name);
-		checkNotNull(value, "value may not be null or empty");
+		checkArgumentNotNullNorEmpty(value, "value");
 		this.value = value;
 	}
 

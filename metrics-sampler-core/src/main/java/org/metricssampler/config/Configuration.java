@@ -1,5 +1,8 @@
 package org.metricssampler.config;
 
+import static org.metricssampler.util.Preconditions.checkArgument;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -14,6 +17,11 @@ public class Configuration {
 	private final Collection<Variable> variables;
 	
 	public Configuration(final int poolSize, final Collection<InputConfig> inputs, final Collection<OutputConfig> outputs, final Collection<SamplerConfig> samplers, final Collection<Variable> variables) {
+		checkArgument(poolSize > 0, "pool-size must be greater than 0");
+		checkArgumentNotNull(inputs, "inputs");
+		checkArgumentNotNull(outputs, "outputs");
+		checkArgumentNotNull(samplers, "samplers");
+		checkArgumentNotNull(variables, "variables");
 		this.poolSize = poolSize;
 		this.inputs = inputs;
 		this.outputs = outputs;

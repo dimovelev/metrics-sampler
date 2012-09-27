@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.jdbc;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,8 @@ public class JdbcInputConfig extends InputConfig {
 	
 	public JdbcInputConfig(final String name, final List<Variable> variables, final String url, final String driver, final String username, final String password, final List<String> queries, final Map<String, String> options) {
 		super(name, variables);
+		checkArgumentNotNullNorEmpty(url, "url");
+		checkArgumentNotNullNorEmpty(queries, "queries");
 		this.url = url;
 		this.driver = driver;
 		this.username = username;

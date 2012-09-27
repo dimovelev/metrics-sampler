@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.base.selector.regexp;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,6 +39,7 @@ public class RegExpMetricsSelector implements MetricsSelector {
 	private Pattern descriptionPattern;
 	
 	public RegExpMetricsSelector(final RegExpSelectorConfig config) {
+		checkArgumentNotNull(config, "config");
 		this.config = config;
 	}
 

@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.base.selector.regexp;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+
 import org.metricssampler.config.SelectorConfig;
 
 public class RegExpSelectorConfig extends SelectorConfig {
@@ -9,6 +11,7 @@ public class RegExpSelectorConfig extends SelectorConfig {
 
 
 	public RegExpSelectorConfig(final String namePattern, final String descriptionPattern, final String keyExpression) {
+		checkArgumentNotNull(keyExpression, "keyExpression");
 		this.namePattern = namePattern;
 		this.descriptionPattern = descriptionPattern;
 		this.keyExpression = keyExpression;

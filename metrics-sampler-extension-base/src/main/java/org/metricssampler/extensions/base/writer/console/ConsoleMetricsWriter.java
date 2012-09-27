@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.base.writer.console;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,11 +19,13 @@ public class ConsoleMetricsWriter implements MetricsWriter {
 	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	public ConsoleMetricsWriter(final ConsoleOutputConfig config) {
+		checkArgumentNotNull(config, "config");
 		this.config = config;
 	}
 
 	@Override
 	public void write(final Map<String, MetricValue> metrics) {
+		checkArgumentNotNull(metrics, "metrics");
 		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
 			final MetricValue value = entry.getValue();
 			final String timestampPrefix = dateFormat.format(new Date(value.getTimestamp()))+" ";

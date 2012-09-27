@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.graphite;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -26,6 +28,7 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 	private Writer writer;
 
 	public GraphiteMetricsWriter(final GraphiteOutputConfig config) {
+		checkArgumentNotNull(config, "config");
 		this.config = config;
 		this.logger = LoggerFactory.getLogger("writer."+config.getName());
 	}
@@ -60,6 +63,7 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 
 	@Override
 	public void write(final Map<String, MetricValue> metrics) {
+		checkArgumentNotNull(metrics, "metrics");
 		assertIsConnected();
 		final StringBuilder builder = new StringBuilder();
 		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
@@ -77,6 +81,8 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 	}
 
 	protected String serializeValue(final String name, final MetricValue value) {
+		checkArgumentNotNull(name, "name");
+		checkArgumentNotNull(value, "value");
 		final long timestamp = value.getTimestamp()/1000;
 		final String prefixedName = (config.getPrefix() != null ? config.getPrefix() : "") + name;
 		final String graphiteName = prefixedName.replaceAll(" ", "_");

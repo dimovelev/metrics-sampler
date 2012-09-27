@@ -1,4 +1,5 @@
 package org.metricssampler.config;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 import java.util.Map;
 
@@ -10,6 +11,7 @@ public class DictionaryVariable extends Variable {
 	
 	public DictionaryVariable(final String name, final Map<String, String> value) {
 		super(name);
+		checkArgumentNotNull(value, "value");
 		this.value = value;
 	}
 

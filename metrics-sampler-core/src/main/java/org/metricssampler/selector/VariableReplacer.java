@@ -1,6 +1,6 @@
 package org.metricssampler.selector;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class VariableReplacer {
 	private static final Logger logger = LoggerFactory.getLogger(VariableReplacer.class);
 
 	public static String replace(final String expression, final Map<String, Object> replacements) {
-		checkNotNull(expression, "expression may not be null");
+		checkArgumentNotNull(expression, "expression");
 		return new VariableReplacer().replaceVariables(expression, replacements);
 	}
 	

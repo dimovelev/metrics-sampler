@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.base.sampler;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -20,6 +22,10 @@ public class DefaultSamplerConfig extends SamplerConfig {
 			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final List<Variable> variables,
 			final boolean quiet) {
 		super(name, interval, disabled);
+		checkArgumentNotNull(input, "input");
+		checkArgumentNotNull(outputs, "outputs");
+		checkArgumentNotNull(selectors, "selectors");
+		checkArgumentNotNull(variables, "variables");
 		this.input = input;
 		this.outputs = outputs;
 		this.selectors = selectors;
