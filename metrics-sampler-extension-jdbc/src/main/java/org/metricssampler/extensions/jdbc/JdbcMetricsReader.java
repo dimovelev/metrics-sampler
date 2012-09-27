@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.Variable;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
@@ -35,9 +34,7 @@ public class JdbcMetricsReader implements BulkMetricsReader {
 
 	private Map<String, Object> prepareVariables() {
 		final Map<String, Object> result = new HashMap<String, Object>();
-		for (final Variable variable : config.getVariables()) {
-			result.put(variable.getName(), variable.getValue());
-		}
+		result.putAll(config.getVariables());
 		result.put("input.name", config.getName());
 		return Collections.unmodifiableMap(result);
 	}

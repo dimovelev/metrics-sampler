@@ -12,7 +12,6 @@ import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.Variable;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -89,7 +88,7 @@ public class ConfigurationXBean {
 	}
 
 	public Configuration toConfig() {
-		final List<Variable> variables = configureVariables(getVariables());
+		final Map<String, Object> variables = VariableXBean.toMap(getVariables());
 		final Map<String, InputConfig> inputs = configureInputs(getInputs());
 		final Map<String, OutputConfig> outputs = configureOutputs(getOutputs());
 		final Map<String, List<SelectorConfig>> selectorGroups = configureSelectorGroups(getSelectorGroups());
@@ -97,17 +96,6 @@ public class ConfigurationXBean {
 		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, variables);
 	}
 
-	private List<Variable> configureVariables(final List<VariableXBean> items) {
-		final List<Variable> result = new LinkedList<Variable>();
-		if (items != null) {
-			for (final VariableXBean item : items) {
-				result.add(item.toConfig());
-			}
-		}
-		return result;
-	}
-
-	
 	private Map<String, InputConfig> configureInputs(final List<InputXBean> list) {
 		final LinkedHashMap<String, InputXBean> xbeans = TemplatableXBeanUtils.sortByDependency(list); 
 		
@@ -154,7 +142,7 @@ public class ConfigurationXBean {
 		return result;
 	}
 
-	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final List<Variable> variables) {
+	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final Map<String, Object> variables) {
 		final LinkedHashMap<String, SamplerXBean> namedSamplers = TemplatableXBeanUtils.sortByDependency(samplers); 
 
 		final List<SamplerConfig> result = new LinkedList<SamplerConfig>();

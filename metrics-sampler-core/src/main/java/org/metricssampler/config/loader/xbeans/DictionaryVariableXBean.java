@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.DictionaryVariable;
-import org.metricssampler.config.Variable;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -24,14 +21,13 @@ public class DictionaryVariableXBean extends VariableXBean {
 	}
 
 	@Override
-	public Variable toConfig() {
+	public Object getValue() {
 		super.validate();
-		final Map<String, String> map = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<String, String>();
 		for (final EntryXBean entry : entries) {
 			entry.validate();
-			map.put(entry.getKey(), entry.getValue());
+			result.put(entry.getKey(), entry.getValue());
 		}
-		return new DictionaryVariable(getName(), map);
+		return result;
 	}
-
 }

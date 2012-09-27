@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.Variable;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsReader;
@@ -43,9 +42,7 @@ public class DefaultSampler implements Sampler {
 	private Map<String, Object> prepareVariables() {
 		final Map<String, Object> result = new HashMap<String, Object>();
 		result.putAll(reader.getVariables());
-		for (final Variable variable : config.getVariables()) {
-			result.put(variable.getName(), variable.getValue());
-		}
+		result.putAll(config.getVariables());
 		
 		return result;
 	}

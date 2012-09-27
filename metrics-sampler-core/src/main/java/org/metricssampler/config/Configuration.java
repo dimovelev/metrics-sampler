@@ -5,6 +5,7 @@ import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * The root configuration of the application
@@ -14,9 +15,9 @@ public class Configuration {
 	private final Collection<InputConfig> inputs;
 	private final Collection<OutputConfig> outputs;
 	private final Collection<SamplerConfig> samplers;
-	private final Collection<Variable> variables;
+	private final Map<String, Object> variables;
 	
-	public Configuration(final int poolSize, final Collection<InputConfig> inputs, final Collection<OutputConfig> outputs, final Collection<SamplerConfig> samplers, final Collection<Variable> variables) {
+	public Configuration(final int poolSize, final Collection<InputConfig> inputs, final Collection<OutputConfig> outputs, final Collection<SamplerConfig> samplers, final Map<String, Object> variables) {
 		checkArgument(poolSize > 0, "pool-size must be greater than 0");
 		checkArgumentNotNull(inputs, "inputs");
 		checkArgumentNotNull(outputs, "outputs");
@@ -26,7 +27,7 @@ public class Configuration {
 		this.inputs = inputs;
 		this.outputs = outputs;
 		this.samplers = samplers;
-		this.variables = variables;
+		this.variables = Collections.unmodifiableMap(variables);
 	}
 
 	/**
@@ -48,7 +49,7 @@ public class Configuration {
 		return Collections.unmodifiableCollection(samplers);
 	}
 
-	public Collection<Variable> getVariables() {
-		return Collections.unmodifiableCollection(variables);
+	public Map<String, Object> getVariables() {
+		return variables;
 	}
 }

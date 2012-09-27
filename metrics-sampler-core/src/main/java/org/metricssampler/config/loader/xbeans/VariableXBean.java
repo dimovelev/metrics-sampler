@@ -2,7 +2,9 @@ package org.metricssampler.config.loader.xbeans;
 
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
-import org.metricssampler.config.Variable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -21,6 +23,16 @@ public abstract class VariableXBean {
 	protected void validate() {
 		notEmpty("name", "variable", getName());
 	}
+
+	public abstract Object getValue();
 	
-	public abstract Variable toConfig();
+	public static Map<String, Object> toMap(final List<VariableXBean> variables) {
+		final Map<String, Object> result = new HashMap<String, Object>();
+		if (variables != null) {
+			for (final VariableXBean variable : variables) {
+				result.put(variable.getName(), variable.getValue());
+			}
+		}
+		return result;
+	}
 }

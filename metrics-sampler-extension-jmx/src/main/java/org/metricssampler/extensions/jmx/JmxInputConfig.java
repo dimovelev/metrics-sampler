@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.SocketOptionsConfig;
-import org.metricssampler.config.Variable;
 
 public class JmxInputConfig extends InputConfig {
 	private final String url;
@@ -19,7 +18,7 @@ public class JmxInputConfig extends InputConfig {
 	private final Map<String, String> connectionProperties;
 	private final SocketOptionsConfig socketOptions;
 	
-	public JmxInputConfig(final String name, final List<Variable> variables, final String url, final String username,
+	public JmxInputConfig(final String name, final  Map<String, Object> variables, final String url, final String username,
 			final String password, final String providerPackages,
 			final boolean persistentConnection, final List<Pattern> ignoredObjectNames, final Map<String, String> connectionProperties, final SocketOptionsConfig socketOptions) {
 		super(name, variables);

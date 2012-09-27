@@ -2,8 +2,6 @@ package org.metricssampler.config.loader.xbeans;
 
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
-import org.metricssampler.config.StringVariable;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -12,7 +10,9 @@ public class StringVariableXBean extends VariableXBean {
 	@XStreamAsAttribute
 	private String value;
 
+	@Override
 	public String getValue() {
+		this.validate();
 		return value;
 	}
 
@@ -20,16 +20,9 @@ public class StringVariableXBean extends VariableXBean {
 		this.value = value;
 	}
 
-	
 	@Override
 	protected void validate() {
 		super.validate();
 		notEmpty("value", "string variable", getValue());
-	}
-
-	@Override
-	public StringVariable toConfig() {
-		validate();
-		return new StringVariable(getName(), getValue());
 	}
 }

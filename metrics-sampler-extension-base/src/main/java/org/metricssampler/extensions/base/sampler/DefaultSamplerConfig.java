@@ -4,22 +4,22 @@ import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.Variable;
 
 public class DefaultSamplerConfig extends SamplerConfig {
 	private final InputConfig input;
 	private final List<OutputConfig> outputs;
 	private final List<SelectorConfig> selectors;
-	private final List<Variable> variables;
+	private final Map<String, Object> variables;
 	private final boolean quiet;
 
 	public DefaultSamplerConfig(final String name, final int interval, final boolean disabled, final InputConfig input,
-			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final List<Variable> variables,
+			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final Map<String, Object> variables,
 			final boolean quiet) {
 		super(name, interval, disabled);
 		checkArgumentNotNull(input, "input");
@@ -29,7 +29,7 @@ public class DefaultSamplerConfig extends SamplerConfig {
 		this.input = input;
 		this.outputs = outputs;
 		this.selectors = selectors;
-		this.variables = variables;
+		this.variables = Collections.unmodifiableMap(variables);
 		this.quiet = quiet;
 	}
 
@@ -45,8 +45,8 @@ public class DefaultSamplerConfig extends SamplerConfig {
 		return Collections.unmodifiableList(selectors);
 	}
 
-	public List<Variable> getVariables() {
-		return Collections.unmodifiableList(variables);
+	public Map<String, Object> getVariables() {
+		return variables;
 	}
 
 	@Override

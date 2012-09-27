@@ -1,11 +1,11 @@
 package org.metricssampler.config.loader.xbeans;
 
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.Variable;
 
 /**
  * Base class for input XBeans.
@@ -29,11 +29,11 @@ public abstract class InputXBean extends TemplatableXBean {
 		return createConfig();
 	}
 	
-	protected List<Variable> getVariablesConfig() {
-		final List<Variable> result = new LinkedList<Variable>();
+	protected Map<String, Object> getVariablesConfig() {
+		final Map<String, Object> result = new HashMap<String, Object>();
 		if (variables != null) {
 			for (final VariableXBean item : variables) {
-				result.add(item.toConfig());
+				result.put(item.getName(), item.getValue());
 			}
 		}
 		return result;

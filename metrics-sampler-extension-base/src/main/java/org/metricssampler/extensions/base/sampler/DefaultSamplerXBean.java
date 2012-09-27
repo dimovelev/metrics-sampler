@@ -2,6 +2,7 @@ package org.metricssampler.extensions.base.sampler;
 
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -9,14 +10,13 @@ import java.util.Map;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.Variable;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.loader.xbeans.VariableXBean;
 import org.metricssampler.config.loader.xbeans.SamplerXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
 import org.metricssampler.config.loader.xbeans.SelectorXBean;
 import org.metricssampler.config.loader.xbeans.SimpleSelectorXBean;
+import org.metricssampler.config.loader.xbeans.VariableXBean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -96,25 +96,21 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		}
 	}
 	@Override
-	public SamplerConfig toConfig(final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorTemplates, final List<Variable> globalVariables) {
+	public SamplerConfig toConfig(final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorTemplates, final Map<String, Object> globalVariables) {
 		validate();
 
 		final InputConfig inputConfig = configureInput(inputs);
 		final List<OutputConfig> outputConfigs = configureOutputs(outputs);
 		final List<SelectorConfig> selectorConfigs = configureSelectors(selectorTemplates);
-		final List<Variable> variableConfigs = configureVariables(globalVariables);
+		final Map<String, Object> variableConfigs = configureVariables(globalVariables);
 		
 		return new DefaultSamplerConfig(getName(), getInterval(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, variableConfigs, getQuiet() != null ? getQuiet() : false);
 	}
 
-	protected List<Variable> configureVariables(final List<Variable> globalVariables) {
-		final List<Variable> result = new LinkedList<Variable>();
-		result.addAll(globalVariables);
-		if (getVariables() != null) {
-			for (final VariableXBean item : getVariables()) {
-				result.add(item.toConfig());
-			}
-		}
+	protected Map<String, Object> configureVariables(final Map<String, Object> globalVariables) {
+		final Map<String, Object> result = new HashMap<String, Object>();
+		result.putAll(globalVariables);
+		result.putAll(VariableXBean.toMap(getVariables()));
 		return result;
 	}
 

@@ -25,7 +25,6 @@ import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.remote.JMXServiceURL;
 
-import org.metricssampler.config.Variable;
 import org.metricssampler.reader.MetaDataMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
@@ -199,9 +198,7 @@ public class JmxMetricsReader implements MetaDataMetricsReader {
 
 	private Map<String, Object> prepareVariables() {
 		final Map<String, Object> result = new HashMap<String, Object>();
-		for (final Variable variable : config.getVariables()) {
-			result.put(variable.getName(), variable.getValue());
-		}
+		result.putAll(config.getVariables());
 		result.put("input.name", config.getName());
 		try {
 			final JMXServiceURL url = new JMXServiceURL(config.getUrl());

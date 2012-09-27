@@ -1,10 +1,9 @@
 package org.metricssampler.extensions.modqos;
 
 import java.net.URL;
-import java.util.List;
+import java.util.Map;
 
 import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.Variable;
 
 public class ModQosInputConfig extends InputConfig {
 	private final URL url;
@@ -12,7 +11,7 @@ public class ModQosInputConfig extends InputConfig {
 	private final String password;
 	private final AuthenticationType authType;
 
-	public ModQosInputConfig(final String name, final List<Variable> variables, final URL url, final String username, final String password, final AuthenticationType authType) {
+	public ModQosInputConfig(final String name, final  Map<String, Object> variables, final URL url, final String username, final String password, final AuthenticationType authType) {
 		super(name, variables);
 		this.url = url;
 		this.username = username;

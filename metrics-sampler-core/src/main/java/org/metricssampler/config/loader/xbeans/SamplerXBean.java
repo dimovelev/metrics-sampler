@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.Variable;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
 
@@ -23,7 +22,7 @@ public abstract class SamplerXBean extends TemplatableXBean {
 	@XStreamAsAttribute
 	private boolean disabled;
 
-	public abstract SamplerConfig toConfig(Map<String, InputConfig> inputs, Map<String, OutputConfig> outputs, Map<String, List<SelectorConfig>> selectorGroups, List<Variable> variables);
+	public abstract SamplerConfig toConfig(Map<String, InputConfig> inputs, Map<String, OutputConfig> outputs, Map<String, List<SelectorConfig>> selectorGroups, Map<String, Object> variables);
 
 	public Integer getInterval() {
 		return interval;

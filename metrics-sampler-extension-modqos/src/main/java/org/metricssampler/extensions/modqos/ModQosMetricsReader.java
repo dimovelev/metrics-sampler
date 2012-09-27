@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
-import org.metricssampler.config.Variable;
 import org.metricssampler.extensions.modqos.ModQosInputConfig.AuthenticationType;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
@@ -35,9 +34,7 @@ public class ModQosMetricsReader implements BulkMetricsReader {
 	
 	private Map<String, Object> prepareVariables() {
 		final Map<String, Object> result = new HashMap<String, Object>();
-		for (final Variable variable : config.getVariables()) {
-			result.put(variable.getName(), variable.getValue());
-		}
+		result.putAll(config.getVariables());
 		result.put("input.name", config.getName());
 		return Collections.unmodifiableMap(result);
 	}

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.Variable;
 
 public class JdbcInputConfig extends InputConfig {
 	private final String url;
@@ -17,7 +16,7 @@ public class JdbcInputConfig extends InputConfig {
 	private final List<String> queries;
 	private final Map<String, String> options;
 	
-	public JdbcInputConfig(final String name, final List<Variable> variables, final String url, final String driver, final String username, final String password, final List<String> queries, final Map<String, String> options) {
+	public JdbcInputConfig(final String name, final Map<String, Object> variables, final String url, final String driver, final String username, final String password, final List<String> queries, final Map<String, String> options) {
 		super(name, variables);
 		checkArgumentNotNullNorEmpty(url, "url");
 		checkArgumentNotNullNorEmpty(queries, "queries");
