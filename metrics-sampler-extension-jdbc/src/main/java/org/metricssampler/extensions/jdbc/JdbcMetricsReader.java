@@ -82,6 +82,7 @@ public class JdbcMetricsReader extends AbstractMetricsReader implements BulkMetr
 		Statement statement = null;
 		try {
 			logger.debug("Executing query {}", query);
+			final long start = System.currentTimeMillis();
 			statement = connection.createStatement();
 			ResultSet resultSet = null;
 			try {
@@ -94,7 +95,7 @@ public class JdbcMetricsReader extends AbstractMetricsReader implements BulkMetr
 					final SimpleMetricName metric = new SimpleMetricName(key, resultSet.getMetaData().getColumnName(1));
 					if (columnCount == 2) {
 						logger.debug("Using current timestamp as metric timestamp for "+key);
-						result.put(metric, new MetricValue(System.currentTimeMillis(), value));
+						result.put(metric, new MetricValue(start, value));
 					} else if (columnCount == 3) {
 						logger.debug("Using timestamp from query result column 3 as metric timestamp for "+key);
 						final long timestamp = resultSet.getLong(3);
@@ -109,6 +110,8 @@ public class JdbcMetricsReader extends AbstractMetricsReader implements BulkMetr
 			} finally {
 				closeQuietly(resultSet);
 			}
+			final long end = System.currentTimeMillis();
+			timingsLogger.debug("Discovered {} metrics in {} ms", result.size(), end - start);
 		} catch (final SQLException e) {
 			reconnect();
 			throw new MetricReadException("Failed to create statement. Will reconnect just in case", e);

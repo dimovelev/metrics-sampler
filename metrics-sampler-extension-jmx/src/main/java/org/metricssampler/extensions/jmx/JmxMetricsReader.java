@@ -128,7 +128,7 @@ public class JmxMetricsReader extends AbstractMetricsReader implements MetaDataM
 		}
 		logger.debug("Loaded "+result.size()+" attributes");
 		final long end = System.currentTimeMillis();
-		timingsLogger.debug("Discovered {} metrics in {} ms", result.size(), end-start);
+		timingsLogger.debug("Discovered {} metrics in {} ms", result.size(), end - start);
 		return result;
 	}
 

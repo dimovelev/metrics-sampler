@@ -39,6 +39,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader implements BulkMe
 
 	@Override
 	public void open() throws MetricReadException {
+		final long start = System.currentTimeMillis();
 		try {
 			final URLConnection urlConnection = config.getUrl().openConnection();
 			applyAuthentication(urlConnection);
@@ -54,6 +55,8 @@ public class ModQosMetricsReader extends AbstractMetricsReader implements BulkMe
 		} catch (final IOException e) {
 			throw new OpenMetricsReaderException(e);
 		}
+		final long end = System.currentTimeMillis();
+		timingsLogger.debug("Discovered {} metrics in {} ms", values.size(), end - start);
 	}
 
 	private void applyAuthentication(final URLConnection urlConnection) throws UnsupportedEncodingException {
