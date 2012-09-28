@@ -1,6 +1,9 @@
 package org.metricssampler.extensions.modqos;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+
 import java.net.URL;
+import java.util.Collections;
 import java.util.Map;
 
 import org.metricssampler.config.InputConfig;
@@ -9,14 +12,16 @@ public class ModQosInputConfig extends InputConfig {
 	private final URL url;
 	private final String username;
 	private final String password;
-	private final AuthenticationType authType;
-
-	public ModQosInputConfig(final String name, final  Map<String, Object> variables, final URL url, final String username, final String password, final AuthenticationType authType) {
+	private final Map<String, String> headers;
+	
+	public ModQosInputConfig(final String name, final  Map<String, Object> variables, final URL url, final String username, final String password, final Map<String, String> headers) {
 		super(name, variables);
+		checkArgumentNotNull(url, "url");
+		checkArgumentNotNull(headers, "headers");
 		this.url = url;
 		this.username = username;
 		this.password = password;
-		this.authType = authType;
+		this.headers = Collections.unmodifiableMap(headers);
 	}
 
 	public URL getUrl() {
@@ -31,12 +36,7 @@ public class ModQosInputConfig extends InputConfig {
 		return password;
 	}
 
-	public AuthenticationType getAuthType() {
-		return authType;
-	}
-
-	public enum AuthenticationType {
-		NONE,
-		BASIC
+	public Map<String, String> getHeaders() {
+		return headers;
 	}
 }

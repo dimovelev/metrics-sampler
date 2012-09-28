@@ -18,13 +18,11 @@ import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 
-public class JdbcMetricsReader extends AbstractMetricsReader implements BulkMetricsReader {
-	private final JdbcInputConfig config;
+public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> implements BulkMetricsReader {
 	private Connection connection;
 	
 	public JdbcMetricsReader(final JdbcInputConfig config) {
 		super(config);
-		this.config = config;
 	}
 
 	@Override

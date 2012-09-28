@@ -8,13 +8,13 @@ import org.metricssampler.config.InputConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractMetricsReader implements MetricsReader {
-	private final InputConfig config;
+public abstract class AbstractMetricsReader<T extends InputConfig> implements MetricsReader {
+	protected final T config;
 	protected final Logger logger;
 	protected final Logger timingsLogger;
 	protected final Map<String, Object> variables;
 
-	protected AbstractMetricsReader(final InputConfig config) {
+	protected AbstractMetricsReader(final T config) {
 		this.config = config;
 		this.logger = LoggerFactory.getLogger("reader." + config.getName());
 		this.timingsLogger = LoggerFactory.getLogger("timings.reader");

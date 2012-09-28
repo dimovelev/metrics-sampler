@@ -5,11 +5,14 @@ import static org.metricssampler.config.loader.xbeans.ValidationUtils.validUrl;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.loader.xbeans.EntryXBean;
 import org.metricssampler.config.loader.xbeans.InputXBean;
-import org.metricssampler.extensions.modqos.ModQosInputConfig.AuthenticationType;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -23,11 +26,20 @@ public class ModQosInputXBean extends InputXBean {
 	private String username;
 
 	@XStreamAsAttribute
-
 	private String password;
 
 	@XStreamAsAttribute
 	private String auth = "none";
+
+	private List<EntryXBean> headers;
+	
+	public List<EntryXBean> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(final List<EntryXBean> headers) {
+		this.headers = headers;
+	}
 
 	public String getUrl() {
 		return url;
@@ -76,12 +88,15 @@ public class ModQosInputXBean extends InputXBean {
 
 	@Override
 	protected InputConfig createConfig() {
-		try {
-			AuthenticationType authType = AuthenticationType.NONE;
-			if (auth != null && auth.equals("basic")) {
-				authType = AuthenticationType.BASIC;
+		final Map<String, String> httpHeaders = new HashMap<String, String>();
+		if (headers != null) {
+			for (final EntryXBean entry : headers) {
+				entry.validate();
+				httpHeaders.put(entry.getKey(), entry.getValue());
 			}
-			return new ModQosInputConfig(getName(), getVariablesConfig(), new URL(getUrl()), username, password, authType);
+		}
+		try {
+			return new ModQosInputConfig(getName(), getVariablesConfig(), new URL(getUrl()), username, password, httpHeaders);
 		} catch (final MalformedURLException e) {
 			throw new ConfigurationException("Invalid URL: "+e.getMessage());
 		}

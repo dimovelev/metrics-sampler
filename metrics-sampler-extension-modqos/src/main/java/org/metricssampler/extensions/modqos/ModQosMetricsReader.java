@@ -1,19 +1,25 @@
 package org.metricssampler.extensions.modqos;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLConnection;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.codec.binary.Base64;
-import org.metricssampler.extensions.modqos.ModQosInputConfig.AuthenticationType;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.reader.AbstractMetricsReader;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
@@ -22,14 +28,38 @@ import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 
-public class ModQosMetricsReader extends AbstractMetricsReader implements BulkMetricsReader {
-	private final ModQosInputConfig config;
-	private List<String> data;
+public class ModQosMetricsReader extends AbstractMetricsReader<ModQosInputConfig> implements BulkMetricsReader {
 	private Map<MetricName, MetricValue> values;
+	private final DefaultHttpClient httpClient;
+	private final HttpGet httpRequest;
 
 	public ModQosMetricsReader(final ModQosInputConfig config) {
 		super(config);
-		this.config = config;
+		httpClient = setupClient();
+		httpRequest = setupRequest();
+	}
+
+	private DefaultHttpClient setupClient() {
+		final DefaultHttpClient result = new DefaultHttpClient();
+		if (config.getUsername() != null) {
+			result.getCredentialsProvider().setCredentials(
+					AuthScope.ANY,
+	                new UsernamePasswordCredentials(config.getUsername(), config.getPassword()));
+		}
+		return result;
+	}
+
+	private HttpGet setupRequest() {
+		try {
+			final HttpGet result = new HttpGet(config.getUrl().toURI());
+			result.setHeader("User-Agent", "metrics-sampler mod_qos");
+			for (final Entry<String, String> header : config.getHeaders().entrySet()) {
+				result.setHeader(header.getKey(), header.getValue());
+			}
+			return result;
+		} catch (final URISyntaxException e) {
+			throw new ConfigurationException("Failed to convert URL to URI", e);
+		}
 	}
 
 	@Override
@@ -41,17 +71,8 @@ public class ModQosMetricsReader extends AbstractMetricsReader implements BulkMe
 	public void open() throws MetricReadException {
 		final long start = System.currentTimeMillis();
 		try {
-			final URLConnection urlConnection = config.getUrl().openConnection();
-			applyAuthentication(urlConnection);
-			final InputStream is = (InputStream) urlConnection.getContent();
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-			String line = null;
-			data = new LinkedList<String>();
-			while ( (line = reader.readLine()) != null) {
-				data.add(line);
-			}
-			reader.close();
-			parseData();
+	            final HttpResponse response = httpClient.execute(httpRequest);
+	            processResponse(response);
 		} catch (final IOException e) {
 			throw new OpenMetricsReaderException(e);
 		}
@@ -59,19 +80,41 @@ public class ModQosMetricsReader extends AbstractMetricsReader implements BulkMe
 		timingsLogger.debug("Discovered {} metrics in {} ms", values.size(), end - start);
 	}
 
-	private void applyAuthentication(final URLConnection urlConnection) throws UnsupportedEncodingException {
-		if (config.getAuthType() == AuthenticationType.BASIC) {
-			final String userpass = config.getUsername() + ":" + config.getPassword();
-			final String basicAuthHeader = "Basic " + Base64.encodeBase64String(userpass.getBytes("ASCII"));
-			urlConnection.setRequestProperty ("Authorization", basicAuthHeader);
+	private void processResponse(final HttpResponse response) throws IOException {
+		final HttpEntity entity = response.getEntity();
+		if (entity != null) {
+			final Charset charset = parseCharset(entity);
+		    final InputStreamReader reader = new InputStreamReader(entity.getContent(), charset);
+		    try {
+				final LineIterator lines = new LineIterator(reader);
+				try {
+					values = new HashMap<MetricName, MetricValue>();
+					while (lines.hasNext()) {
+						final String line = lines.next();
+						parseModQosLine(line);
+					}
+				} finally {
+					lines.close();
+				}
+		    } finally {
+		    	IOUtils.closeQuietly(reader);
+		    }
+		} else {
+			values = Collections.emptyMap();
+			logger.warn("Response was null. Response line: {}", response.getStatusLine());
 		}
 	}
 
-	private void parseData() {
-		values = new HashMap<MetricName, MetricValue>();
-		for (final String line : data) {
-			parseModQosLine(line);
+	private Charset parseCharset(final HttpEntity entity) {
+		try {
+			final ContentType contentType = ContentType.getOrDefault(entity);
+		    if (contentType != null && contentType.getCharset() != null) {
+		    	return contentType.getCharset();
+		    }
+		} catch (final ParseException e) {
+			logger.warn("Failed to parse content type", e);
 		}
+		return Charset.defaultCharset();
 	}
 
 	protected void parseModQosLine(final String line) {

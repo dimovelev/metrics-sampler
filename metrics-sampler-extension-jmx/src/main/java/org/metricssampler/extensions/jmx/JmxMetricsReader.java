@@ -34,14 +34,12 @@ import org.metricssampler.reader.OpenMetricsReaderException;
 /**
  * Read metrics from a JMX server. This class is not thread safe and may not be reused in multiple samplers.
  */
-public class JmxMetricsReader extends AbstractMetricsReader implements MetaDataMetricsReader {
-	private final JmxInputConfig config;
+public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> implements MetaDataMetricsReader {
 	private MetricsMetaData metadata;
 	private final JmxConnection connection;
 
 	public JmxMetricsReader(final JmxInputConfig config) {
 		super(config);
-		this.config = config;
 		try {
 			this.connection = new JmxConnection(config);
 		} catch (final IOException e) {
