@@ -45,7 +45,7 @@ Check out the following configuration as a quick-start:
 			</jdbc>
 			
 			<!-- Apache mod_qos status page -->
-			<mod-qos name="apache01" url="http://apache1.metrics-sampler.org:80/qos-viewer?auto" username="user" password="pass" auth="basic"/>
+			<mod-qos name="apache01" url="http://apache1.metrics-sampler.org:80/qos-viewer?auto" username="user" password="pass" />
 		</inputs>
 		<outputs>
 			<!-- Write to the standard output -->
@@ -190,7 +190,6 @@ Internals
 * The graphite writer currently disconnects on each sampling but could be improved to keep the connection (or even better let that be configurable)
 * XStream is used to load the XML configuration. The XML is mapped to *XBean instances which are basically POJOs with the some added abilities like validating their data and converting themselves to the configuration format independent *Config POJOs. The *Config POJOs are value objects used by the rest of the system (e.g. samplers, readers, writers, selectors).
 * The core implementation took about 2 days. In that light it might be more understandable why there are no unit tests. I intend however to write some in the future.
-* mod_qos uses an URLConnection to fetch the data. Currently we also have a trivial implementation of basic authentication. It would be nice to switch to httpcomponents so that we get all the nice stuff out-of-the-box (also a better API) - maybe even persistent connections.
 
 Compatibility
 =============
