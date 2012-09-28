@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>org.metrics-sampler</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.4.2-SNAPSHOT</version>
+		<version>0.4.2</version>
 	</parent>
 	<artifactId>metrics-sampler-extension-base</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.4.2-SNAPSHOT</version>
+			<version>0.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
