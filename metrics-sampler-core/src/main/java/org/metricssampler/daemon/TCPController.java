@@ -24,6 +24,7 @@ public class TCPController implements Runnable {
 	private static final String SAMPLER_COMMAND_PREFIX = "sampler ";
 	private static final String SAMPLER_COMMAND_SUFFIX_START = " start";
 	private static final String SAMPLER_COMMAND_SUFFIX_STOP = " stop";
+	private static final String SAMPLER_COMMAND_SUFFIX_SAMPLE = " sample";
 
 	private final ServerSocket serverSocket;
 	private final ExecutorService executor;
@@ -129,6 +130,16 @@ public class TCPController implements Runnable {
 				logger.info("Enabling sampler \"{}\"", name);
 				task.enable();
 				writer.write("Sampler \"" + name + "\" enabled\n");
+			} else {
+				writer.write("Sampler named \"" + name + "\" not found\n");
+			}
+		} else if (line.endsWith(SAMPLER_COMMAND_SUFFIX_SAMPLE)) {
+			final String name = line.substring(SAMPLER_COMMAND_PREFIX.length(), line.length()-SAMPLER_COMMAND_SUFFIX_SAMPLE.length());
+			final SamplerTask task = tasks.get(name);
+			if (task != null) {
+				logger.info("Enabling sampler \"{}\" for one-time sampling", name);
+				task.enableOnce();
+				writer.write("Sampler \"" + name + "\" enabled for one-time sampling\n");
 			} else {
 				writer.write("Sampler named \"" + name + "\" not found\n");
 			}

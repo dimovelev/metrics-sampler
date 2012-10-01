@@ -8,6 +8,7 @@ import org.slf4j.MDC;
 public class SamplerTask implements Runnable {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private volatile boolean enabled = true;
+	private volatile boolean enableOnce = false;
 	private final Sampler sampler;
 	
 	public SamplerTask(final Sampler sampler) {
@@ -17,9 +18,10 @@ public class SamplerTask implements Runnable {
 	@Override
 	public void run() {
 		MDC.put("sampler", sampler.getName());
-		if (enabled) {
+		if (enabled || enableOnce) {
 			try {
 				sampler.sample();
+				enableOnce = false;
 			} catch (final RuntimeException e) {
 				logger.warn("Sampler threw exception. Ignoring.", e);
 			}
@@ -37,4 +39,7 @@ public class SamplerTask implements Runnable {
 		this.enabled = false;
 	}
 	
+	public void enableOnce() {
+		enableOnce = true;
+	}
 }
