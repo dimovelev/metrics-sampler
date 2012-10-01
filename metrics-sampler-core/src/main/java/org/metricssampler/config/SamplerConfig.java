@@ -10,14 +10,16 @@ import java.util.Map;
  */
 public abstract class SamplerConfig extends NamedConfig {
 	private final int interval;
+	private final boolean ignored;
 	private final boolean disabled;
 	private final Map<String, Object> globalVariables;
 	
-	public SamplerConfig(final String name, final int interval, final boolean disabled, final Map<String, Object> globalVariables) {
+	public SamplerConfig(final String name, final int interval, final boolean ignored, final boolean disabled, final Map<String, Object> globalVariables) {
 		super(name);
 		checkArgument(interval > 0, "interval must be greater than 0 seconds");
 		checkArgumentNotNull(globalVariables, "globalVariables");
 		this.interval = interval;
+		this.ignored = ignored;
 		this.disabled = disabled;
 		this.globalVariables = Collections.unmodifiableMap(globalVariables);
 	}
@@ -32,13 +34,15 @@ public abstract class SamplerConfig extends NamedConfig {
 	/**
 	 * @return {@code true} if the sampler should be excluded when sampling
 	 */
-	public boolean isDisabled() {
-		return disabled;
+	public boolean isIgnored() {
+		return ignored;
 	}
 
 	public Map<String, Object> getGlobalVariables() {
 		return globalVariables;
 	}
-	
-	
+
+	public boolean isDisabled() {
+		return disabled;
+	}
 }

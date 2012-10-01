@@ -20,6 +20,9 @@ public abstract class SamplerXBean extends TemplatableXBean {
 	private Integer interval;
 
 	@XStreamAsAttribute
+	private boolean ignored;
+
+	@XStreamAsAttribute
 	private boolean disabled;
 
 	public abstract SamplerConfig toConfig(Map<String, InputConfig> inputs, Map<String, OutputConfig> outputs, Map<String, List<SelectorConfig>> selectorGroups, Map<String, Object> globalVariables);
@@ -30,6 +33,14 @@ public abstract class SamplerXBean extends TemplatableXBean {
 
 	public void setInterval(final Integer interval) {
 		this.interval = interval;
+	}
+
+	public boolean isIgnored() {
+		return ignored;
+	}
+
+	public void setIgnored(final boolean ignored) {
+		this.ignored = ignored;
 	}
 
 	public boolean isDisabled() {

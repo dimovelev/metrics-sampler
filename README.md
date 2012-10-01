@@ -129,8 +129,8 @@ Check out the following configuration as a quick-start:
 				</selectors>
 			</sampler>
 
-			<!-- you can use disabled="true" to disable a sampler without removing / commenting it out. Note that it still needs to be valid. -->
-			<sampler input="oracle01" outputs="graphite" interval="10" disabled="true">
+			<!-- you can use ignored="true" to completely skip a sampler without removing / commenting it out. Note that it still needs to be valid. -->
+			<sampler input="oracle01" outputs="graphite" interval="10" ignored="true">
 				<variables>
 					<string name="prefix" value="database.${input.name}" />
 				</variables>

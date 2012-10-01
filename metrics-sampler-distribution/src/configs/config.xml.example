@@ -65,7 +65,7 @@
  				<use-group name="jrockit" />
  			</selectors>
  		</sampler>
- 		<sampler reader="tomcat01" writers="console" interval="10" disabled="true">
+ 		<sampler reader="tomcat01" writers="console" interval="10" ignored="true">
  			<selectors>
  				<use-group name="tomcat" />
  				<use-group name="hotspot" />

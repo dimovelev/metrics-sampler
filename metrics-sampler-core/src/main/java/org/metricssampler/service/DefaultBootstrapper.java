@@ -84,7 +84,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	private void createSamplers() {
 		samplers = new LinkedList<Sampler>();
 		for (final SamplerConfig samplerConfig : configuration.getSamplers()) {
-			if (!samplerConfig.isDisabled()) {
+			if (!samplerConfig.isIgnored()) {
 				final Sampler sampler = newSampler(samplerConfig);
 				samplers.add(sampler);
 			}

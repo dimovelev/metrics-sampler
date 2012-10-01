@@ -19,10 +19,10 @@ public class DefaultSamplerConfig extends SamplerConfig {
 	private final Map<String, Object> globalVariables;
 	private final boolean quiet;
 
-	public DefaultSamplerConfig(final String name, final int interval, final boolean disabled, final InputConfig input,
+	public DefaultSamplerConfig(final String name, final int interval, final boolean ignored, final boolean disabled, final InputConfig input,
 			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final Map<String, Object> variables,
 			final Map<String, Object> globalVariables, final boolean quiet) {
-		super(name, interval, disabled, globalVariables);
+		super(name, interval, ignored, disabled, globalVariables);
 		checkArgumentNotNull(input, "input");
 		checkArgumentNotNull(outputs, "outputs");
 		checkArgumentNotNull(selectors, "selectors");
