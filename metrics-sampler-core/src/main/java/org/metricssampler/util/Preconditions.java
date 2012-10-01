@@ -35,4 +35,16 @@ public final class Preconditions {
 			throw new IllegalArgumentException(msg);
 		}
 	}
+	
+	public static void checkStateNull(final Object property, final String name) throws IllegalArgumentException {
+		if (property != null) {
+			throw new IllegalStateException("Property \"" + name + "\" must be null");
+		}
+	}
+	
+	public static void checkStateNotNull(final Object property, final String name) throws IllegalArgumentException {
+		if (property == null) {
+			throw new IllegalStateException("Property \"" + name + "\" may not be null");
+		}
+	}
 }

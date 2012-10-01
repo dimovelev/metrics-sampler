@@ -38,6 +38,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	private int controlPort;
 
 	private DefaultBootstrapper() {
+		ApplicationInfo.initialize();
 	}
 	
 	public static Bootstrapper bootstrap(final String filename) {

@@ -27,6 +27,7 @@ import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.service.ApplicationInfo;
 
 public class ModQosMetricsReader extends AbstractMetricsReader<ModQosInputConfig> implements BulkMetricsReader {
 	private Map<MetricName, MetricValue> values;
@@ -52,7 +53,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader<ModQosInputConfig
 	private HttpGet setupRequest() {
 		try {
 			final HttpGet result = new HttpGet(config.getUrl().toURI());
-			result.setHeader("User-Agent", "metrics-sampler mod_qos");
+			result.setHeader("User-Agent", "metrics-sampler mod_qos v" + ApplicationInfo.getInstance().getVersion());
 			for (final Entry<String, String> header : config.getHeaders().entrySet()) {
 				result.setHeader(header.getKey(), header.getValue());
 			}

@@ -8,7 +8,6 @@ import org.metricssampler.service.Extension;
 import org.metricssampler.service.LocalObjectFactory;
 
 public class ModQosExtension implements Extension {
-
 	@Override
 	public String getName() {
 		return "mod_qos";
@@ -28,7 +27,6 @@ public class ModQosExtension implements Extension {
 
 	@Override
 	public void initialize() {
-		// do not need to do anything
 	}
 
 }
