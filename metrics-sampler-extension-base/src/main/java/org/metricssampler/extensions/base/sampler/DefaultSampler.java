@@ -45,7 +45,7 @@ public class DefaultSampler implements Sampler {
 		result.putAll(config.getGlobalVariables());
 		result.putAll(reader.getVariables());
 		result.putAll(config.getVariables());
-		result.put("sampler.name", getName());
+		result.put("sampler.name", config.getName());
 		result.put("sampler.interval", config.getInterval());
 		return Collections.unmodifiableMap(result);
 	}
@@ -153,11 +153,6 @@ public class DefaultSampler implements Sampler {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName()+"["+reader+"->"+writers+ "]";
-	}
-
-	@Override
-	public String getName() {
-		return config.getName();
 	}
 
 	@Override

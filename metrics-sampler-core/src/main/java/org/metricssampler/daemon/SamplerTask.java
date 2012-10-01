@@ -17,7 +17,7 @@ public class SamplerTask implements Runnable {
 
 	@Override
 	public void run() {
-		MDC.put("sampler", sampler.getName());
+		MDC.put("sampler", sampler.getConfig().getName());
 		if (enabled || enableOnce) {
 			try {
 				sampler.sample();

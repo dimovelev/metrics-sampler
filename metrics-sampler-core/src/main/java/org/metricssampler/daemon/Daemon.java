@@ -66,7 +66,7 @@ public class Daemon {
 			if (config.isDisabled()) {
 				task.disable();
 			}
-			tasks.put(sampler.getName(), task);
+			tasks.put(config.getName(), task);
 			executor.scheduleAtFixedRate(task, 0L, config.getInterval(), TimeUnit.SECONDS);
 		}
 	}
