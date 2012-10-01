@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.metricssampler.config.Configuration;
+import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.service.Bootstrapper;
 import org.slf4j.Logger;
@@ -59,10 +60,14 @@ public class Daemon {
 
 	private void scheduleSamplers() {
 		for (final Sampler sampler : bootstrapper.getSamplers()) {
-			logger.info("Scheduling {} at fixed rate of {} seconds", sampler, sampler.getRate());
+			final SamplerConfig config = sampler.getConfig();
+			logger.info("Scheduling {} at fixed rate of {} seconds", sampler, config.getInterval());
 			final SamplerTask task = new SamplerTask(sampler);
+			if (config.isDisabled()) {
+				task.disable();
+			}
 			tasks.put(sampler.getName(), task);
-			executor.scheduleAtFixedRate(task, 0L, sampler.getRate(), TimeUnit.SECONDS);
+			executor.scheduleAtFixedRate(task, 0L, config.getInterval(), TimeUnit.SECONDS);
 		}
 	}
 }

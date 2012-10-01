@@ -42,6 +42,9 @@ public abstract class SamplerConfig extends NamedConfig {
 		return globalVariables;
 	}
 
+	/**
+	 * @return {@code true} if the sampler is temporarily disabled and should not sample but should still be scheduled.
+	 */
 	public boolean isDisabled() {
 		return disabled;
 	}

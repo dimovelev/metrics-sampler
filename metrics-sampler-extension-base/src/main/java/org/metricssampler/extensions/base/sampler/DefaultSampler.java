@@ -161,7 +161,7 @@ public class DefaultSampler implements Sampler {
 	}
 
 	@Override
-	public int getRate() {
-		return config.getInterval();
+	public DefaultSamplerConfig getConfig() {
+		return config;
 	}
 }
