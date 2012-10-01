@@ -24,7 +24,7 @@
 		<module>metrics-sampler-extension-base</module>
 		<module>metrics-sampler-extension-jmx</module>
 		<module>metrics-sampler-extension-graphite</module>
-		<module>metrics-sampler-extension-modqos</module>
+		<module>metrics-sampler-extension-apache-status</module>
 		<module>metrics-sampler-extension-jdbc</module>
 		<module>metrics-sampler-distribution</module>
 	</modules>

@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.modqos;
+package org.metricssampler.extensions.apachestatus;
 
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
@@ -8,13 +8,13 @@ import java.util.Map;
 
 import org.metricssampler.config.InputConfig;
 
-public class ModQosInputConfig extends InputConfig {
+public class ApacheStatusInputConfig extends InputConfig {
 	private final URL url;
 	private final String username;
 	private final String password;
 	private final Map<String, String> headers;
 	
-	public ModQosInputConfig(final String name, final  Map<String, Object> variables, final URL url, final String username, final String password, final Map<String, String> headers) {
+	public ApacheStatusInputConfig(final String name, final  Map<String, Object> variables, final URL url, final String username, final String password, final Map<String, String> headers) {
 		super(name, variables);
 		checkArgumentNotNull(url, "url");
 		checkArgumentNotNull(headers, "headers");

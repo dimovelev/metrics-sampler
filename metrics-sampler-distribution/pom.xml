@@ -65,7 +65,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
-			<artifactId>metrics-sampler-extension-modqos</artifactId>
+			<artifactId>metrics-sampler-extension-apache-status</artifactId>
 			<version>0.4.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>

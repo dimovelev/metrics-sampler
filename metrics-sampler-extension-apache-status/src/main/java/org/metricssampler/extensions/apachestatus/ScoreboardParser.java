@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.modqos;
+package org.metricssampler.extensions.apachestatus;
 
 import static org.metricssampler.util.Preconditions.checkArgument;
 

@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.modqos;
+package org.metricssampler.extensions.apachestatus;
 
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.validUrl;
@@ -17,8 +17,8 @@ import org.metricssampler.config.loader.xbeans.InputXBean;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias("mod-qos")
-public class ModQosInputXBean extends InputXBean {
+@XStreamAlias("apache-status")
+public class ApacheStatusInputXBean extends InputXBean {
 	@XStreamAsAttribute
 	private String url;
 
@@ -76,13 +76,13 @@ public class ModQosInputXBean extends InputXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		validUrl("url", "final mod_qos reader", url);
+		validUrl("url", "apache-status reader", url);
 		if (auth != null && (!auth.equals("none") && !auth.equals("basic"))) {
 			throw new ConfigurationException("Unsupported authentication type " + auth);
 		}
 		if (auth!=null && auth.equals("basic")) {
-			notEmpty("username", "mod_qos reader", getUsername());
-			notEmpty("password", "mod_qos reader", getPassword());
+			notEmpty("username", "apache-status reader", getUsername());
+			notEmpty("password", "apache-status reader", getPassword());
 		}
 	}
 
@@ -96,7 +96,7 @@ public class ModQosInputXBean extends InputXBean {
 			}
 		}
 		try {
-			return new ModQosInputConfig(getName(), getVariablesConfig(), new URL(getUrl()), username, password, httpHeaders);
+			return new ApacheStatusInputConfig(getName(), getVariablesConfig(), new URL(getUrl()), username, password, httpHeaders);
 		} catch (final MalformedURLException e) {
 			throw new ConfigurationException("Invalid URL: "+e.getMessage());
 		}

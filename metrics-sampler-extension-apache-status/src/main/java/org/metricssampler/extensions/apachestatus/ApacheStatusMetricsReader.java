@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.modqos;
+package org.metricssampler.extensions.apachestatus;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,13 +29,13 @@ import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 import org.metricssampler.service.ApplicationInfo;
 
-public class ModQosMetricsReader extends AbstractMetricsReader<ModQosInputConfig> implements BulkMetricsReader {
+public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatusInputConfig> implements BulkMetricsReader {
 	private Map<MetricName, MetricValue> values;
 	private final ScoreboardParser scoreboardParser = new ScoreboardParser();
 	private final DefaultHttpClient httpClient;
 	private final HttpGet httpRequest;
 
-	public ModQosMetricsReader(final ModQosInputConfig config) {
+	public ApacheStatusMetricsReader(final ApacheStatusInputConfig config) {
 		super(config);
 		httpClient = setupClient();
 		httpRequest = setupRequest();
@@ -54,7 +54,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader<ModQosInputConfig
 	private HttpGet setupRequest() {
 		try {
 			final HttpGet result = new HttpGet(config.getUrl().toURI());
-			result.setHeader("User-Agent", "metrics-sampler mod_qos v" + ApplicationInfo.getInstance().getVersion());
+			result.setHeader("User-Agent", "metrics-sampler apache-status v" + ApplicationInfo.getInstance().getVersion());
 			for (final Entry<String, String> header : config.getHeaders().entrySet()) {
 				result.setHeader(header.getKey(), header.getValue());
 			}

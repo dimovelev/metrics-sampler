@@ -44,8 +44,8 @@ Check out the following configuration as a quick-start:
 				<query>select replace(T2.host_name||'.'||T2.instance_name||'.'||replace(replace(replace(replace(metric_name,'/',''),'%','Perc'),'(',''),')',''),' ','_') as metric, value, (25200 + round((end_time - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400),0))*1000 as dt from gv$sysmetric T1, gv$instance T2 where T1.intsize_csec between 1400 and 1600 and T1.inst_id = T2.INST_ID</query>
 			</jdbc>
 			
-			<!-- Apache mod_qos status page -->
-			<mod-qos name="apache01" url="http://apache1.metrics-sampler.org:80/qos-viewer?auto" username="user" password="pass" />
+			<!-- Apache mod_status page -->
+			<apache-status name="apache01" url="http://apache1.metrics-sampler.org:80/qos-viewer?auto" username="user" password="pass" />
 		</inputs>
 		<outputs>
 			<!-- Write to the standard output -->
@@ -146,7 +146,7 @@ Supported Inputs
 -----------------
 * Java Management Extensions (JMX) - queries object names and attributes from a remote JMX server. The reader caches all meta-data until a reconnect. The name of the metrics consist of the canonicalized object name + '#' + attribute name.
 * JDBC - sequentially execute a list of SQL queries and interpret the returned rows as metrics. The reader currently does not reuse the data-base connection between samplings. Queries must return either two or three columns - the first one is the metric's name and the second one is its value. The optional third one is a timestamp (in milliseconds since epoch start).
-* mod_qos - parses the output of the mod_qos status page (with option ?auto) and exposes the values in a more usable format. The reader uses non-persistent HTTP connection and queries both metadata and data when opened.
+* apache-status - parses the output of the apache and mod_qos status page (with option ?auto) and exposes the values in a more usable format. The reader uses non-persistent HTTP connection and queries both metadata and data when opened.
 
 Supported Selectors
 -------------------

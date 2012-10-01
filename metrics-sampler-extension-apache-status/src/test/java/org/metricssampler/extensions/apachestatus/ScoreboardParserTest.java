@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.modqos;
+package org.metricssampler.extensions.apachestatus;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.metricssampler.extensions.apachestatus.ScoreboardParser;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricValue;
 
