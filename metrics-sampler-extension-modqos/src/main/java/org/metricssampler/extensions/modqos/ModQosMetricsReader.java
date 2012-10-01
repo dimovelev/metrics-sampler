@@ -31,6 +31,7 @@ import org.metricssampler.service.ApplicationInfo;
 
 public class ModQosMetricsReader extends AbstractMetricsReader<ModQosInputConfig> implements BulkMetricsReader {
 	private Map<MetricName, MetricValue> values;
+	private final ScoreboardParser scoreboardParser = new ScoreboardParser();
 	private final DefaultHttpClient httpClient;
 	private final HttpGet httpRequest;
 
@@ -92,7 +93,7 @@ public class ModQosMetricsReader extends AbstractMetricsReader<ModQosInputConfig
 					values = new HashMap<MetricName, MetricValue>();
 					while (lines.hasNext()) {
 						final String line = lines.next();
-						parseModQosLine(line);
+						parseLine(line);
 					}
 				} finally {
 					lines.close();
@@ -116,6 +117,17 @@ public class ModQosMetricsReader extends AbstractMetricsReader<ModQosInputConfig
 			logger.warn("Failed to parse content type", e);
 		}
 		return Charset.defaultCharset();
+	}
+
+	protected void parseLine(final String line) {
+		if (line.startsWith(ScoreboardParser.SCOREBOARD_PREFIX)) {
+			final Map<MetricName, MetricValue> scoreboardMetrics = scoreboardParser.parse(line);
+			values.putAll(scoreboardMetrics);
+		} else if (line.contains("QS_")) {
+			parseModQosLine(line);
+		} else {
+			logger.debug("Ignoring response line \"{}\"", line);
+		}
 	}
 
 	protected void parseModQosLine(final String line) {

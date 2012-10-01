@@ -25,6 +25,7 @@ public class ScoreboardParser {
 		new SimpleMetricName("workers.idle_cleanup", "I: Idle cleanup of worker"),
 		new SimpleMetricName("workers.open_slot", ".: Open slot with no current process")
 	};
+	
 	public Map<MetricName, MetricValue> parse(final String line) {
 		checkArgument(line.startsWith(SCOREBOARD_PREFIX), "Not a scoreboard line");
 		final long timestamp = System.currentTimeMillis();
