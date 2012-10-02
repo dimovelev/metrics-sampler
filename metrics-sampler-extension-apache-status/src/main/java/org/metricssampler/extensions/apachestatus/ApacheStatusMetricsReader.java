@@ -28,6 +28,7 @@ import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 import org.metricssampler.service.ApplicationInfo;
+import org.metricssampler.util.VariableUtils;
 
 public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatusInputConfig> implements BulkMetricsReader {
 	private Map<MetricName, MetricValue> values;
@@ -66,7 +67,7 @@ public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatu
 
 	@Override
 	protected void defineCustomVariables(final Map<String, Object> variables) {
-		variables.put("reader.host", config.getUrl().getHost());
+		VariableUtils.addHostVariables(variables, "input", config.getUrl().getHost());
 	}
 
 	@Override

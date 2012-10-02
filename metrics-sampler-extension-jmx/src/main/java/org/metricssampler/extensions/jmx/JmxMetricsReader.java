@@ -1,9 +1,7 @@
 package org.metricssampler.extensions.jmx;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +28,7 @@ import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsMetaData;
 import org.metricssampler.reader.OpenMetricsReaderException;
+import org.metricssampler.util.VariableUtils;
 
 /**
  * Read metrics from a JMX server. This class is not thread safe and may not be reused in multiple samplers.
@@ -51,26 +50,8 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 	protected void defineCustomVariables(final Map<String, Object> variables) {
 		try {
 			final JMXServiceURL url = new JMXServiceURL(config.getUrl());
-			final String host = url.getHost();
-			if (host != null) {
-				variables.put("input.host", host);
-				try {
-					final InetAddress inetAddress = InetAddress.getByName(host);
-					final String hostname = inetAddress.getHostName();
-					variables.put("input.fqhn", hostname);
-					final int dotIdx = hostname.indexOf('.');
-					if (dotIdx > 0) {
-						variables.put("input.hostname", hostname.substring(0, dotIdx));
-					} else {
-						variables.put("input.hostname", hostname);
-					}
-					variables.put("input.ip", inetAddress.getHostAddress());
-				} catch (final UnknownHostException e) {
-					// ignore
-				}
-			}
+			VariableUtils.addHostVariables(variables, "input", url.getHost());
 		} catch (final MalformedURLException e) {
-			e.printStackTrace();
 			// ignore
 		}
 	}
