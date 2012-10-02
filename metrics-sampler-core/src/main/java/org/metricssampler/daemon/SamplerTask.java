@@ -42,4 +42,8 @@ public class SamplerTask implements Runnable {
 	public void enableOnce() {
 		enableOnce = true;
 	}
+	
+	public String getName() {
+		return sampler.getConfig().getName();
+	}
 }

@@ -8,10 +8,15 @@ import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.metricssampler.service.Bootstrapper;
@@ -115,38 +120,67 @@ public class TCPController implements Runnable {
 	private void sampler(final String line, final BufferedWriter writer) throws IOException {
 		if (line.endsWith(SAMPLER_COMMAND_SUFFIX_STOP)) {
 			final String name = line.substring(SAMPLER_COMMAND_PREFIX.length(), line.length()-SAMPLER_COMMAND_SUFFIX_STOP.length());
-			final SamplerTask task = tasks.get(name);
-			if (task != null) {
-				logger.info("Disabling sampler \"{}\"", name);
-				task.disable();
-				writer.write("Sampler \"" + name + "\" disabled\n");
-			} else {
-				writer.write("Sampler named \"" + name + "\" not found\n");
-			}
+			executeOnMatchingTasks(name, writer, new SamplerTaskAction() {
+				@Override
+				public void execute(final SamplerTask task, final BufferedWriter writer) throws IOException {
+					logger.info("Disabling sampler \"{}\"", task.getName());
+					task.disable();
+					writer.write("Sampler \"" + task.getName() + "\" disabled\n");
+				}
+			});
 		} else if (line.endsWith(SAMPLER_COMMAND_SUFFIX_START)) {
 			final String name = line.substring(SAMPLER_COMMAND_PREFIX.length(), line.length()-SAMPLER_COMMAND_SUFFIX_START.length());
-			final SamplerTask task = tasks.get(name);
-			if (task != null) {
-				logger.info("Enabling sampler \"{}\"", name);
-				task.enable();
-				writer.write("Sampler \"" + name + "\" enabled\n");
-			} else {
-				writer.write("Sampler named \"" + name + "\" not found\n");
-			}
+			executeOnMatchingTasks(name, writer, new SamplerTaskAction() {
+				@Override
+				public void execute(final SamplerTask task, final BufferedWriter writer) throws IOException {
+					logger.info("Enabling sampler \"{}\"", task.getName());
+					task.enable();
+					writer.write("Sampler \"" + task.getName() + "\" enabled\n");
+				}
+			});
 		} else if (line.endsWith(SAMPLER_COMMAND_SUFFIX_SAMPLE)) {
 			final String name = line.substring(SAMPLER_COMMAND_PREFIX.length(), line.length()-SAMPLER_COMMAND_SUFFIX_SAMPLE.length());
-			final SamplerTask task = tasks.get(name);
-			if (task != null) {
-				logger.info("Enabling sampler \"{}\" for one-time sampling", name);
-				task.enableOnce();
-				writer.write("Sampler \"" + name + "\" enabled for one-time sampling\n");
-			} else {
-				writer.write("Sampler named \"" + name + "\" not found\n");
-			}
+			executeOnMatchingTasks(name, writer, new SamplerTaskAction() {
+				@Override
+				public void execute(final SamplerTask task, final BufferedWriter writer) throws IOException {
+					logger.info("Enabling sampler \"{}\" for one-time sampling", task.getName());
+					task.enableOnce();
+					writer.write("Sampler \"" + task.getName() + "\" enabled for one-time sampling\n");
+				}
+			});
 		} else {
 			writer.write("Invalid syntax. Use \"sampler <name> [start|stop]\"\n");
 		}
 		writer.flush();
 	}
+	
+	private void executeOnMatchingTasks(final String expression, final BufferedWriter writer, final SamplerTaskAction action) throws IOException {
+		try {
+			final List<SamplerTask> matchingTasks = findMatchingTasks(expression);
+			if (matchingTasks.isEmpty()) {
+				writer.write("No samplers found matching regular expression \"" + expression + "\"\n");
+			} else {
+				for (final SamplerTask task : matchingTasks) {
+					action.execute(task, writer);
+				}
+			}
+		} catch (final PatternSyntaxException e) {
+			writer.write("Could not compile sampler name regular expression \"" + expression +"\": "+e.getMessage()+"\n");
+		}
+	}
 
+	private interface SamplerTaskAction {
+		void execute(SamplerTask task, BufferedWriter writer) throws IOException; 
+	}
+	
+	private List<SamplerTask> findMatchingTasks(final String expression) {
+		final List<SamplerTask> result = new LinkedList<SamplerTask>();
+		final Pattern nameExpression = Pattern.compile(expression);
+		for (final Entry<String, SamplerTask> entry : tasks.entrySet()) {
+			if (nameExpression.matcher(entry.getKey()).matches()) {
+				result.add(entry.getValue());
+			}
+		}
+		return result;
+	}
 }
