@@ -102,8 +102,10 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		final List<OutputConfig> outputConfigs = configureOutputs(outputs);
 		final List<SelectorConfig> selectorConfigs = configureSelectors(selectorTemplates);
 		final Map<String, Object> samplerVariables = VariableXBean.toMap(getVariables());
-		
-		return new DefaultSamplerConfig(getName(), getInterval(), isIgnored(), isDisabled(), inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, getQuiet() != null ? getQuiet() : false);
+		final boolean ignored = getIgnored() != null ? getIgnored() : false;
+		final boolean disabled = getDisabled() != null ? getDisabled() : false;
+		final boolean quiet = getQuiet() != null ? getQuiet() : false;
+		return new DefaultSamplerConfig(getName(), getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, quiet);
 	}
 
 	protected List<SelectorConfig> configureSelectors(final Map<String, List<SelectorConfig>> templates) {
