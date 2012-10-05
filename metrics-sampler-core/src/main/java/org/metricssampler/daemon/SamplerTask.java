@@ -39,7 +39,6 @@ public class SamplerTask implements Runnable {
 	}
 
 	private void decrementRemainingRepetitions() {
-		repetitionsLock.lock();
 		repetitions--;
 		if (repetitions == Long.MIN_VALUE) {
 			repetitions = -1L;
@@ -47,7 +46,6 @@ public class SamplerTask implements Runnable {
 		if (repetitions == 0L) {
 			logger.info("Auto-disabling sampler because it reached its repetitions limit");
 		}
-		repetitionsLock.unlock();
 	}
 
 	public void enableForTimes(final int times) {
