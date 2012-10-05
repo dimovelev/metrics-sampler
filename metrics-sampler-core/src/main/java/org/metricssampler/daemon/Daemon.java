@@ -44,7 +44,7 @@ public class Daemon {
 
 	private void createController() {
 		try {
-			final Runnable controller = new TCPController(bootstrapper, executor, tasks);
+			final Runnable controller = new DefaultTCPController(bootstrapper, executor, tasks);
 			controllerThread = new Thread(controller);
 		} catch (final IllegalStateException e) {
 			logger.error(e.getMessage(), e);

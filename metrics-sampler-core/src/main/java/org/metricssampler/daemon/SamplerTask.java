@@ -1,5 +1,8 @@
 package org.metricssampler.daemon;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.metricssampler.sampler.Sampler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,10 +10,10 @@ import org.slf4j.MDC;
 
 public class SamplerTask implements Runnable {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private volatile boolean enabled = true;
-	private volatile boolean enableOnce = false;
 	private final Sampler sampler;
-	
+	private final Lock repetitionsLock = new ReentrantLock();
+	private long repetitions = -1L;
+
 	public SamplerTask(final Sampler sampler) {
 		this.sampler = sampler;
 	}
@@ -18,31 +21,54 @@ public class SamplerTask implements Runnable {
 	@Override
 	public void run() {
 		MDC.put("sampler", sampler.getConfig().getName());
-		if (enabled || enableOnce) {
+
+		repetitionsLock.lock();
+		if (repetitions != 0) {
 			try {
+				decrementRemainingRepetitions();
+				repetitionsLock.unlock();
 				sampler.sample();
-				enableOnce = false;
 			} catch (final RuntimeException e) {
 				logger.warn("Sampler threw exception. Ignoring.", e);
 			}
 		} else {
+			repetitionsLock.unlock();
 			logger.debug("Sampler disabled thus not sampling");
 		}
 		MDC.remove("sampler");
 	}
 
-	public void enable() {
-		this.enabled = true;
+	private void decrementRemainingRepetitions() {
+		repetitionsLock.lock();
+		repetitions--;
+		if (repetitions == Long.MIN_VALUE) {
+			repetitions = -1L;
+		}
+		if (repetitions == 0L) {
+			logger.info("Auto-disabling sampler because it reached its repetitions limit");
+		}
+		repetitionsLock.unlock();
 	}
-	
+
+	public void enableForTimes(final int times) {
+		repetitionsLock.lock();
+		this.repetitions = times;
+		repetitionsLock.unlock();
+	}
+
+	public void enableForDuration(final long seconds) {
+		final long times = seconds / sampler.getConfig().getInterval();
+		repetitionsLock.lock();
+		repetitions = times > 1L ? times : 1L;
+		repetitionsLock.unlock();
+	}
+
 	public void disable() {
-		this.enabled = false;
+		repetitionsLock.lock();
+		repetitions = 0;
+		repetitionsLock.unlock();
 	}
-	
-	public void enableOnce() {
-		enableOnce = true;
-	}
-	
+
 	public String getName() {
 		return sampler.getConfig().getName();
 	}
