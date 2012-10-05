@@ -21,6 +21,7 @@
 					<include>org.metrics-sampler:metrics-sampler-extension-jmx</include>
 					<include>org.metrics-sampler:metrics-sampler-extension-apache-status</include>
 					<include>org.metrics-sampler:metrics-sampler-extension-jdbc</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-redis</include>
 			</includes>
 			<binaries>
 				<outputDirectory>lib</outputDirectory>

@@ -126,13 +126,15 @@ public class ConfigurationXBean {
 	}
 
 	private Map<String, List<SelectorConfig>> configureSelectorGroups(final List<SelectorGroupXBean> items) {
-		final Map<String, SelectorGroupXBean> groups = new HashMap<String, SelectorGroupXBean>(items.size());
+		final Map<String, SelectorGroupXBean> groups = new HashMap<String, SelectorGroupXBean>(items != null ? items.size() : 0);
 		
-		for (final SelectorGroupXBean item : items) {
-			if (groups.containsKey(item.getName())) {
-				throw new ConfigurationException("Two selector groups with the same name \""+item.getName() + "\"");
+		if (items != null) {
+			for (final SelectorGroupXBean item : items) {
+				if (groups.containsKey(item.getName())) {
+					throw new ConfigurationException("Two selector groups with the same name \"" + item.getName() + "\"");
+				}
+				groups.put(item.getName(), item);
 			}
-			groups.put(item.getName(), item);
 		}
 		
 		final Map<String, List<SelectorConfig>> result = new HashMap<String, List<SelectorConfig>>();

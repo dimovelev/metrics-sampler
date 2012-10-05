@@ -12,7 +12,7 @@ public final class ValidationUtils {
 
 	public static void notEmpty(final String name, final String context, final String value) {
 		if (value == null || value.equals("")) {
-			throw new ConfigurationException("Attribute "+name+" of "+context+" is mandatory");
+			throw new ConfigurationException("Attribute \"" + name + "\" of " + context + " is mandatory");
 		}
 	}
 
@@ -31,7 +31,10 @@ public final class ValidationUtils {
 		}
 	}
 
-	public static void validPort(final String name, final String context, final int value) {
+	public static void validPort(final String name, final String context, final Integer value) {
+		if (value == null) {
+			throw new ConfigurationException("Attribute \"" + name + "\" of " + context + " is mandatory");
+		}
 		if (value < 1 || value > 65535) {
 			throw new ConfigurationException("Attribute "+name+" of "+context+" with value "+value+" is not a valid port in range [1,65535]");
 		}
