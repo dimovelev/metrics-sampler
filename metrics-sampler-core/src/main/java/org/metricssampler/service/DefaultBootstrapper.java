@@ -76,8 +76,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		try {
 			controlPort = Integer.parseInt(System.getProperty("control.port", "undefined"));
 		} catch (final NumberFormatException e) {
-			logger.warn("Please provide a valid shutdown port using -Dcontrol.port");
-			System.exit(-1);
+			throw new ConfigurationException("Please provide a valid control port using -Dcontrol.port");
 		}
 	}
 

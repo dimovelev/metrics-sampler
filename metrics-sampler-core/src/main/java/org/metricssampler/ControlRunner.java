@@ -7,8 +7,8 @@ public abstract class ControlRunner implements Runner {
 	@Override
 	public void run(final String... args) {
 		final Bootstrapper bootstrapper = DefaultBootstrapper.bootstrap();
-		run(bootstrapper.getControlHost(), bootstrapper.getControlPort(), args);
+		runControl(bootstrapper.getControlHost(), bootstrapper.getControlPort(), args);
 	}
 	
-	protected abstract void run(String host, int port, String... args);
+	protected abstract void runControl(String host, int port, String... args);
 }

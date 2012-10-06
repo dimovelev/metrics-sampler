@@ -13,7 +13,7 @@ public class Metadata extends NormalRunner {
 	}
 
 	@Override
-	protected void run(final Bootstrapper bootstrapper) {
+	protected void runBootstrapped(final Bootstrapper bootstrapper) {
 		final GlobalObjectFactory factory = (GlobalObjectFactory) bootstrapper;
 		for(final InputConfig input : bootstrapper.getConfiguration().getInputs()) {
 			final MetricsReader reader = factory.newReaderForInput(input);

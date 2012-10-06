@@ -25,4 +25,23 @@ public class SimpleMetricName implements MetricName {
 	public String toString() {
 		return getClass().getSimpleName() + "[" + name + "]";
 	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || !obj.getClass().equals(this.getClass())) {
+			return false;
+		}
+		final SimpleMetricName that = (SimpleMetricName) obj;
+		return this.getName().equals(that.getName());
+	}
+
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
+	
+	
 }

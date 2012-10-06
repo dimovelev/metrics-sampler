@@ -119,4 +119,26 @@ public class ControlCommandParserTest {
 		assertSame(expected, result);
 	}
 
+	@Test
+	public void parseEnableSamplerForDurationInvalidNumber() {
+		final ControlCommand expected = mock(ControlCommand.class);
+		final String line = "sampler boo enable for xx minutes";
+		when(factory.invalidSyntax(line, "could not parse command")).thenReturn(expected);
+		
+		final ControlCommand result = testee.parse(line);
+
+		assertSame(expected, result);
+	}
+	
+	@Test
+	public void parseEnableSamplerForDurationInvalidUnit() {
+		final ControlCommand expected = mock(ControlCommand.class);
+		final String line = "sampler boo enable for 10 stunden";
+		when(factory.invalidSyntax(line, "could not parse command")).thenReturn(expected);
+		
+		final ControlCommand result = testee.parse(line);
+		
+		assertSame(expected, result);
+	}
+
 }

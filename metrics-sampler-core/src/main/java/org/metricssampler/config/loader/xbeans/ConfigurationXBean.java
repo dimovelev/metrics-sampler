@@ -115,12 +115,14 @@ public class ConfigurationXBean {
 
 	private Map<String, OutputConfig> configureOutputs(final List<OutputXBean> list) {
 		final Map<String, OutputConfig> result = new HashMap<String, OutputConfig>();
-		for (final OutputXBean fromItem : list) {
-			final OutputConfig item = fromItem.toConfig();
-			if (result.containsKey(item.getName())) {
-				throw new ConfigurationException("Two outputs with the same name "+item.getName());
+		if (list != null) {
+			for (final OutputXBean fromItem : list) {
+				final OutputConfig item = fromItem.toConfig();
+				if (result.containsKey(item.getName())) {
+					throw new ConfigurationException("Two outputs with the same name "+item.getName());
+				}
+				result.put(item.getName(), item);
 			}
-			result.put(item.getName(), item);
 		}
 		return result;
 	}
@@ -148,10 +150,12 @@ public class ConfigurationXBean {
 		final LinkedHashMap<String, SamplerXBean> namedSamplers = TemplatableXBeanUtils.sortByDependency(samplers); 
 
 		final List<SamplerConfig> result = new LinkedList<SamplerConfig>();
-		for (final SamplerXBean def : samplers) {
-			TemplatableXBeanUtils.applyTemplate(def, namedSamplers);
-			if (def.isInstantiatable()) {
-				result.add(def.toConfig(inputs, outputs, selectorGroups, globalVariables));
+		if (samplers != null) {
+			for (final SamplerXBean def : samplers) {
+				TemplatableXBeanUtils.applyTemplate(def, namedSamplers);
+				if (def.isInstantiatable()) {
+					result.add(def.toConfig(inputs, outputs, selectorGroups, globalVariables));
+				}
 			}
 		}
 		return result;

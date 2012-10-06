@@ -48,7 +48,7 @@ public class ControlCommandParser {
 					final int times = Integer.parseInt(enableForTimesMatcher.group(2));
 					return factory.enableSamplerForTimes(name, times);
 				} catch (final NumberFormatException e) {
-					return factory.invalidSyntax(line, "could not interpret repetitions as an integer number");
+					return factory.invalidSyntax(line, "could not parse repetitions as an integer number");
 				}
 			}
 			final Matcher enableForDurationMatcher = PATTERN_SAMPLER_ENABLE_FOR_DURATION.matcher(line);

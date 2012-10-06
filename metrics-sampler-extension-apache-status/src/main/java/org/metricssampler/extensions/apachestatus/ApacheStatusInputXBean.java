@@ -1,6 +1,5 @@
 package org.metricssampler.extensions.apachestatus;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.validUrl;
 
 import java.net.MalformedURLException;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.loader.xbeans.EntryXBean;
 import org.metricssampler.config.loader.xbeans.InputXBean;
 
@@ -27,9 +25,6 @@ public class ApacheStatusInputXBean extends InputXBean {
 
 	@XStreamAsAttribute
 	private String password;
-
-	@XStreamAsAttribute
-	private String auth = "none";
 
 	private List<EntryXBean> headers;
 	
@@ -65,29 +60,14 @@ public class ApacheStatusInputXBean extends InputXBean {
 		this.password = password;
 	}
 
-	public String getAuth() {
-		return auth;
-	}
-
-	public void setAuth(final String auth) {
-		this.auth = auth;
-	}
-
 	@Override
 	protected void validate() {
 		super.validate();
 		validUrl("url", "apache-status reader", url);
-		if (auth != null && (!auth.equals("none") && !auth.equals("basic"))) {
-			throw new ConfigurationException("Unsupported authentication type " + auth);
-		}
-		if (auth!=null && auth.equals("basic")) {
-			notEmpty("username", "apache-status reader", getUsername());
-			notEmpty("password", "apache-status reader", getPassword());
-		}
 	}
 
 	@Override
-	protected InputConfig createConfig() {
+	protected ApacheStatusInputConfig createConfig() {
 		final Map<String, String> httpHeaders = new HashMap<String, String>();
 		if (headers != null) {
 			for (final EntryXBean entry : headers) {

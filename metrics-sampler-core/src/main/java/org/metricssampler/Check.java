@@ -14,7 +14,7 @@ public class Check extends NormalRunner {
 	}
 
 	@Override
-	protected void run(final Bootstrapper bootstrapper) {
+	protected void runBootstrapped(final Bootstrapper bootstrapper) {
 		boolean allValid = true;
 		for (final Sampler sampler : bootstrapper.getSamplers()) {
 			logger.info("Checking {}", sampler);

@@ -13,7 +13,7 @@ public class Test extends NormalRunner {
 	}
 
 	@Override
-	protected void run(final Bootstrapper bootstrapper) {
+	protected void runBootstrapped(final Bootstrapper bootstrapper) {
 		for (final Sampler sampler : bootstrapper.getSamplers()) {
 			try {
 				sampler.sample();

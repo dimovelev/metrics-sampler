@@ -13,9 +13,11 @@ import org.metricssampler.config.ConfigurationException;
 public class TemplatableXBeanUtils {
 	public static <T extends TemplatableXBean> LinkedHashMap<String, T> sortByDependency(final List<T> list) {
 		final Map<String, T> map = createMapByName(list);
-		final LinkedHashMap<String, T> result = new LinkedHashMap<String, T>(list.size());
-		for (final T item : list) {
-			addDependency(item, result, map);
+		final LinkedHashMap<String, T> result = new LinkedHashMap<String, T>(map.size());
+		if (list != null) {
+			for (final T item : list) {
+				addDependency(item, result, map);
+			}
 		}
 		return result;
 	}
@@ -34,9 +36,11 @@ public class TemplatableXBeanUtils {
 	}
 
 	public static <T extends NamedXBean> Map<String, T> createMapByName(final List<T> list) {
-		final Map<String, T> result = new HashMap<String, T>(list.size());
-		for (final T item : list) {
-			result.put(item.getName(), item);
+		final Map<String, T> result = new HashMap<String, T>(list != null ? list.size() : 0);
+		if (list != null) {
+			for (final T item : list) {
+				result.put(item.getName(), item);
+			}
 		}
 		return result;
 	}

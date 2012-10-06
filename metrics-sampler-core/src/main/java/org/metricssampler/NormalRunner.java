@@ -20,7 +20,7 @@ public abstract class NormalRunner implements Runner {
 			System.exit(2);
 		}
 		final Bootstrapper bootstrapper = DefaultBootstrapper.bootstrap(configFile.getAbsolutePath());
-		run(bootstrapper);
+		runBootstrapped(bootstrapper);
 	}
 	
 	private void outputHelp() {
@@ -33,6 +33,6 @@ public abstract class NormalRunner implements Runner {
 		System.exit(1);
 	}
 
-	protected abstract void run(Bootstrapper bootstrapper);
+	protected abstract void runBootstrapped(Bootstrapper bootstrapper);
 
 }

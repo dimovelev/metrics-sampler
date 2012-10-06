@@ -10,7 +10,7 @@ public class Start extends NormalRunner {
 	}
 
 	@Override
-	protected void run(final Bootstrapper bootstrapper) {
+	protected void runBootstrapped(final Bootstrapper bootstrapper) {
 		final Daemon daemon = new Daemon(bootstrapper);
 		daemon.start();
 	}
