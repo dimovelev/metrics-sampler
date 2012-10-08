@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>org.metrics-sampler</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.4.4</version>
+		<version>0.4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>metrics-sampler-extension-redis</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.4.4</version>
+			<version>0.4.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>redis.clients</groupId>
