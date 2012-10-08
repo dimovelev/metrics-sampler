@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -20,6 +22,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.extensions.apachestatus.parsers.GenericLineParser;
+import org.metricssampler.extensions.apachestatus.parsers.ModQosParser;
+import org.metricssampler.extensions.apachestatus.parsers.ScoreboardParser;
+import org.metricssampler.extensions.apachestatus.parsers.StatusLineParser;
 import org.metricssampler.reader.AbstractMetricsReader;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
@@ -31,8 +37,7 @@ import org.metricssampler.util.VariableUtils;
 
 public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatusInputConfig> implements BulkMetricsReader {
 	private Map<MetricName, MetricValue> values;
-	private final ScoreboardParser scoreboardParser = new ScoreboardParser();
-	private final ModQosStatusLineParser modqosParser = new ModQosStatusLineParser();
+	private final List<StatusLineParser> lineParsers = Arrays.asList(new ModQosParser(), new ScoreboardParser(), new GenericLineParser());
 	private final DefaultHttpClient httpClient;
 	private final HttpGet httpRequest;
 
@@ -92,9 +97,10 @@ public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatu
 				final LineIterator lines = new LineIterator(reader);
 				try {
 					values = new HashMap<MetricName, MetricValue>();
+					final long timestamp = System.currentTimeMillis();
 					while (lines.hasNext()) {
 						final String line = lines.next();
-						parseLine(line);
+						parseLine(line, timestamp);
 					}
 				} finally {
 					lines.close();
@@ -120,14 +126,16 @@ public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatu
 		return Charset.defaultCharset();
 	}
 
-	protected void parseLine(final String line) {
-		if (line.startsWith(ScoreboardParser.SCOREBOARD_PREFIX)) {
-			final Map<MetricName, MetricValue> scoreboardMetrics = scoreboardParser.parse(line);
-			values.putAll(scoreboardMetrics);
-		} else if (line.contains("QS_")) {
-			modqosParser.parse(line, values);
-		} else {
-			logger.debug("Ignoring response line \"{}\"", line);
+	protected void parseLine(final String line, final long timestamp) {
+		boolean parsed = false;
+		for (final StatusLineParser lineParser : lineParsers) {
+			parsed = parsed || lineParser.parse(line, values, timestamp);
+			if (parsed) {
+				break;
+			}
+		}
+		if (!parsed) {
+			logger.debug("Ignoring response line \"{}\" as I do not know how to parse it", line);
 		}
 	}
 

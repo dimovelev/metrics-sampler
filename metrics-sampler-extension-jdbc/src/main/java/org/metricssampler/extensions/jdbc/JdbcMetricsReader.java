@@ -20,7 +20,7 @@ import org.metricssampler.reader.SimpleMetricName;
 
 public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> implements BulkMetricsReader {
 	private Connection connection;
-	
+
 	public JdbcMetricsReader(final JdbcInputConfig config) {
 		super(config);
 	}
@@ -76,7 +76,6 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 		return result;
 	}
 
-	@SuppressWarnings("resource")
 	protected void readMetricsFromQuery(final String query, final Map<MetricName, MetricValue> result) {
 		Statement statement = null;
 		try {
@@ -128,7 +127,7 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 			}
 		}
 	}
-	
+
 	protected void closeQuietly(final ResultSet closeable) {
 		if (closeable != null) {
 			try {

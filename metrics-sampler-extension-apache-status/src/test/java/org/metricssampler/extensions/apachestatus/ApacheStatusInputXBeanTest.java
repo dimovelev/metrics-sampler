@@ -7,6 +7,8 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.loader.xbeans.EntryXBean;
+import org.metricssampler.extensions.apachestatus.ApacheStatusInputConfig;
+import org.metricssampler.extensions.apachestatus.ApacheStatusInputXBean;
 
 public class ApacheStatusInputXBeanTest {
 

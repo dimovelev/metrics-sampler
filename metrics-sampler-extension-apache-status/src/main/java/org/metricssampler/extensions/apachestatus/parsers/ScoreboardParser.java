@@ -1,15 +1,15 @@
-package org.metricssampler.extensions.apachestatus;
+package org.metricssampler.extensions.apachestatus.parsers;
 
-import static org.metricssampler.util.Preconditions.checkArgument;
-
-import java.util.HashMap;
 import java.util.Map;
 
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.SimpleMetricName;
 
-public class ScoreboardParser {
+/**
+ * Parse the apache scoreboard status line
+ */
+public class ScoreboardParser implements StatusLineParser {
 	public static final String SCOREBOARD_PREFIX = "Scoreboard: ";
 	private static final String chars = "_SRWKDCLGI.";
 	private static final MetricName[] NAMES = {
@@ -25,20 +25,21 @@ public class ScoreboardParser {
 		new SimpleMetricName("workers.idle_cleanup", "I: Idle cleanup of worker"),
 		new SimpleMetricName("workers.open_slot", ".: Open slot with no current process")
 	};
-	
-	public Map<MetricName, MetricValue> parse(final String line) {
-		checkArgument(line.startsWith(SCOREBOARD_PREFIX), "Not a scoreboard line");
-		final long timestamp = System.currentTimeMillis();
+
+	@Override
+	public boolean parse(final String line, final Map<MetricName, MetricValue> metrics, final long timestamp) {
+		if (!line.startsWith(SCOREBOARD_PREFIX)) {
+			return false;
+		}
 		final int[] counts = new int[chars.length()];
-		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
 		final String scoreboard = line.substring(SCOREBOARD_PREFIX.length());
 		for (int i=0; i<scoreboard.length(); i++) {
 			counts[chars.indexOf(scoreboard.charAt(i))]++;
 		}
-		result.put(new SimpleMetricName("workers.total_count", "Total number of workers"), new MetricValue(timestamp, scoreboard.length()));
+		metrics.put(new SimpleMetricName("workers.total_count", "Total number of workers"), new MetricValue(timestamp, scoreboard.length()));
 		for (int i=0; i<counts.length; i++) {
-			result.put(NAMES[i], new MetricValue(timestamp, counts[i]));
+			metrics.put(NAMES[i], new MetricValue(timestamp, counts[i]));
 		}
-		return result;
+		return true;
 	}
 }

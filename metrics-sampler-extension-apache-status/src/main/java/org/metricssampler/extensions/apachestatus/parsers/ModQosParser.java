@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.apachestatus;
+package org.metricssampler.extensions.apachestatus.parsers;
 
 import java.util.Map;
 
@@ -6,8 +6,17 @@ import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.SimpleMetricName;
 
-public class ModQosStatusLineParser {
-	public void parse(final String line, final Map<MetricName, MetricValue> metrics) {
+/**
+ * Parse a status line from the mod_qos status module
+ */
+public class ModQosParser implements StatusLineParser {
+	private static final String MOD_QOS_MARKER = "QS_";
+
+	@Override
+	public boolean parse(final String line, final Map<MetricName, MetricValue> metrics, final long timestamp) {
+		if (!line.contains(MOD_QOS_MARKER)) {
+			return false;
+		}
 		final String[] cols = line.split(";");
 		final StringBuilder result = new StringBuilder();
 		result.append("virtual=").append(cols[0])
@@ -17,7 +26,7 @@ public class ModQosStatusLineParser {
 		if (colIdx > 0) {
 			result.append(",metric=").append(cols[3].substring(0, colIdx));
 			final String value = cols[3].substring(colIdx+2);
-			addValue(metrics, result.toString(), value);
+			addValue(timestamp, metrics, result.toString(), value);
 		} else {
 			result.append(",metric=").append(cols[3]);
 			final int pathStartIdx = cols[4].indexOf('[');
@@ -29,14 +38,15 @@ public class ModQosStatusLineParser {
 			final String limit = cols[4].substring(0, pathStartIdx);
 			final String current = cols[4].substring(colonIdx+2);
 			final String nameBase = result.toString();
-			addValue(metrics, nameBase + ".limit", limit);
-			addValue(metrics, nameBase + ".current", current);
+			addValue(timestamp, metrics, nameBase + ".limit", limit);
+			addValue(timestamp, metrics, nameBase + ".current", current);
 		}
+		return true;
 	}
 
-	protected void addValue(final Map<MetricName, MetricValue> metrics, final String name, final String value) {
+	protected void addValue(final long timestamp, final Map<MetricName, MetricValue> metrics, final String name, final String value) {
 		final SimpleMetricName metric = new SimpleMetricName(name, null);
-		metrics.put(metric, new MetricValue(System.currentTimeMillis(), value));
+		metrics.put(metric, new MetricValue(timestamp, value));
 	}
-	
+
 }
