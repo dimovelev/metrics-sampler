@@ -14,13 +14,20 @@ import java.util.Map.Entry;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.extensions.apachestatus.parsers.GenericLineParser;
 import org.metricssampler.extensions.apachestatus.parsers.ModQosParser;
@@ -40,11 +47,13 @@ public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatu
 	private final List<StatusLineParser> lineParsers = Arrays.asList(new ModQosParser(), new ScoreboardParser(), new GenericLineParser());
 	private final DefaultHttpClient httpClient;
 	private final HttpGet httpRequest;
+	private final HttpContext httpContext;
 
 	public ApacheStatusMetricsReader(final ApacheStatusInputConfig config) {
 		super(config);
 		httpClient = setupClient();
 		httpRequest = setupRequest();
+		httpContext = setupContext();
 	}
 
 	private DefaultHttpClient setupClient() {
@@ -70,6 +79,17 @@ public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatu
 		}
 	}
 
+	private HttpContext setupContext() {
+        final BasicHttpContext result = new BasicHttpContext();
+		if (config.isPreemtiveAuthEnabled()) {
+	        final AuthCache authCache = new BasicAuthCache();
+	        final BasicScheme basicAuth = new BasicScheme();
+	        authCache.put(new HttpHost(config.getUrl().getHost(), config.getUrl().getPort()), basicAuth);
+	        result.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		}
+		return result;
+	}
+
 	@Override
 	protected void defineCustomVariables(final Map<String, Object> variables) {
 		VariableUtils.addHostVariables(variables, "input", config.getUrl().getHost());
@@ -79,7 +99,7 @@ public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatu
 	public void open() throws MetricReadException {
 		final long start = System.currentTimeMillis();
 		try {
-	            final HttpResponse response = httpClient.execute(httpRequest);
+	            final HttpResponse response = httpClient.execute(httpRequest, httpContext);
 	            processResponse(response);
 		} catch (final IOException e) {
 			throw new OpenMetricsReaderException(e);

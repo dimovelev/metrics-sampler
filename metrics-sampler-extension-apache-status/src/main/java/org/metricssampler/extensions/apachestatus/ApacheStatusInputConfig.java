@@ -13,8 +13,9 @@ public class ApacheStatusInputConfig extends InputConfig {
 	private final String username;
 	private final String password;
 	private final Map<String, String> headers;
-	
-	public ApacheStatusInputConfig(final String name, final  Map<String, Object> variables, final URL url, final String username, final String password, final Map<String, String> headers) {
+	private final boolean preemptiveAuthEnabled;
+
+	public ApacheStatusInputConfig(final String name, final  Map<String, Object> variables, final URL url, final String username, final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled) {
 		super(name, variables);
 		checkArgumentNotNull(url, "url");
 		checkArgumentNotNull(headers, "headers");
@@ -22,6 +23,7 @@ public class ApacheStatusInputConfig extends InputConfig {
 		this.username = username;
 		this.password = password;
 		this.headers = Collections.unmodifiableMap(headers);
+		this.preemptiveAuthEnabled = preemptiveAuthEnabled;
 	}
 
 	public URL getUrl() {
@@ -38,5 +40,9 @@ public class ApacheStatusInputConfig extends InputConfig {
 
 	public Map<String, String> getHeaders() {
 		return headers;
+	}
+
+	public boolean isPreemtiveAuthEnabled() {
+		return preemptiveAuthEnabled;
 	}
 }

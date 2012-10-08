@@ -26,8 +26,12 @@ public class ApacheStatusInputXBean extends InputXBean {
 	@XStreamAsAttribute
 	private String password;
 
+	@XStreamAlias("preemptive-auth")
+	@XStreamAsAttribute
+	private Boolean preemptiveAuth;
+
 	private List<EntryXBean> headers;
-	
+
 	public List<EntryXBean> getHeaders() {
 		return headers;
 	}
@@ -76,7 +80,7 @@ public class ApacheStatusInputXBean extends InputXBean {
 			}
 		}
 		try {
-			return new ApacheStatusInputConfig(getName(), getVariablesConfig(), new URL(getUrl()), username, password, httpHeaders);
+			return new ApacheStatusInputConfig(getName(), getVariablesConfig(), new URL(getUrl()), username, password, httpHeaders, preemptiveAuth == null ? true : preemptiveAuth);
 		} catch (final MalformedURLException e) {
 			throw new ConfigurationException("Invalid URL: "+e.getMessage());
 		}
