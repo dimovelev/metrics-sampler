@@ -13,7 +13,7 @@
 			<artifactId>metrics-sampler-core</artifactId>
 			<version>0.4.5-SNAPSHOT</version>
 		</dependency>
-		<!-- install with mvn install:install-file -DgroupId=oracle.nosql -DartifactId=kvclient -Dpackaging=jar -Dversion=1.2.123 -Dfile=kvclient-1.2.123.jar -DgeneratePom=true -->
+		<!-- install with mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvclient -Dpackaging=jar -Dversion=1.2.123 -Dfile=kvclient-1.2.123.jar -DgeneratePom=true -->
 		<dependency>
 			<groupId>com.oracle.nosql</groupId>
 			<artifactId>kvclient</artifactId>

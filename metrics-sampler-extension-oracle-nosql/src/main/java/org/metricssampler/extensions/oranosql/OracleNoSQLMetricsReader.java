@@ -31,7 +31,7 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 
 	@Override
 	protected void defineCustomVariables(final Map<String, Object> variables) {
-		variables.put("storeName", config.getStoreName());
+		variables.put("input.store", config.getStoreName());
 	}
 
 	@Override
