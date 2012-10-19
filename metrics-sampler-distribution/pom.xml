@@ -79,6 +79,11 @@
 			<version>0.4.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-extension-oracle-nosql</artifactId>
+			<version>0.4.5-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>

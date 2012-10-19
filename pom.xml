@@ -22,14 +22,15 @@
 	</properties>
 	<modules>
 		<module>metrics-sampler-core</module>
+		<module>metrics-sampler-distribution</module>
 		<module>metrics-sampler-extension-base</module>
 		<module>metrics-sampler-extension-jmx</module>
 		<module>metrics-sampler-extension-graphite</module>
 		<module>metrics-sampler-extension-apache-status</module>
 		<module>metrics-sampler-extension-jdbc</module>
-		<module>metrics-sampler-distribution</module>
     	<module>metrics-sampler-extension-redis</module>
-  </modules>
+    	<module>metrics-sampler-extension-oracle-nosql</module>
+	</modules>
 	<build>
 		<pluginManagement>
 			<plugins>

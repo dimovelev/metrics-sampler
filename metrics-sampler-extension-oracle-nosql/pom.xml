@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.metrics-sampler</groupId>
+		<artifactId>metrics-sampler</artifactId>
+		<version>0.4.5-SNAPSHOT</version>
+	</parent>
+	<artifactId>metrics-sampler-extension-oracle-nosql</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-core</artifactId>
+			<version>0.4.5-SNAPSHOT</version>
+		</dependency>
+		<!-- install with mvn install:install-file -DgroupId=oracle.nosql -DartifactId=kvclient -Dpackaging=jar -Dversion=1.2.123 -Dfile=kvclient-1.2.123.jar -DgeneratePom=true -->
+		<dependency>
+			<groupId>com.oracle.nosql</groupId>
+			<artifactId>kvclient</artifactId>
+			<version>1.2.123</version>
+		</dependency>
+	</dependencies>
+</project>
