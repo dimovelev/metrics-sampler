@@ -1,6 +1,7 @@
 package org.metricssampler.extensions.oranosql;
 
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPort;
 
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.loader.xbeans.InputXBean;
@@ -14,7 +15,10 @@ public class OracleNoSQLInputXBean extends InputXBean {
 	private String store;
 
 	@XStreamAsAttribute
-	private String hosts;
+	private String host;
+
+	@XStreamAsAttribute
+	private Integer port;
 
 	public String getStore() {
 		return store;
@@ -24,24 +28,32 @@ public class OracleNoSQLInputXBean extends InputXBean {
 		this.store = store;
 	}
 
-	public String getHosts() {
-		return hosts;
+	public String getHost() {
+		return host;
 	}
 
-	public void setHosts(final String hosts) {
-		this.hosts = hosts;
+	public void setHost(final String host) {
+		this.host = host;
+	}
+
+	public Integer getPort() {
+		return port;
+	}
+
+	public void setPort(final Integer port) {
+		this.port = port;
 	}
 
 	@Override
 	protected void validate() {
 		super.validate();
 		notEmpty("store", "oracle-nosql", getStore());
-		notEmpty("hosts", "oracle-nosql", getHosts());
+		notEmpty("host", "oracle-nosql", getHost());
+		validPort("port", "oracle-nosql", getPort());
 	}
-	
+
 	@Override
 	protected InputConfig createConfig() {
-		final String[] hostsArray = getHosts().split(" ");
-		return new OracleNoSQLInputConfig(getName(), getVariablesConfig(), getStore(), hostsArray);
+		return new OracleNoSQLInputConfig(getName(), getVariablesConfig(), getStore(), getHost(), getPort());
 	}
 }

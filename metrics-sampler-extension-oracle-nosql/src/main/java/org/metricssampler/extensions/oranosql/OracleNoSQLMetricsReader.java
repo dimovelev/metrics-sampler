@@ -1,14 +1,19 @@
 package org.metricssampler.extensions.oranosql;
 
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import oracle.kv.FaultException;
-import oracle.kv.KVStore;
-import oracle.kv.KVStoreConfig;
-import oracle.kv.KVStoreFactory;
-import oracle.kv.stats.KVStats;
+import oracle.kv.impl.admin.CommandService;
+import oracle.kv.impl.admin.CommandServiceAPI;
+import oracle.kv.impl.measurement.LatencyInfo;
+import oracle.kv.impl.monitor.views.PerfEvent;
+import oracle.kv.impl.topo.ResourceId;
 import oracle.kv.stats.NodeMetrics;
 import oracle.kv.stats.OperationMetrics;
 
@@ -20,13 +25,15 @@ import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 
+import com.sleepycat.utilint.Latency;
+
 public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLInputConfig> implements BulkMetricsReader {
-	private final KVStoreConfig storeConfig;
-	private KVStore kvStore;
-	
+	private static final String COMMAND_SERVICE_NAME = "commandService";
+
+	private CommandServiceAPI commonServiceAPI = null;
+
 	public OracleNoSQLMetricsReader(final OracleNoSQLInputConfig config) {
 		super(config);
-		storeConfig = new KVStoreConfig(config.getStoreName(), config.getHosts()); 
 	}
 
 	@Override
@@ -36,26 +43,28 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 
 	@Override
 	public void open() {
-		closeStore();
-		assert kvStore == null;
-		logger.info("Connecting KVStore");
+		if (commonServiceAPI != null) {
+			return;
+		}
+		logger.info("Connecting to common service API");
 		try {
-			kvStore = KVStoreFactory.getStore(storeConfig);
-		} catch (final FaultException e) {
-			throw new OpenMetricsReaderException("Failed to get store", e);
+			final Registry rmiRegistry = LocateRegistry.getRegistry(config.getHost(), config.getPort());
+	        final Remote stub = rmiRegistry.lookup(COMMAND_SERVICE_NAME);
+	        if (stub instanceof CommandService) {
+	    		commonServiceAPI = CommandServiceAPI.wrap((CommandService) stub);
+	        } else {
+	        	throw new OpenMetricsReaderException("Remote stub named " + COMMAND_SERVICE_NAME + " is not instance of " + CommandService.class);
+	        }
+		} catch (final RemoteException e) {
+			throw new OpenMetricsReaderException("Could not get RMI registry at " + config.getHost() + ":" + config.getPort(), e);
+		} catch (final NotBoundException e) {
+			throw new OpenMetricsReaderException("Could not find stub " + COMMAND_SERVICE_NAME + ": " + e.getMessage(), e);
 		}
 	}
 
-	private void closeStore() {
-		if (kvStore != null) {
-			kvStore.close();
-			kvStore = null;
-		}
-	}
-	
 	@Override
 	public void close() throws MetricReadException {
-		closeStore();
+		// do not do anything - use persistent connection
 	}
 
 	@Override
@@ -65,17 +74,39 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 
 	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
-		assert kvStore != null;
-		final long timestamp = System.currentTimeMillis();
+		assert commonServiceAPI != null;
 		try {
-			final KVStats stats = kvStore.getStats(false);
-			final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
-			addNodeMetrics(timestamp, stats.getNodeMetrics(), result);
-			addOperationMetrics(timestamp, stats.getOpMetrics(), result);
-			return result;
-		} catch (final FaultException e) {
-			throw new MetricReadException("Failed to get stats", e);
+    		final Map<ResourceId, PerfEvent> map = commonServiceAPI.getPerfMap();
+    		return convertEventsToMetrics(map.values());
+		} catch (final RemoteException e) {
+			commonServiceAPI = null;
+			throw new MetricReadException("Failed to get perf map", e);
 		}
+	}
+
+	protected Map<MetricName, MetricValue> convertEventsToMetrics(final Iterable<PerfEvent> events) {
+		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+		for (final PerfEvent event : events) {
+
+			addLatencyMetrics(event.getSingleInt(), event.getResourceId().getFullName() + ".single.interval", result);
+			addLatencyMetrics(event.getSingleCum(), event.getResourceId().getFullName() + ".single.cumulative", result);
+			addLatencyMetrics(event.getMultiInt(), event.getResourceId().getFullName() + ".multi.interval", result);
+			addLatencyMetrics(event.getMultiCum(), event.getResourceId().getFullName() + ".multi.cumulative", result);
+		}
+		return result;
+	}
+
+	protected void addLatencyMetrics(final LatencyInfo info, final String prefix, final Map<MetricName, MetricValue> result) {
+		final long timestamp = info.getEnd();
+		final Latency latency = info.getLatency();
+		result.put(new SimpleMetricName(prefix + ".totalOperations", ""), new MetricValue(timestamp, latency.getTotalOps()));
+		result.put(new SimpleMetricName(prefix + ".operationsOverflow", ""), new MetricValue(timestamp, latency.getOpsOverflow()));
+		result.put(new SimpleMetricName(prefix + ".min", ""), new MetricValue(timestamp, latency.getMin()));
+		result.put(new SimpleMetricName(prefix + ".max", ""), new MetricValue(timestamp, latency.getMax()));
+		result.put(new SimpleMetricName(prefix + ".avg", ""), new MetricValue(timestamp, Math.round(latency.getAvg())));
+		result.put(new SimpleMetricName(prefix + ".percentile95", ""), new MetricValue(timestamp, latency.get95thPercent()));
+		result.put(new SimpleMetricName(prefix + ".percentile99", ""), new MetricValue(timestamp, latency.get99thPercent()));
+		result.put(new SimpleMetricName(prefix + ".tps", ""), new MetricValue(timestamp, info.getThroughputPerSec()));
 	}
 
 	protected void addNodeMetrics(final long timestamp, final List<NodeMetrics> nodeMetrics, final Map<MetricName, MetricValue> result) {
