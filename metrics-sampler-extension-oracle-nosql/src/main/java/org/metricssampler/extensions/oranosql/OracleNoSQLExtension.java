@@ -4,31 +4,26 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.metricssampler.service.Extension;
-import org.metricssampler.service.LocalObjectFactory;
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.service.AbstractExtension;
 
-public class OracleNoSQLExtension implements Extension {
-
-	@Override
-	public String getName() {
-		return "oracle-nosql";
-	}
-
+public class OracleNoSQLExtension extends AbstractExtension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
 		result.add(OracleNoSQLInputXBean.class);
 		return result;
 	}
-
+	
 	@Override
-	public LocalObjectFactory getObjectFactory() {
-		return new OracleNoSQLObjectFactory();
+	public boolean supportsInput(final InputConfig config) {
+		return config instanceof OracleNoSQLInputConfig;
 	}
 
 	@Override
-	public void initialize() {
-		// do not need to do anything
+	protected MetricsReader doNewReader(final InputConfig config) {
+		return new OracleNoSQLMetricsReader((OracleNoSQLInputConfig) config);
 	}
 
 }

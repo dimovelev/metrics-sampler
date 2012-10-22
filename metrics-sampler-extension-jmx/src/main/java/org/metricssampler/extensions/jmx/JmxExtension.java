@@ -4,16 +4,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.metricssampler.service.Extension;
-import org.metricssampler.service.LocalObjectFactory;
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.service.AbstractExtension;
 
-public class JmxExtension implements Extension {
-
-	@Override
-	public String getName() {
-		return "jmx";
-	}
-
+public class JmxExtension extends AbstractExtension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
@@ -21,15 +16,14 @@ public class JmxExtension implements Extension {
 		result.add(IgnoreObjectNameXBean.class);
 		return result;
 	}
-
+	
 	@Override
-	public LocalObjectFactory getObjectFactory() {
-		return new JmxObjectFactory();
+	public boolean supportsInput(final InputConfig config) {
+		return config instanceof JmxInputConfig;
 	}
 
 	@Override
-	public void initialize() {
-		// do not need to do anything
+	protected MetricsReader doNewReader(final InputConfig config) {
+		return new JmxMetricsReader((JmxInputConfig) config);
 	}
-
 }

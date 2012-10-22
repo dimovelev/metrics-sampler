@@ -4,29 +4,29 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.metricssampler.service.Extension;
-import org.metricssampler.service.LocalObjectFactory;
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.service.AbstractExtension;
 
-public class ApacheStatusExtension implements Extension {
-	@Override
-	public String getName() {
-		return "apache-status";
-	}
-
+public class ApacheStatusExtension extends AbstractExtension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
 		result.add(ApacheStatusInputXBean.class);
 		return result;
 	}
-
+	
 	@Override
-	public LocalObjectFactory getObjectFactory() {
-		return new ApacheStatusObjectFactory();
+	public boolean supportsInput(final InputConfig config) {
+		return config instanceof ApacheStatusInputConfig;
 	}
 
 	@Override
-	public void initialize() {
+	protected MetricsReader doNewReader(final InputConfig config) {
+		if (config instanceof ApacheStatusInputConfig) {
+			return new ApacheStatusMetricsReader((ApacheStatusInputConfig) config);
+		} else {
+			throw new IllegalArgumentException("Unsupported reader config: " + config);
+		}
 	}
-
 }

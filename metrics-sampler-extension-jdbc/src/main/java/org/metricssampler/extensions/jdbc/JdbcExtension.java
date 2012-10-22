@@ -5,25 +5,16 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.metricssampler.service.Extension;
-import org.metricssampler.service.LocalObjectFactory;
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.service.AbstractExtension;
 
-public class JdbcExtension implements Extension {
-	@Override
-	public String getName() {
-		return "jdbc";
-	}
-
+public class JdbcExtension extends AbstractExtension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
 		result.add(JdbcInputXBean.class);
 		return result;
-	}
-
-	@Override
-	public LocalObjectFactory getObjectFactory() {
-		return new JdbcObjectFactory();
 	}
 
 	@Override
@@ -34,4 +25,13 @@ public class JdbcExtension implements Extension {
 		DriverManager.getDrivers();
 	}
 
+	@Override
+	public boolean supportsInput(final InputConfig config) {
+		return config instanceof JdbcInputConfig;
+	}
+
+	@Override
+	protected MetricsReader doNewReader(final InputConfig config) {
+		return new JdbcMetricsReader((JdbcInputConfig) config);
+	}
 }

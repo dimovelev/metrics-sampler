@@ -4,18 +4,25 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.metricssampler.config.OutputConfig;
+import org.metricssampler.config.SamplerConfig;
+import org.metricssampler.config.SelectorConfig;
+import org.metricssampler.extensions.base.sampler.DefaultSampler;
+import org.metricssampler.extensions.base.sampler.DefaultSamplerConfig;
 import org.metricssampler.extensions.base.sampler.DefaultSamplerXBean;
+import org.metricssampler.extensions.base.selector.regexp.RegExpMetricsSelector;
+import org.metricssampler.extensions.base.selector.regexp.RegExpSelectorConfig;
 import org.metricssampler.extensions.base.selector.regexp.RegExpSelectorXBean;
+import org.metricssampler.extensions.base.writer.console.ConsoleMetricsWriter;
+import org.metricssampler.extensions.base.writer.console.ConsoleOutputConfig;
 import org.metricssampler.extensions.base.writer.console.ConsoleOutputXBean;
-import org.metricssampler.service.Extension;
-import org.metricssampler.service.LocalObjectFactory;
+import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.sampler.Sampler;
+import org.metricssampler.selector.MetricsSelector;
+import org.metricssampler.service.AbstractExtension;
+import org.metricssampler.writer.MetricsWriter;
 
-public class BaseExtension implements Extension {
-
-	@Override
-	public String getName() {
-		return "base";
-	}
+public class BaseExtension extends AbstractExtension {
 
 	@Override
 	public Collection<Class<?>> getXBeans() {
@@ -25,14 +32,43 @@ public class BaseExtension implements Extension {
 		result.add(DefaultSamplerXBean.class);
 		return result;
 	}
-
+	
 	@Override
-	public LocalObjectFactory getObjectFactory() {
-		return new BaseObjectFactory();
+	public boolean supportsOutput(final OutputConfig config) {
+		return config instanceof ConsoleOutputConfig;
 	}
 
 	@Override
-	public void initialize() {
-		// we do not need to do anything
+	protected MetricsWriter doNewWriter(final OutputConfig config) {
+		return new ConsoleMetricsWriter((ConsoleOutputConfig) config);
+	}
+
+	@Override
+	public boolean supportsSelector(final SelectorConfig config) {
+		return config instanceof RegExpSelectorConfig;
+	}
+
+	@Override
+	protected MetricsSelector doNewSelector(final SelectorConfig config) {
+		return new RegExpMetricsSelector((RegExpSelectorConfig) config);
+	}
+
+	@Override
+	public boolean supportsSampler(final SamplerConfig config) {
+		return config instanceof DefaultSamplerConfig;
+	}
+
+	@Override
+	protected Sampler doNewSampler(final SamplerConfig config) {
+		final DefaultSamplerConfig actualConfig = (DefaultSamplerConfig) config;
+		final MetricsReader reader = getGlobalFactory().newReaderForInput(actualConfig.getReader());
+		final DefaultSampler result = new DefaultSampler(actualConfig, reader);
+		for (final OutputConfig writerConfig : actualConfig.getOutputs()) {
+			result.addWriter(getGlobalFactory().newWriterForOutput(writerConfig));
+		}
+		for (final SelectorConfig selector : actualConfig.getSelectors()) {
+			result.addSelector(getGlobalFactory().newSelector(selector));
+		}
+		return result;
 	}
 }

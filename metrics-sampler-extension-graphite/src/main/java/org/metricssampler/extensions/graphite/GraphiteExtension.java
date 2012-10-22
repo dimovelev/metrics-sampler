@@ -4,30 +4,24 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.metricssampler.service.Extension;
-import org.metricssampler.service.LocalObjectFactory;
+import org.metricssampler.config.OutputConfig;
+import org.metricssampler.service.AbstractExtension;
+import org.metricssampler.writer.MetricsWriter;
 
-public class GraphiteExtension implements Extension {
-
-	@Override
-	public String getName() {
-		return "graphite";
-	}
-
+public class GraphiteExtension extends AbstractExtension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
 		result.add(GraphiteOutputXBean.class);
 		return result;
 	}
-
 	@Override
-	public LocalObjectFactory getObjectFactory() {
-		return new GraphiteObjectFactory();
+	public boolean supportsOutput(final OutputConfig config) {
+		return config instanceof GraphiteOutputConfig;
 	}
 
 	@Override
-	public void initialize() {
-		// we do not need to do anything
+	protected MetricsWriter doNewWriter(final OutputConfig config) {
+		return new GraphiteMetricsWriter((GraphiteOutputConfig) config);
 	}
 }

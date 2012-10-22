@@ -4,15 +4,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.metricssampler.service.Extension;
-import org.metricssampler.service.LocalObjectFactory;
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.service.AbstractExtension;
 
-public class RedisExtension implements Extension {
-
-	@Override
-	public String getName() {
-		return "redis";
-	}
+public class RedisExtension extends AbstractExtension {
 
 	@Override
 	public Collection<Class<?>> getXBeans() {
@@ -22,13 +18,14 @@ public class RedisExtension implements Extension {
 	}
 
 	@Override
-	public LocalObjectFactory getObjectFactory() {
-		return new RedisObjectFactory();
+	public boolean supportsInput(final InputConfig config) {
+		return config instanceof RedisInputConfig;
 	}
 
 	@Override
-	public void initialize() {
-		// do not need to do anything
+	protected MetricsReader doNewReader(final InputConfig config) {
+		final RedisInputConfig typedConfig = (RedisInputConfig) config;
+		return new RedisMetricsReader(typedConfig);
 	}
 
 }
