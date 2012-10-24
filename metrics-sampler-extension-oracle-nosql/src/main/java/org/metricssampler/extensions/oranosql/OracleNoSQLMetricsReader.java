@@ -17,6 +17,7 @@ import oracle.kv.impl.topo.ResourceId;
 import oracle.kv.stats.NodeMetrics;
 import oracle.kv.stats.OperationMetrics;
 
+import org.metricssampler.extensions.oranosql.OracleNoSQLInputConfig.HostConfig;
 import org.metricssampler.reader.AbstractMetricsReader;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
@@ -43,7 +44,7 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 		}
 		logger.info("Connecting to common service API");
 		try {
-			final Registry rmiRegistry = LocateRegistry.getRegistry(config.getHost(), config.getPort());
+			final Registry rmiRegistry = getFirstAvailableRmiRegistry();
 	        final Remote stub = rmiRegistry.lookup(COMMAND_SERVICE_NAME);
 	        if (stub instanceof CommandService) {
 	    		commonServiceAPI = CommandServiceAPI.wrap((CommandService) stub);
@@ -51,10 +52,23 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 	        	throw new OpenMetricsReaderException("Remote stub named " + COMMAND_SERVICE_NAME + " is not instance of " + CommandService.class);
 	        }
 		} catch (final RemoteException e) {
-			throw new OpenMetricsReaderException("Could not get RMI registry at " + config.getHost() + ":" + config.getPort(), e);
+			throw new OpenMetricsReaderException("Could not get RMI registry", e);
 		} catch (final NotBoundException e) {
 			throw new OpenMetricsReaderException("Could not find stub " + COMMAND_SERVICE_NAME + ": " + e.getMessage(), e);
 		}
+	}
+
+	private Registry getFirstAvailableRmiRegistry() throws RemoteException {
+		RemoteException lastException = null;
+		for (final HostConfig host : config.getHosts()) {
+			logger.debug("Trying RMI registry at {}", host);
+			try {
+				return LocateRegistry.getRegistry(host.getHost(), host.getPort());
+			} catch (final RemoteException e) {
+				lastException = e;
+			}
+		}
+		throw lastException;
 	}
 
 	@Override

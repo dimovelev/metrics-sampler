@@ -1,34 +1,45 @@
 package org.metricssampler.extensions.oranosql;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
+import java.util.List;
 import java.util.Map;
 
 import org.metricssampler.config.InputConfig;
 
 public class OracleNoSQLInputConfig extends InputConfig {
-	private final String store;
-	private final String host;
-	private final int port;
+	private final List<HostConfig> hosts;
 
-	public OracleNoSQLInputConfig(final String name, final Map<String, Object> variables, final String store, final String host, final int port) {
+	public OracleNoSQLInputConfig(final String name, final Map<String, Object> variables, final List<HostConfig> hosts) {
 		super(name, variables);
-		checkArgumentNotNull(store, "store");
-		checkArgumentNotNull(host, "host");
-		this.store = store;
-		this.host = host;
-		this.port = port;
+		checkArgumentNotNullNorEmpty(hosts, "hosts");
+		this.hosts = hosts;
 	}
 
-	public String getStore() {
-		return store;
+	public List<HostConfig> getHosts() {
+		return hosts;
 	}
 
-	public String getHost() {
-		return host;
-	}
+	public static class HostConfig {
+		private final String host;
+		private final int port;
 
-	public int getPort() {
-		return port;
+		public HostConfig(final String host, final int port) {
+			this.host = host;
+			this.port = port;
+		}
+
+		public String getHost() {
+			return host;
+		}
+
+		public int getPort() {
+			return port;
+		}
+
+		@Override
+		public String toString() {
+			return host + ":" + port;
+		}
 	}
 }
