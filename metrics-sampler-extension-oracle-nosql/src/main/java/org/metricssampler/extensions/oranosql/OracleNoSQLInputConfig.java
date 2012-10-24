@@ -7,21 +7,21 @@ import java.util.Map;
 import org.metricssampler.config.InputConfig;
 
 public class OracleNoSQLInputConfig extends InputConfig {
-	private final String storeName;
+	private final String store;
 	private final String host;
 	private final int port;
 
-	public OracleNoSQLInputConfig(final String name, final Map<String, Object> variables, final String storeName, final String host, final int port) {
+	public OracleNoSQLInputConfig(final String name, final Map<String, Object> variables, final String store, final String host, final int port) {
 		super(name, variables);
-		checkArgumentNotNull(storeName, "storeName");
+		checkArgumentNotNull(store, "store");
 		checkArgumentNotNull(host, "host");
-		this.storeName = storeName;
+		this.store = store;
 		this.host = host;
 		this.port = port;
 	}
 
-	public String getStoreName() {
-		return storeName;
+	public String getStore() {
+		return store;
 	}
 
 	public String getHost() {
