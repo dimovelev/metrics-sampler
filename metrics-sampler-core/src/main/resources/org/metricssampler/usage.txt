@@ -1,6 +1,8 @@
-Usage: <metrics-sampler> [start|check|test|metadata] <config.xml>
+Usage: <metrics-sampler> [start|stop|check|test|metadata] <config.xml>
 
-   start     start the sampler with the given configuration
+   start     start with the given configuration
+   stop      stop the application
+   status    check whether the application is running
    check     check whether each transformation rule matches at least one metric
    test      sample just once
    metadata  dump metadata from all inputs (e.g. list all beans and attributes for a JMX input)
