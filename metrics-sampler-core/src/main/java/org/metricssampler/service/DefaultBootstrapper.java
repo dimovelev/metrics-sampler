@@ -21,7 +21,7 @@ import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupXBean;
 import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
 import org.metricssampler.config.loader.xbeans.StringVariableXBean;
-import org.metricssampler.config.loader.xbeans.ThreadPoolXBean;
+import org.metricssampler.config.loader.xbeans.SamplerThreadPoolXBean;
 import org.metricssampler.config.loader.xbeans.VariableXBean;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
@@ -80,7 +80,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		xbeanClasses.add(DictionaryVariableXBean.class);		
 		xbeanClasses.add(EntryXBean.class);
 		xbeanClasses.add(SharedResourceXBean.class);
-		xbeanClasses.add(ThreadPoolXBean.class);
+		xbeanClasses.add(SamplerThreadPoolXBean.class);
 	}
 
 	private void loadConfiguration(final String filename) {

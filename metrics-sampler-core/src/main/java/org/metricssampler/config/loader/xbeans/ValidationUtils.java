@@ -57,7 +57,7 @@ public final class ValidationUtils {
 			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " is mandatory");
 		}
 		if (value < 1 || value > 65535) {
-			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean)  + " with value "+value+" is not a valid port in range [1,65535]");
+			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean)  + " with value " + value + " is not a valid port in range [1,65535]");
 		}
 	}
 
@@ -66,7 +66,7 @@ public final class ValidationUtils {
 			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " is mandatory");
 		}
 		if (value < 1) {
-			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " with value "+value+" is not a valid number greater than 0");
+			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " with value " + value + " is not a valid number greater than 0");
 		}
 	}
 	
@@ -75,7 +75,15 @@ public final class ValidationUtils {
 			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " is mandatory");
 		}
 		if (value < 0) {
-			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " with value "+value+" is not a valid number greater than or equal to 0");
+			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " with value " + value + " is not a valid number greater than or equal to 0");
+		}
+	}
+	
+	public static void notNegativeOptional(final Object xbean, final String name, final Integer value) {
+		if (value != null) {
+			if (value < 0) {
+				throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " with value " + value + " is not a valid number greater than or equal to 0");
+			}
 		}
 	}
 }

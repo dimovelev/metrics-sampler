@@ -25,8 +25,15 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 	}
 
 	private ScheduledThreadPoolExecutor createExecutorService(final ThreadPoolConfig config) {
-		logger.info("Starting scheduled thread pool \"{}\" with {} threads", config.getName(), config.getSize());
-		return new ScheduledThreadPoolExecutor(config.getSize());
+		logger.info("Starting scheduled thread pool \"{}\" with core size of {} threads", config.getName(), config.getCoreSize());
+		final ScheduledThreadPoolExecutor result = new ScheduledThreadPoolExecutor(config.getCoreSize());
+		if (config.getMaxSize() != -1) {
+			result.setMaximumPoolSize(config.getMaxSize());
+		}
+		if (config.getKeepAliveTime() != -1) {
+			result.setKeepAliveTime(config.getKeepAliveTime(), TimeUnit.SECONDS);
+		}
+		return result;
 	}
 
 	@Override

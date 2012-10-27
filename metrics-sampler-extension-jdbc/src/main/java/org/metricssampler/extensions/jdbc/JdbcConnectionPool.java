@@ -41,6 +41,11 @@ public class JdbcConnectionPool implements SharedResource {
 		result.setJdbcUrl(config.getUrl());
 		result.setMinPoolSize(config.getMinSize());
 		result.setMaxPoolSize(config.getMaxSize());
+		try {
+			result.setLoginTimeout(config.getLoginTimeout());
+		} catch (final SQLException e) {
+			throw new ConfigurationException("Failed to set login timeout", e);
+		}
 		return result;
 	}
 

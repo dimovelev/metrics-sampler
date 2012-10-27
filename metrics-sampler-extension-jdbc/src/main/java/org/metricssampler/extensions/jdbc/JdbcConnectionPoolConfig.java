@@ -16,8 +16,9 @@ public class JdbcConnectionPoolConfig extends SharedResourceConfig {
 	private final String username;
 	private final String password;
 	private final Map<String, String> options;
+	private final int loginTimeout;
 	
-	public JdbcConnectionPoolConfig(final int minSize, final int maxSize, final String name, final boolean ignored, final String url, final String driver, final String username, final String password, final Map<String, String> options) {
+	public JdbcConnectionPoolConfig(final int minSize, final int maxSize, final String name, final boolean ignored, final String url, final String driver, final String username, final String password, final Map<String, String> options, final int loginTimeout) {
 		super(name, ignored);
 		checkArgumentNotNullNorEmpty(url, "url");
 		checkArgument(maxSize >= minSize, "Max size must be greater than min size");
@@ -28,6 +29,7 @@ public class JdbcConnectionPoolConfig extends SharedResourceConfig {
 		this.username = username;
 		this.password = password;
 		this.options = Collections.unmodifiableMap(options);
+		this.loginTimeout = loginTimeout;
 	}
 
 	public int getMinSize() {
@@ -56,5 +58,12 @@ public class JdbcConnectionPoolConfig extends SharedResourceConfig {
 
 	public Map<String, String> getOptions() {
 		return options;
+	}
+
+	/**
+	 * @return the login timeout in seconds
+	 */
+	public int getLoginTimeout() {
+		return loginTimeout;
 	}
 }
