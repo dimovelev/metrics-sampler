@@ -1,5 +1,7 @@
 package org.metricssampler.config.loader.xbeans;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -12,6 +14,7 @@ import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
+import org.metricssampler.config.SharedResourceConfig;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -27,6 +30,8 @@ public class ConfigurationXBean {
 	private List<OutputXBean> outputs;
 	private List<SamplerXBean> samplers;
 	private List<VariableXBean> variables;
+	@XStreamAlias("shared-resources")
+	private List<SharedResourceXBean> sharedResources;
 	
 	@XStreamAlias("selector-groups")
 	private List<SelectorGroupXBean> selectorGroups;
@@ -87,13 +92,22 @@ public class ConfigurationXBean {
 		this.variables = variables;
 	}
 
+	public List<SharedResourceXBean> getSharedResources() {
+		return sharedResources;
+	}
+
+	public void setSharedResources(final List<SharedResourceXBean> sharedResources) {
+		this.sharedResources = sharedResources;
+	}
+
 	public Configuration toConfig() {
 		final Map<String, Object> globalVariables = VariableXBean.toMap(getVariables());
 		final Map<String, InputConfig> inputs = configureInputs(getInputs());
 		final Map<String, OutputConfig> outputs = configureOutputs(getOutputs());
 		final Map<String, List<SelectorConfig>> selectorGroups = configureSelectorGroups(getSelectorGroups());
 		final List<SamplerConfig> samplers = configureSamplers(getSamplers(), inputs, outputs, selectorGroups, globalVariables);
-		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, globalVariables);
+		final List<SharedResourceConfig> sharedResources = configureSharedResources(getSharedResources());
+		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, globalVariables, sharedResources);
 	}
 
 	private Map<String, InputConfig> configureInputs(final List<InputXBean> list) {
@@ -157,6 +171,17 @@ public class ConfigurationXBean {
 					result.add(def.toConfig(inputs, outputs, selectorGroups, globalVariables));
 				}
 			}
+		}
+		return result;
+	}
+
+	private List<SharedResourceConfig> configureSharedResources(final List<SharedResourceXBean> sharedResources) {
+		if (sharedResources == null) {
+			return Collections.emptyList();
+		}
+		final List<SharedResourceConfig> result = new ArrayList<SharedResourceConfig>(sharedResources.size());
+		for (final SharedResourceXBean item : sharedResources) {
+			result.add(item.toConfig());
 		}
 		return result;
 	}

@@ -16,18 +16,21 @@ public class Configuration {
 	private final Collection<OutputConfig> outputs;
 	private final Collection<SamplerConfig> samplers;
 	private final Map<String, Object> variables;
+	private final Collection<SharedResourceConfig> sharedResources;
 	
-	public Configuration(final int poolSize, final Collection<InputConfig> inputs, final Collection<OutputConfig> outputs, final Collection<SamplerConfig> samplers, final Map<String, Object> variables) {
+	public Configuration(final int poolSize, final Collection<InputConfig> inputs, final Collection<OutputConfig> outputs, final Collection<SamplerConfig> samplers, final Map<String, Object> variables, final Collection<SharedResourceConfig> sharedResources) {
 		checkArgument(poolSize > 0, "pool-size must be greater than 0");
 		checkArgumentNotNull(inputs, "inputs");
 		checkArgumentNotNull(outputs, "outputs");
 		checkArgumentNotNull(samplers, "samplers");
 		checkArgumentNotNull(variables, "variables");
+		checkArgumentNotNull(sharedResources, "sharedResources");
 		this.poolSize = poolSize;
 		this.inputs = inputs;
 		this.outputs = outputs;
 		this.samplers = samplers;
 		this.variables = Collections.unmodifiableMap(variables);
+		this.sharedResources = sharedResources;
 	}
 
 	/**
@@ -47,6 +50,10 @@ public class Configuration {
 
 	public Collection<SamplerConfig> getSamplers() {
 		return Collections.unmodifiableCollection(samplers);
+	}
+
+	public Collection<SharedResourceConfig> getSharedResources() {
+		return Collections.unmodifiableCollection(sharedResources);
 	}
 
 	/**
