@@ -31,7 +31,7 @@ public class ConfigurationXBean {
 	private List<VariableXBean> variables;
 	@XStreamAlias("shared-resources")
 	private List<SharedResourceXBean> sharedResources;
-	
+
 	@XStreamAlias("selector-groups")
 	private List<SelectorGroupXBean> selectorGroups;
 
@@ -110,8 +110,8 @@ public class ConfigurationXBean {
 	}
 
 	private Map<String, InputConfig> configureInputs(final List<InputXBean> list) {
-		final LinkedHashMap<String, InputXBean> xbeans = TemplatableXBeanUtils.sortByDependency(list); 
-		
+		final LinkedHashMap<String, InputXBean> xbeans = TemplatableXBeanUtils.sortByDependency(list);
+
 		final Map<String, InputConfig> result = new HashMap<String, InputConfig>();
 		for (final InputXBean fromItem : xbeans.values()) {
 			TemplatableXBeanUtils.applyTemplate(fromItem, xbeans);
@@ -142,7 +142,7 @@ public class ConfigurationXBean {
 
 	private Map<String, List<SelectorConfig>> configureSelectorGroups(final List<SelectorGroupXBean> items) {
 		final Map<String, SelectorGroupXBean> groups = new HashMap<String, SelectorGroupXBean>(items != null ? items.size() : 0);
-		
+
 		if (items != null) {
 			for (final SelectorGroupXBean item : items) {
 				if (groups.containsKey(item.getName())) {
@@ -151,7 +151,7 @@ public class ConfigurationXBean {
 				groups.put(item.getName(), item);
 			}
 		}
-		
+
 		final Map<String, List<SelectorConfig>> result = new HashMap<String, List<SelectorConfig>>();
 		for (final SelectorGroupXBean item : groups.values()) {
 			result.put(item.getName(), item.toConfig(groups));
@@ -160,7 +160,7 @@ public class ConfigurationXBean {
 	}
 
 	private List<SamplerConfig> configureSamplers(final List<SamplerXBean> samplers, final Map<String, InputConfig> inputs, final Map<String, OutputConfig> outputs, final Map<String, List<SelectorConfig>> selectorGroups, final Map<String, Object> globalVariables) {
-		final LinkedHashMap<String, SamplerXBean> namedSamplers = TemplatableXBeanUtils.sortByDependency(samplers); 
+		final LinkedHashMap<String, SamplerXBean> namedSamplers = TemplatableXBeanUtils.sortByDependency(samplers);
 
 		final List<SamplerConfig> result = new LinkedList<SamplerConfig>();
 		if (samplers != null) {
@@ -191,8 +191,9 @@ public class ConfigurationXBean {
 		variables = addAllToList(variables, includeConfig.getVariables());
 		selectorGroups = addAllToList(selectorGroups, includeConfig.getSelectorGroups());
 		samplers = addAllToList(samplers, includeConfig.getSamplers());
+		sharedResources = addAllToList(sharedResources, includeConfig.getSharedResources());
 	}
-	
+
 	private <T> List<T> addAllToList(final List<T> destination, final List<T> source) {
 		final List<T> result = destination != null ? destination : new LinkedList<T>();
 		if (source != null) {
