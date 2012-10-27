@@ -98,10 +98,13 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	}
 	
 	private void createSharedResourcees() {
+		logger.debug("Creating shared resources");
 		sharedResources = new HashMap<String, SharedResource>();
 		for (final SharedResourceConfig resourceConfig : configuration.getSharedResources().values()) {
-			final SharedResource sharedResource = newSharedResource(resourceConfig);
-			sharedResources.put(resourceConfig.getName(), sharedResource);
+			if (!resourceConfig.isIgnored()) {
+				final SharedResource sharedResource = newSharedResource(resourceConfig);
+				sharedResources.put(resourceConfig.getName(), sharedResource);
+			}
 		}
 	}
 
@@ -110,6 +113,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		for (final LocalObjectFactory factory : objectFactories) {
 			try {
 				if (factory.supportsSharedResource(config)) {
+					logger.debug("Creating shared resource {}", config.getName());
 					return factory.newSharedResource(config);
 				}
 			} catch (final RuntimeException e) {
@@ -120,6 +124,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	}
 
 	private void createSamplers() {
+		logger.debug("Creating samplers");
 		samplers = new LinkedList<Sampler>();
 		for (final SamplerConfig samplerConfig : configuration.getSamplers()) {
 			if (!samplerConfig.isIgnored()) {

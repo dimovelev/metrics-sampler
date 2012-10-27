@@ -17,8 +17,8 @@ public class JdbcConnectionPoolConfig extends SharedResourceConfig {
 	private final String password;
 	private final Map<String, String> options;
 	
-	public JdbcConnectionPoolConfig(final int minSize, final int maxSize, final String name, final String url, final String driver, final String username, final String password, final Map<String, String> options) {
-		super(name);
+	public JdbcConnectionPoolConfig(final int minSize, final int maxSize, final String name, final boolean ignored, final String url, final String driver, final String username, final String password, final Map<String, String> options) {
+		super(name, ignored);
 		checkArgumentNotNullNorEmpty(url, "url");
 		checkArgument(maxSize >= minSize, "Max size must be greater than min size");
 		this.minSize = minSize;

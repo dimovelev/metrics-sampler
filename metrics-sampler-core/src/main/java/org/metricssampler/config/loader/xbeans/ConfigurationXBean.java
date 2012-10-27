@@ -180,9 +180,7 @@ public class ConfigurationXBean {
 		}
 		final Map<String, SharedResourceConfig> result = new HashMap<String, SharedResourceConfig>(sharedResources.size());
 		for (final SharedResourceXBean item : sharedResources) {
-			if (item.getIgnored() == null || item.getIgnored() == false) {
-				result.put(item.getName(), item.toConfig());
-			}
+			result.put(item.getName(), item.toConfig());
 		}
 		return result;
 	}

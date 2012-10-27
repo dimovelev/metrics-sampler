@@ -54,7 +54,8 @@ public class JdbcConnectionPoolXBean extends SharedResourceXBean {
 	@Override
 	protected SharedResourceConfig createConfig() {
 		final Map<String, String> jdbcOptions = options != null ? options.toMap() : Collections.<String,String>emptyMap();
-		return new JdbcConnectionPoolConfig(getMinSize(), getMaxSize(), getName(), getUrl(), getDriver(), getUsername(), getPassword(), jdbcOptions);
+		final boolean ignore = getIgnored() != null ? getIgnored() : false;
+		return new JdbcConnectionPoolConfig(getMinSize(), getMaxSize(), getName(), ignore, getUrl(), getDriver(), getUsername(), getPassword(), jdbcOptions);
 	}
 
 	public String getUrl() {
