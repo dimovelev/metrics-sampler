@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>org.metrics-sampler</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.5.0</version>
+		<version>0.5.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>metrics-sampler-extension-redis</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 		<!-- Download JAR from https://github.com/downloads/xetorthio/jedis/jedis-2.1.0.jar and install with 
 			 mvn install:install-file -DgroupId=redis.client -DartifactId=jedis -Dpackaging=jar -Dversion=2.1.0 -Dfile=jedis-2.1.0.jar -DgeneratePom=true -->
