@@ -106,7 +106,7 @@ public class JmxInputXBean extends InputXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("url", "jmx reader", getUrl());
+		notEmpty(this, "url", getUrl());
 	}
 	
 	@Override

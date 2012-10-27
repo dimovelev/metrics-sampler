@@ -30,7 +30,7 @@ public class OracleNoSQLInputXBean extends InputXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("hosts", "oracle-nosql", getHosts());
+		notEmpty(this, "hosts", getHosts());
 		final String[] hostsArray = getHosts().split(" ");
 		if (hostsArray.length == 0) {
 			throw new ConfigurationException("Specify at least one host configuration in hosts");
@@ -41,7 +41,7 @@ public class OracleNoSQLInputXBean extends InputXBean {
 				throw new ConfigurationException("Invalid host specification: " + hostEntry+". Should be in the form <host>:<port>.");
 			}
 			try {
-				validPort("port", "oracle-nosql", Integer.parseInt(spec[1]));
+				validPort(this, "port", Integer.parseInt(spec[1]));
 			} catch (final NumberFormatException e) {
 				throw new ConfigurationException("Invalid port in the host specification: " + hostEntry);
 			}

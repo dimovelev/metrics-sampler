@@ -20,8 +20,6 @@ public abstract class NamedXBean {
 	}
 
 	protected void validate() {
-		final String className = getClass().getSimpleName();
-		final String context = className.substring(0, className.length()-"XBean".length()).toLowerCase();
-		notEmpty("name", context, getName());
+		notEmpty(this, "name", getName());
 	}
 }

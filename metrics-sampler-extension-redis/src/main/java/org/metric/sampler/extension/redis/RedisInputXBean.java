@@ -47,8 +47,8 @@ public class RedisInputXBean extends InputXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("host", "redis reader", getHost());
-		validPort("port", "redis reader", getPort());
+		notEmpty(this, "host", getHost());
+		validPort(this, "port", getPort());
 	}
 
 	@Override

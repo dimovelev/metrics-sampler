@@ -55,7 +55,7 @@ public abstract class SamplerXBean extends TemplatableXBean {
 	protected void validate() {
 		super.validate();
 		if (isInstantiatable()) {
-			greaterThanZero("interval", "sampler", getInterval());
+			greaterThanZero(this, "interval", getInterval());
 		}
 	}
 }

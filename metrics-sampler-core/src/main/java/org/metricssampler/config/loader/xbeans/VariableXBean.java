@@ -21,7 +21,7 @@ public abstract class VariableXBean {
 	}
 	
 	protected void validate() {
-		notEmpty("name", "variable", getName());
+		notEmpty(this, "name", getName());
 	}
 
 	public abstract Object getValue();

@@ -26,6 +26,6 @@ public class EntryXBean {
 		this.value = value;
 	}
 	public void validate() {
-		notEmpty("key", "entry", getKey());
+		notEmpty(this, "key", getKey());
 	}
 }

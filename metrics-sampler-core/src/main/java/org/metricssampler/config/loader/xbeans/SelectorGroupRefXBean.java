@@ -25,7 +25,7 @@ public class SelectorGroupRefXBean extends SelectorXBean {
 	}
 
 	protected void validate() {
-		notEmpty("name", "use-group", getName());
+		notEmpty(this, "name", getName());
 	}
 
 	public List<SelectorConfig> toConfig(final Map<String, List<SelectorConfig>> selectorGroups) {

@@ -40,12 +40,12 @@ public class JdbcConnectionPoolXBean extends SharedResourceXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("username", "jdbc-connection-pool", getUsername());
-		notEmpty("password", "jdbc-connection-pool", getPassword());
-		notEmpty("url", "jdbc-connection-pool", getUrl());
-		notEmpty("driver", "jdbc-connection-pool", getDriver());
-		notNegative("min-size", "jdbc-connection-pool", getMinSize());
-		greaterThanZero("max-size", "jdbc-connection-pool", getMaxSize());
+		notEmpty(this, "username", getUsername());
+		notEmpty(this, "password", getPassword());
+		notEmpty(this, "url", getUrl());
+		notEmpty(this, "driver", getDriver());
+		notNegative(this, "min-size", getMinSize());
+		greaterThanZero(this, "max-size", getMaxSize());
 		if (options != null) {
 			options.validate();
 		}

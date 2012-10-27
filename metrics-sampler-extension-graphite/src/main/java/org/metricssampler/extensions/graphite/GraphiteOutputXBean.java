@@ -42,8 +42,8 @@ public class GraphiteOutputXBean extends OutputXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("host", "graphite writer", getHost());
-		validPort("port", "graphite writer", getPort());
+		notEmpty(this, "host", getHost());
+		validPort(this, "port", getPort());
 	}
 	@Override
 	public OutputConfig toConfig() {

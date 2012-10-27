@@ -89,9 +89,9 @@ public class DefaultSamplerXBean extends SamplerXBean {
 	protected void validate() {
 		super.validate();
 		if (isInstantiatable()) {
-			notEmpty("input", "default sampler", getInput());
-			notEmpty("outputs", "default sampler", getOutputs());
-			notEmpty("selectors", "default sampler", getSelectors());
+			notEmpty(this, "input", getInput());
+			notEmpty(this, "outputs", getOutputs());
+			notEmpty(this, "selectors", getSelectors());
 		}
 	}
 	@Override

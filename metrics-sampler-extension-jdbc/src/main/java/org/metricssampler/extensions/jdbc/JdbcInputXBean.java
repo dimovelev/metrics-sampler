@@ -22,8 +22,8 @@ public class JdbcInputXBean extends InputXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		notEmpty("pool", "jdbc-reader", getPool());
-		notEmpty("queries", "jdbc-reader", getQueries());
+		notEmpty(this, "pool", getPool());
+		notEmpty(this, "queries", getQueries());
 	}
 
 	@Override

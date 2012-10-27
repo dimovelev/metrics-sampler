@@ -51,8 +51,7 @@ public class OracleNoSQLInputConfig extends InputConfig {
 
 		@Override
 		public int hashCode() {
-			// TODO Auto-generated method stub
-			return super.hashCode();
+			return host.hashCode() + port;
 		}
 
 		@Override

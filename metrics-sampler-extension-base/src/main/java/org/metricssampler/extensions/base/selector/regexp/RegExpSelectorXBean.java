@@ -45,7 +45,7 @@ public class RegExpSelectorXBean extends SimpleSelectorXBean {
 		if ((fromName == null || fromName.equals("")) && (fromDescription == null || fromDescription.equals(""))) {
 			throw new ConfigurationException("Either from-name or from-description must be set for regexp selector");
 		}
-		notEmpty("to-name", "regexp selector", getToName());
+		notEmpty(this, "to-name", getToName());
 	}
 	@Override
 	public SelectorConfig toConfig() {
