@@ -1,7 +1,9 @@
 package org.metricssampler.service;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.metricssampler.config.Configuration;
@@ -10,15 +12,18 @@ import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
+import org.metricssampler.config.SharedResourceConfig;
 import org.metricssampler.config.loader.ConfigurationLoader;
 import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
 import org.metricssampler.config.loader.xbeans.DictionaryVariableXBean;
 import org.metricssampler.config.loader.xbeans.EntryXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupXBean;
+import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
 import org.metricssampler.config.loader.xbeans.StringVariableXBean;
 import org.metricssampler.config.loader.xbeans.VariableXBean;
 import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.writer.MetricsWriter;
@@ -33,7 +38,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 
 	private Configuration configuration;
 	private List<Sampler> samplers;
-
+	private Map<String, SharedResource> sharedResources;
 	private String controlHost;
 	private int controlPort;
 
@@ -45,10 +50,11 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		final DefaultBootstrapper result = new DefaultBootstrapper();
 		result.initialize();
 		result.loadConfiguration(filename);
+		result.createSharedResourcees();
 		result.createSamplers();
 		return result;
 	}
-	
+
 	public static Bootstrapper bootstrap() {
 		final DefaultBootstrapper result = new DefaultBootstrapper();
 		result.loadFromEnvironment();
@@ -62,6 +68,17 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		for (final Extension extension : services) {
 			registerExtension(extension);
 		}
+	}
+
+	protected void addDefaultXBeanClasses() {
+		xbeanClasses.add(ConfigurationXBean.class);
+		xbeanClasses.add(SelectorGroupXBean.class);
+		xbeanClasses.add(SelectorGroupRefXBean.class);
+		xbeanClasses.add(VariableXBean.class);		
+		xbeanClasses.add(StringVariableXBean.class);		
+		xbeanClasses.add(DictionaryVariableXBean.class);		
+		xbeanClasses.add(EntryXBean.class);
+		xbeanClasses.add(SharedResourceXBean.class);
 	}
 
 	private void loadConfiguration(final String filename) {
@@ -79,8 +96,36 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 			throw new ConfigurationException("Please provide a valid control port using -Dcontrol.port");
 		}
 	}
+	
+	private void createSharedResourcees() {
+		logger.debug("Creating shared resources");
+		sharedResources = new HashMap<String, SharedResource>();
+		for (final SharedResourceConfig resourceConfig : configuration.getSharedResources().values()) {
+			if (!resourceConfig.isIgnored()) {
+				final SharedResource sharedResource = newSharedResource(resourceConfig);
+				sharedResources.put(resourceConfig.getName(), sharedResource);
+			}
+		}
+		logger.debug("Created {} shared resources", sharedResources.size());
+	}
+
+	@Override
+	public SharedResource newSharedResource(final SharedResourceConfig config) {
+		for (final LocalObjectFactory factory : objectFactories) {
+			try {
+				if (factory.supportsSharedResource(config)) {
+					logger.debug("Creating shared resource {}", config.getName());
+					return factory.newSharedResource(config);
+				}
+			} catch (final RuntimeException e) {
+				throw new ConfigurationException("Failed to create shared resource \"" + config.getName() + "\"", e);
+			}
+		}
+		throw new ConfigurationException("Unsupported shared resource: " + config.getName());
+	}
 
 	private void createSamplers() {
+		logger.debug("Creating samplers");
 		samplers = new LinkedList<Sampler>();
 		for (final SamplerConfig samplerConfig : configuration.getSamplers()) {
 			if (!samplerConfig.isIgnored()) {
@@ -88,16 +133,6 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 				samplers.add(sampler);
 			}
 		}
-	}
-
-	protected void addDefaultXBeanClasses() {
-		xbeanClasses.add(ConfigurationXBean.class);
-		xbeanClasses.add(SelectorGroupXBean.class);
-		xbeanClasses.add(SelectorGroupRefXBean.class);
-		xbeanClasses.add(VariableXBean.class);		
-		xbeanClasses.add(StringVariableXBean.class);		
-		xbeanClasses.add(DictionaryVariableXBean.class);		
-		xbeanClasses.add(EntryXBean.class);
 	}
 
 	private void registerExtension(final Extension extension) {
@@ -171,5 +206,10 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	@Override
 	public int getControlPort() {
 		return controlPort;
+	}
+
+	@Override
+	public SharedResource getSharedResource(final String name) {
+		return sharedResources.get(name);
 	}
 }

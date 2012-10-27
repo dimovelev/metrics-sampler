@@ -5,8 +5,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.SharedResourceConfig;
 import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.resources.SharedResource;
 import org.metricssampler.service.AbstractExtension;
 
 public class JdbcExtension extends AbstractExtension {
@@ -14,6 +17,7 @@ public class JdbcExtension extends AbstractExtension {
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
 		result.add(JdbcInputXBean.class);
+		result.add(JdbcConnectionPoolXBean.class);
 		return result;
 	}
 
@@ -32,6 +36,24 @@ public class JdbcExtension extends AbstractExtension {
 
 	@Override
 	protected MetricsReader doNewReader(final InputConfig config) {
-		return new JdbcMetricsReader((JdbcInputConfig) config);
+		final JdbcInputConfig jdbcConfig = (JdbcInputConfig) config;
+		final SharedResource sharedResource = getGlobalFactory().getSharedResource(jdbcConfig.getPool());
+		if (sharedResource instanceof JdbcConnectionPool) {
+			return new JdbcMetricsReader(jdbcConfig, (JdbcConnectionPool) sharedResource);
+		} else {
+			throw new ConfigurationException(jdbcConfig.getPool() + " is not a JDBC connection pool: " + sharedResource);
+		}
+	}
+
+	@Override
+	public boolean supportsSharedResource(final SharedResourceConfig config) {
+		return config instanceof JdbcConnectionPoolConfig;
+	}
+
+	@Override
+	protected SharedResource doNewSharedResource(final SharedResourceConfig config) {
+		final JdbcConnectionPoolConfig poolConfig = (JdbcConnectionPoolConfig) config;
+		final JdbcConnectionPool result = new JdbcConnectionPool(poolConfig);
+		return result;
 	}
 }
