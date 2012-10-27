@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.base.writer.console;
+package org.metricssampler.extensions.base;
 
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.loader.xbeans.OutputXBean;

@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.base.sampler;
+package org.metricssampler.extensions.base;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -6,6 +6,8 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.metricssampler.extensions.base.DefaultSampler;
+import org.metricssampler.extensions.base.DefaultSamplerConfig;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.writer.MetricsWriter;

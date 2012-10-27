@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.base.selector.regexp;
+package org.metricssampler.extensions.base;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -10,6 +10,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.metricssampler.extensions.base.RegExpMetricsSelector;
+import org.metricssampler.extensions.base.RegExpSelectorConfig;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetaDataMetricsReader;
 import org.metricssampler.reader.MetricName;

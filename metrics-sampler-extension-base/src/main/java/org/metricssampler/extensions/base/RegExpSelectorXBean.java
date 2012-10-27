@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.base.selector.regexp;
+package org.metricssampler.extensions.base;
 
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 

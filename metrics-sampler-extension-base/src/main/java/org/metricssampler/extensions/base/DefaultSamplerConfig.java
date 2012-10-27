@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.base.sampler;
+package org.metricssampler.extensions.base;
 
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 

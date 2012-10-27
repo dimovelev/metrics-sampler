@@ -1,4 +1,4 @@
-package org.metricssampler.extensions.base.service;
+package org.metricssampler.extensions.base;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -9,16 +9,6 @@ import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
 import org.metricssampler.config.SharedResourceConfig;
 import org.metricssampler.config.ThreadPoolConfig;
-import org.metricssampler.extensions.base.resources.DefaultSamplerThreadPool;
-import org.metricssampler.extensions.base.sampler.DefaultSampler;
-import org.metricssampler.extensions.base.sampler.DefaultSamplerConfig;
-import org.metricssampler.extensions.base.sampler.DefaultSamplerXBean;
-import org.metricssampler.extensions.base.selector.regexp.RegExpMetricsSelector;
-import org.metricssampler.extensions.base.selector.regexp.RegExpSelectorConfig;
-import org.metricssampler.extensions.base.selector.regexp.RegExpSelectorXBean;
-import org.metricssampler.extensions.base.writer.console.ConsoleMetricsWriter;
-import org.metricssampler.extensions.base.writer.console.ConsoleOutputConfig;
-import org.metricssampler.extensions.base.writer.console.ConsoleOutputXBean;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
