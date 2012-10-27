@@ -5,7 +5,14 @@ package org.metricssampler.config;
  * Base class for output configurations.
  */
 public abstract class OutputConfig extends NamedConfig {
-	public OutputConfig(final String name) {
+	private final boolean default_;
+	
+	public OutputConfig(final String name, final boolean default_) {
 		super(name);
+		this.default_ = default_;
+	}
+	
+	public boolean isDefault() {
+		return default_;
 	}
 }

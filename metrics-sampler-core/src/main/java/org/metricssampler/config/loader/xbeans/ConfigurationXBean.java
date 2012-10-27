@@ -24,6 +24,7 @@ public class ConfigurationXBean {
 	private List<OutputXBean> outputs;
 	private List<SamplerXBean> samplers;
 	private List<VariableXBean> variables;
+
 	@XStreamAlias("shared-resources")
 	private List<SharedResourceXBean> sharedResources;
 

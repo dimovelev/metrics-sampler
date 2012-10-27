@@ -48,7 +48,7 @@ public class GraphiteOutputXBean extends OutputXBean {
 	@Override
 	public OutputConfig toConfig() {
 		validate();
-		return new GraphiteOutputConfig(getName(), getHost(), getPort(), getPrefix());
+		return new GraphiteOutputConfig(getName(), isDefault(), getHost(), getPort(), getPrefix());
 	}
 
 }

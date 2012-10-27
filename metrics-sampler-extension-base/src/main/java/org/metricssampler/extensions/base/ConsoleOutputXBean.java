@@ -10,6 +10,6 @@ public class ConsoleOutputXBean extends OutputXBean {
 	@Override
 	public OutputConfig toConfig() {
 		validate();
-		return new ConsoleOutputConfig(getName());
+		return new ConsoleOutputConfig(getName(), isDefault());
 	}
 }

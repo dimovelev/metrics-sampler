@@ -103,7 +103,6 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		super.validate();
 		if (isInstantiatable()) {
 			notEmpty(this, "input", getInput());
-			notEmpty(this, "outputs", getOutputs());
 			notEmpty(this, "selectors", getSelectors());
 		}
 	}
@@ -149,12 +148,23 @@ public class DefaultSamplerXBean extends SamplerXBean {
 
 	protected List<OutputConfig> configureOutputs(final Map<String, OutputConfig> outputs) {
 		final List<OutputConfig> result = new LinkedList<OutputConfig>();
-		for (final String name : getOutputs().split(",")) {
-			final OutputConfig output = outputs.get(name);
-			if (output == null) {
-				throw new ConfigurationException("Output named \"" + name + "\" not found");
+		if (getOutputs() == null) {
+			for (final OutputConfig output : outputs.values()) {
+				if (output.isDefault()) {
+					result.add(output);
+				}
 			}
-			result.add(output);
+			if (result.isEmpty()) {
+				throw new ConfigurationException("No outputs specified for sampler \"" + getName() + "\" and no default outputs found");
+			}
+		} else {
+			for (final String name : getOutputs().split(",")) {
+				final OutputConfig output = outputs.get(name);
+				if (output == null) {
+					throw new ConfigurationException("Output named \"" + name + "\" not found");
+				}
+				result.add(output);
+			}
 		}
 		return result;
 	}
