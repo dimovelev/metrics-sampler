@@ -35,7 +35,7 @@ public class DefaultSampler implements Sampler {
 		checkArgumentNotNull(reader, "reader");
 		this.config = config;
 		this.reader = reader;
-		this.variables = prepareVariables(); 
+		this.variables = prepareVariables();
 		logger = LoggerFactory.getLogger("sampler." + this.config.getName());
 		timingsLogger = LoggerFactory.getLogger("timings.sampler");
 	}
@@ -86,10 +86,13 @@ public class DefaultSampler implements Sampler {
 			writeMetrics(metrics);
 			timingsLogger.debug("Metrics sent to writers in {} ms", System.currentTimeMillis()-readEnd);
 		} catch (final OpenMetricsReaderException e) {
-			if (!config.isQuiet()) {
-				logger.warn("Failed to open reader", e);
-			} else {
+			if (logger.isDebugEnabled()) {
 				logger.debug("Failed to open reader", e);
+			} else {
+				if (!config.isQuiet()) {
+					final String msg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+					logger.info("Failed to open reader: {}", msg);
+				}
 			}
 		} catch (final MetricReadException e) {
 			logger.warn("Failed to read metrics", e);
@@ -116,7 +119,7 @@ public class DefaultSampler implements Sampler {
 	private Map<String, MetricValue> readMetrics() {
 		logger.debug("Opening reader {}", reader);
 		reader.open();
-		
+
 		logger.debug("Reading metrics from {}", reader);
 		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
 		for (final MetricsSelector selector : selectors) {

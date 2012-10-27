@@ -38,6 +38,24 @@ public class OracleNoSQLInputConfig extends InputConfig {
 		}
 
 		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!getClass().equals(obj.getClass())) {
+				return false;
+			}
+			final HostConfig that = (HostConfig) obj;
+			return port == that.port && host.equals(that.host);
+		}
+
+		@Override
+		public int hashCode() {
+			// TODO Auto-generated method stub
+			return super.hashCode();
+		}
+
+		@Override
 		public String toString() {
 			return host + ":" + port;
 		}
