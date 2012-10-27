@@ -1,5 +1,7 @@
 package org.metricssampler.daemon;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -10,9 +12,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.metricssampler.daemon.commands.ControlCommand;
 import org.metricssampler.daemon.commands.DefaultControlCommandFactory;
+import org.metricssampler.resources.SamplerTask;
 import org.metricssampler.service.Bootstrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,9 +80,9 @@ public class DefaultTCPController implements TCPController {
 				socket.close();
 			} catch (final IOException e) {
 				logger.warn("Failed to accept connection from client", e);
-				IOUtils.closeQuietly(clientReader);
-				IOUtils.closeQuietly(clientWriter);
-				IOUtils.closeQuietly(socket);
+				closeQuietly(clientReader);
+				closeQuietly(clientWriter);
+				closeQuietly(socket);
 				continue;
 			}
 		}

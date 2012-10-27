@@ -1,5 +1,7 @@
 package org.metricssampler;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -7,8 +9,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
-
-import org.apache.commons.io.IOUtils;
 
 public class Status extends ControlRunner {
 
@@ -44,9 +44,9 @@ public class Status extends ControlRunner {
 		} catch (final IOException e) {
 			return "Unknown state: " + e.getMessage();
 		} finally {
-			IOUtils.closeQuietly(writer);
-			IOUtils.closeQuietly(reader);
-			IOUtils.closeQuietly(socket);
+			closeQuietly(writer);
+			closeQuietly(reader);
+			closeQuietly(socket);
 		}
 	}
 

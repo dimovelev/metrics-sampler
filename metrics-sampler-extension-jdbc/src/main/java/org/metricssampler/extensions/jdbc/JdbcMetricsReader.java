@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.jdbc;
 
+import static org.metricssampler.util.CloseableUtils.closeQuietly;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -104,26 +106,6 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 			throw new MetricReadException("Failed to create statement. Will reconnect just in case", e);
 		} finally {
 			closeQuietly(statement);
-		}
-	}
-
-	protected void closeQuietly(final Statement closeable) {
-		if (closeable != null) {
-			try {
-				closeable.close();
-			} catch (final SQLException e) {
-				// ignore
-			}
-		}
-	}
-
-	protected void closeQuietly(final ResultSet closeable) {
-		if (closeable != null) {
-			try {
-				closeable.close();
-			} catch (final SQLException e) {
-				// ignore
-			}
 		}
 	}
 

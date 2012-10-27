@@ -7,7 +7,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.metricssampler.config.ThreadPoolConfig;
+import org.metricssampler.resources.SamplerTask;
 import org.metricssampler.resources.SamplerThreadPool;
+import org.metricssampler.sampler.Sampler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +30,10 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 	}
 
 	@Override
-	public ScheduledExecutorService getExecutorService() {
-		return executorService;
+	public SamplerTask schedule(final Sampler sampler) {
+		final SamplerTask result = new SamplerTask(sampler);
+		executorService.scheduleAtFixedRate(result, 0L, sampler.getConfig().getInterval(), TimeUnit.SECONDS);
+		return result;
 	}
 
 	@Override

@@ -1,11 +1,12 @@
 package org.metricssampler.config.loader.xbeans;
 
+import static org.metricssampler.util.StringUtils.camelCaseToSplit;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
 import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.util.StringUtils;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -18,7 +19,7 @@ public final class ValidationUtils {
 		if (annotation != null) {
 			return annotation.value();
 		}
-		return StringUtils.camelCaseToSplit(xbean.getClass().getSimpleName(), "-");
+		return camelCaseToSplit(xbean.getClass().getSimpleName(), "-");
 	}
 	
 	private static String determineBeanName(final Object xbean) {

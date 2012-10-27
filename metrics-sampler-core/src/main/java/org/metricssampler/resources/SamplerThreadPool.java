@@ -1,7 +1,12 @@
 package org.metricssampler.resources;
 
-import java.util.concurrent.ScheduledExecutorService;
+import org.metricssampler.sampler.Sampler;
 
 public interface SamplerThreadPool extends SharedResource  {
-	abstract ScheduledExecutorService getExecutorService();
+	/**
+	 * Scheduled the sampler in the thread pool
+	 * @param sampler
+	 * @return the actual runnable task that can be used to control the sampler
+	 */
+	SamplerTask schedule(Sampler sampler);
 }

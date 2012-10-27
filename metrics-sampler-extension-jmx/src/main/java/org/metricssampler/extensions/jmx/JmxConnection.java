@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.jmx;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,6 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.naming.Context;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,7 @@ public class JmxConnection {
 		if (serverConnection != null) {
 			serverConnection = null;
 			logger.debug("Disconnecting");
-			IOUtils.closeQuietly(connector);
+			closeQuietly(connector);
 			connector = null;
 		}
 	}

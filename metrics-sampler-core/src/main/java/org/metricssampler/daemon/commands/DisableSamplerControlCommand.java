@@ -5,7 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Map;
 
-import org.metricssampler.daemon.SamplerTask;
+import org.metricssampler.resources.SamplerTask;
 
 public class DisableSamplerControlCommand extends SamplerTaskCommand {
 	protected DisableSamplerControlCommand(final BufferedReader reader, final BufferedWriter writer, final Map<String, SamplerTask> tasks, final String name) {

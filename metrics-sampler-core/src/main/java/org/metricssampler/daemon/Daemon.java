@@ -2,9 +2,9 @@ package org.metricssampler.daemon;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.metricssampler.config.SamplerConfig;
+import org.metricssampler.resources.SamplerTask;
 import org.metricssampler.resources.SamplerThreadPool;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.service.Bootstrapper;
@@ -53,13 +53,9 @@ public class Daemon {
 		for (final Sampler sampler : bootstrapper.getSamplers()) {
 			final SamplerConfig config = sampler.getConfig();
 			logger.info("Scheduling {} at fixed rate of {} seconds", sampler, config.getInterval());
-			final SamplerTask task = new SamplerTask(sampler);
-			if (config.isDisabled()) {
-				task.disable();
-			}
-			tasks.put(config.getName(), task);
 			final SamplerThreadPool threadPool = (SamplerThreadPool) bootstrapper.getSharedResource(sampler.getConfig().getPool());
-			threadPool.getExecutorService().scheduleAtFixedRate(task, 0L, config.getInterval(), TimeUnit.SECONDS);
+			final SamplerTask task = threadPool.schedule(sampler);
+			tasks.put(config.getName(), task);
 		}
 	}
 }

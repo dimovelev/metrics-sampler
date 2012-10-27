@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.metricssampler.daemon.SamplerTask;
+import org.metricssampler.resources.SamplerTask;
 
 public abstract class SamplerTaskCommand extends BaseControlCommand {
 	private final String name;

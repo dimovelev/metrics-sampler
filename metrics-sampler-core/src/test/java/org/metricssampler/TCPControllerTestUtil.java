@@ -1,5 +1,6 @@
 package org.metricssampler;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -10,8 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import org.apache.commons.io.IOUtils;
 
 public class TCPControllerTestUtil {
 	public static int setupServer(final String request, final String response) {
@@ -34,10 +33,10 @@ public class TCPControllerTestUtil {
 					} catch (final IOException e) {
 						fail("Failed to server response: " + e.getMessage());
 					} finally {
-						IOUtils.closeQuietly(reader);
-						IOUtils.closeQuietly(writer);
-						IOUtils.closeQuietly(socket);
-						IOUtils.closeQuietly(serverSocket);
+						closeQuietly(reader);
+						closeQuietly(writer);
+						closeQuietly(socket);
+						closeQuietly(serverSocket);
 					}
 				}
 			};

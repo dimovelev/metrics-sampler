@@ -1,4 +1,4 @@
-package org.metricssampler.daemon;
+package org.metricssampler.resources;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+/**
+ * A wrapper around a sampler that handles run-time aspects - enabling, disabling and running for a configured amount of time
+ */
 public class SamplerTask implements Runnable {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final Sampler sampler;
@@ -16,6 +19,9 @@ public class SamplerTask implements Runnable {
 
 	public SamplerTask(final Sampler sampler) {
 		this.sampler = sampler;
+		if (sampler.getConfig().isDisabled()) {
+			disable();
+		}
 	}
 
 	@Override
@@ -35,6 +41,7 @@ public class SamplerTask implements Runnable {
 			repetitionsLock.unlock();
 			logger.debug("Sampler disabled thus not sampling");
 		}
+		
 		MDC.remove("sampler");
 	}
 
@@ -48,6 +55,9 @@ public class SamplerTask implements Runnable {
 		}
 	}
 
+	public void enable() {
+		enableForTimes(-1);
+	}
 	public void enableForTimes(final int times) {
 		repetitionsLock.lock();
 		this.repetitions = times;

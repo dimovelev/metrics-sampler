@@ -1,5 +1,7 @@
 package org.metricssampler.extensions.apachestatus;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
@@ -11,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -126,7 +127,7 @@ public class ApacheStatusMetricsReader extends AbstractMetricsReader<ApacheStatu
 					lines.close();
 				}
 		    } finally {
-		    	IOUtils.closeQuietly(reader);
+		    	closeQuietly(reader);
 		    }
 		} else {
 			values = Collections.emptyMap();

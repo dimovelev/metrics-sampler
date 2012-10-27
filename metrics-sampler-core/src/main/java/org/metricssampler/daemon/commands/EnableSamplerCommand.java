@@ -5,7 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Map;
 
-import org.metricssampler.daemon.SamplerTask;
+import org.metricssampler.resources.SamplerTask;
 
 public class EnableSamplerCommand extends SamplerTaskCommand {
 	private final int times;
@@ -27,7 +27,7 @@ public class EnableSamplerCommand extends SamplerTaskCommand {
 					task.enableForDuration(seconds);
 				} else if (times == -1) {
 					logger.info("Enabling sampler \"{}\"", task.getName(), times);
-					task.enableForTimes(-1);
+					task.enable();
 				} else {
 					logger.info("Enabling sampler \"{}\" for {} samplings", task.getName(), times);
 					task.enableForTimes(times);

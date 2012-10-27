@@ -1,12 +1,12 @@
 package org.metricssampler;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
-
-import org.apache.commons.io.IOUtils;
 
 public class Stop extends ControlRunner {
 
@@ -25,8 +25,8 @@ public class Stop extends ControlRunner {
 			final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			writer.write("shutdown\n");
 			writer.flush();
-			IOUtils.closeQuietly(writer);
-			IOUtils.closeQuietly(socket);
+			closeQuietly(writer);
+			closeQuietly(socket);
 			return "Stopped";
 		} catch (final ConnectException e) {
 			return "No daemon running on port " + port;

@@ -1,12 +1,12 @@
 package org.metricssampler.service;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.metricssampler.util.Preconditions.checkStateNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.metricssampler.config.ConfigurationException;
 
 public class ApplicationInfo {
@@ -32,7 +32,7 @@ public class ApplicationInfo {
 			} catch (final IOException e) {
 				throw new ConfigurationException("Could not load " + PROPERTIES_FILE_NAME + " from classpath", e);
 			} finally {
-				IOUtils.closeQuietly(propertiesStream);
+				closeQuietly(propertiesStream);
 			}
 		}
 	}

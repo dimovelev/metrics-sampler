@@ -1,5 +1,6 @@
 package org.metricssampler.extensions.graphite;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
@@ -54,8 +54,8 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 	@Override
 	public void close() throws MetricWriteException {
 		if (isConnected()) {
-			IOUtils.closeQuietly(writer);
-			IOUtils.closeQuietly(socket);
+			closeQuietly(writer);
+			closeQuietly(socket);
 			writer = null;
 			socket = null;
 		}
