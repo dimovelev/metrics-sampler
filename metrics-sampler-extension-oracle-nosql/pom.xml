@@ -1,17 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.metrics-sampler</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.5.0-SNAPSHOT</version>
+		<version>0.5.0</version>
 	</parent>
 	<artifactId>metrics-sampler-extension-oracle-nosql</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.5.0-SNAPSHOT</version>
+			<version>0.5.0</version>
 		</dependency>
 		<!-- Download Oracle NoSQL from http://download.oracle.com/otn/nosql-database/kv-ce-1.2.123.zip and install the artefacts in your local maven repository using:
 			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvstore -Dpackaging=jar -Dversion=1.2.123 -Dfile=kvstore-1.2.123.jar -DgeneratePom=true
