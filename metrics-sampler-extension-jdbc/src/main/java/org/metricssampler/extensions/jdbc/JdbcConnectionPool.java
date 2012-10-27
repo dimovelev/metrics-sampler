@@ -20,6 +20,11 @@ public class JdbcConnectionPool implements SharedResource {
 
 	protected ComboPooledDataSource createDataSource(final JdbcConnectionPoolConfig config) {
 		final ComboPooledDataSource result = new ComboPooledDataSource();
+		if (!config.getOptions().isEmpty()) {
+			final Properties props = new Properties();
+			props.putAll(config.getOptions());
+			result.setProperties(props);
+		}
 		result.setDataSourceName(config.getName());
 		try {
 			result.setDriverClass(config.getDriver());
@@ -31,9 +36,6 @@ public class JdbcConnectionPool implements SharedResource {
 		result.setJdbcUrl(config.getUrl());
 		result.setMinPoolSize(config.getMinSize());
 		result.setMaxPoolSize(config.getMaxSize());
-		final Properties props = new Properties();
-		props.putAll(config.getOptions());
-		result.setProperties(props);
 		return result;
 	}
 

@@ -106,6 +106,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 				sharedResources.put(resourceConfig.getName(), sharedResource);
 			}
 		}
+		logger.debug("Created {} shared resources", sharedResources.size());
 	}
 
 	@Override

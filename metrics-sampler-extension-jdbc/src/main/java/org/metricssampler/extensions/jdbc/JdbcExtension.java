@@ -37,11 +37,11 @@ public class JdbcExtension extends AbstractExtension {
 	@Override
 	protected MetricsReader doNewReader(final InputConfig config) {
 		final JdbcInputConfig jdbcConfig = (JdbcInputConfig) config;
-		final SharedResource sharedResource = getGlobalFactory().getSharedResource(jdbcConfig.getName());
+		final SharedResource sharedResource = getGlobalFactory().getSharedResource(jdbcConfig.getPool());
 		if (sharedResource instanceof JdbcConnectionPool) {
 			return new JdbcMetricsReader(jdbcConfig, (JdbcConnectionPool) sharedResource);
 		} else {
-			throw new ConfigurationException(jdbcConfig.getName() + " is not a JDBC connection pool");
+			throw new ConfigurationException(jdbcConfig.getPool() + " is not a JDBC connection pool: " + sharedResource);
 		}
 	}
 
@@ -53,7 +53,7 @@ public class JdbcExtension extends AbstractExtension {
 	@Override
 	protected SharedResource doNewSharedResource(final SharedResourceConfig config) {
 		final JdbcConnectionPoolConfig poolConfig = (JdbcConnectionPoolConfig) config;
-		// TODO
-		return null;
+		final JdbcConnectionPool result = new JdbcConnectionPool(poolConfig);
+		return result;
 	}
 }
