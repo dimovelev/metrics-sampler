@@ -1,19 +1,16 @@
 package org.metricssampler.extensions.oranosql;
 
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import oracle.kv.impl.admin.CommandService;
 import oracle.kv.impl.admin.CommandServiceAPI;
 import oracle.kv.impl.measurement.LatencyInfo;
 import oracle.kv.impl.monitor.views.PerfEvent;
 import oracle.kv.impl.topo.ResourceId;
+import oracle.kv.impl.util.registry.RegistryUtils;
 import oracle.kv.stats.NodeMetrics;
 import oracle.kv.stats.OperationMetrics;
 
@@ -23,15 +20,12 @@ import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 
 import com.sleepycat.utilint.Latency;
 
 public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLInputConfig> implements BulkMetricsReader {
-	private static final String COMMAND_SERVICE_NAME = "commandService";
-
-	private CommandServiceAPI commonServiceAPI = null;
+	private final Map<HostConfig, CommandServiceAPI> services = new HashMap<HostConfig, CommandServiceAPI>();
 
 	public OracleNoSQLMetricsReader(final OracleNoSQLInputConfig config) {
 		super(config);
@@ -39,36 +33,21 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 
 	@Override
 	public void open() {
-		if (commonServiceAPI != null) {
-			return;
-		}
-		logger.info("Connecting to common service API");
-		try {
-			final Registry rmiRegistry = getFirstAvailableRmiRegistry();
-	        final Remote stub = rmiRegistry.lookup(COMMAND_SERVICE_NAME);
-	        if (stub instanceof CommandService) {
-	    		commonServiceAPI = CommandServiceAPI.wrap((CommandService) stub);
-	        } else {
-	        	throw new OpenMetricsReaderException("Remote stub named " + COMMAND_SERVICE_NAME + " is not instance of " + CommandService.class);
-	        }
-		} catch (final RemoteException e) {
-			throw new OpenMetricsReaderException("Could not get RMI registry", e);
-		} catch (final NotBoundException e) {
-			throw new OpenMetricsReaderException("Could not find stub " + COMMAND_SERVICE_NAME + ": " + e.getMessage(), e);
-		}
-	}
-
-	private Registry getFirstAvailableRmiRegistry() throws RemoteException {
-		RemoteException lastException = null;
 		for (final HostConfig host : config.getHosts()) {
-			logger.debug("Trying RMI registry at {}", host);
-			try {
-				return LocateRegistry.getRegistry(host.getHost(), host.getPort());
-			} catch (final RemoteException e) {
-				lastException = e;
+			if(!services.containsKey(host)) {
+				logger.info("Connecting to {}", host);
+				try {
+					final CommandServiceAPI service = RegistryUtils.getAdmin(host.getHost(), host.getPort());
+					if (service != null) {
+						services.put(host, service);
+					}
+				} catch (final RemoteException e) {
+					logger.warn("Failed to fetch command service from " + host, e);
+				} catch (final NotBoundException e) {
+					logger.warn("Failed to fetch command service from " + host, e);
+				}
 			}
 		}
-		throw lastException;
 	}
 
 	@Override
@@ -83,26 +62,35 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 
 	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
-		assert commonServiceAPI != null;
-		try {
-    		final Map<ResourceId, PerfEvent> map = commonServiceAPI.getPerfMap();
-    		return convertEventsToMetrics(map.values());
-		} catch (final RemoteException e) {
-			commonServiceAPI = null;
-			throw new MetricReadException("Failed to get perf map", e);
-		}
-	}
-
-	protected Map<MetricName, MetricValue> convertEventsToMetrics(final Iterable<PerfEvent> events) {
 		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
-		for (final PerfEvent event : events) {
-
-			addLatencyMetrics(event.getSingleInt(), event.getResourceId().getFullName() + ".single.interval", result);
-			addLatencyMetrics(event.getSingleCum(), event.getResourceId().getFullName() + ".single.cumulative", result);
-			addLatencyMetrics(event.getMultiInt(), event.getResourceId().getFullName() + ".multi.interval", result);
-			addLatencyMetrics(event.getMultiCum(), event.getResourceId().getFullName() + ".multi.cumulative", result);
+		for (final HostConfig host : config.getHosts()) {
+			final CommandServiceAPI service = services.get(host);
+			if (service != null) {
+	    		try {
+		    		logger.debug("Loading perfmon map from {}", host);
+	    			final Map<ResourceId, PerfEvent> map = service.getPerfMap();
+	        		convertEventsToMetrics(result, map.values());
+		    		logger.debug("Perfmon map contains {} entries. Converting them to metrics", map.size());
+	    		} catch (final RemoteException e) {
+	    			logger.warn("Failed to fetch perfmon map from " + host, e);
+	    			services.remove(host);
+	    		}
+			}
+		}
+		if (services.isEmpty()) {
+			throw new MetricReadException("No hosts available");
 		}
 		return result;
+	}
+
+	protected void convertEventsToMetrics(final Map<MetricName, MetricValue> metrics, final Iterable<PerfEvent> events) {
+		for (final PerfEvent event : events) {
+			logger.debug("Processing event {}", event);
+			addLatencyMetrics(event.getSingleInt(), event.getResourceId().getFullName() + ".single.interval", metrics);
+			addLatencyMetrics(event.getSingleCum(), event.getResourceId().getFullName() + ".single.cumulative", metrics);
+			addLatencyMetrics(event.getMultiInt(), event.getResourceId().getFullName() + ".multi.interval", metrics);
+			addLatencyMetrics(event.getMultiCum(), event.getResourceId().getFullName() + ".multi.cumulative", metrics);
+		}
 	}
 
 	protected void addLatencyMetrics(final LatencyInfo info, final String prefix, final Map<MetricName, MetricValue> result) {
