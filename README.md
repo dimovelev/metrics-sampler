@@ -150,11 +150,18 @@ Check out the following configuration as a quick-start:
 		</samplers>
 	</configuration>
 
+Shared Resources
+----------------
+* JDBC connection pools to use with e.g. the jdbc input. Utilizes c3p0 under the hood.
+* Thread pools for the samplers that make it possible to distribute the samplers on different thread pools. You will need to define at least one called "samplers".
+
 Supported Inputs
 -----------------
 * Java Management Extensions (JMX) - queries object names and attributes from a remote JMX server. The reader caches all meta-data until a reconnect. The name of the metrics consist of the canonicalized object name + '#' + attribute name.
 * JDBC - sequentially execute a list of SQL queries and interpret the returned rows as metrics. The reader currently does not reuse the data-base connection between samplings. Queries must return either two or three columns - the first one is the metric's name and the second one is its value. The optional third one is a timestamp (in milliseconds since epoch start).
 * apache-status - parses the output of the apache and mod_qos status page (with option ?auto) and exposes the values in a more usable format. The reader uses non-persistent HTTP connection and queries both metadata and data when opened.
+* oracle-nosql - fetches the perfmap from a list of hosts/ports running in an Oralce NoSQL (KVStore) cluster and exposes the values in a more usable format as metrics. The reader caches the RMI connections and only reloads them in case of failures.
+* redis - executes the info command using jedis and exposes the parsed values as metrics. Keeps the connection until a failure is detected.
 
 Supported Selectors
 -------------------
@@ -197,8 +204,8 @@ Internals
 * I chose to use slf4j in all classes with logback under the hood as it is pretty simple to configure
 * The graphite writer currently disconnects on each sampling but could be improved to keep the connection (or even better let that be configurable)
 * XStream is used to load the XML configuration. The XML is mapped to *XBean instances which are basically POJOs with the some added abilities like validating their data and converting themselves to the configuration format independent *Config POJOs. The *Config POJOs are value objects used by the rest of the system (e.g. samplers, readers, writers, selectors).
-* The core implementation took about 2 days. In that light it might be more understandable why there are no unit tests. I intend however to write some in the future.
-
+* You will need to install some artifacts in your maven repository to be able to build using maven because some of the required artifacts (e.g. the oracle nosql kvstore jars)
+ 
 Compatibility
 =============
 * Tested with Hotspot/JRockit JVM 1.6
