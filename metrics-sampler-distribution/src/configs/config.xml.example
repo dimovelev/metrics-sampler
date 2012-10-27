@@ -1,7 +1,10 @@
-<configuration pool-size="10">
+<configuration>
 	<includes>
 		<include location="selectors/*.xml" />
 	</includes>
+	<shared-resources>
+		<thread-pool name="samplers" size="10" />
+	</shared-resources>
 	<inputs>
 		<jmx name="wls-template" template="true" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true">
  			<ignore-object-names>

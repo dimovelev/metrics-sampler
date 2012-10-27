@@ -6,8 +6,16 @@ Example Configuration
 ---------------------
 Check out the following configuration as a quick-start:
 
-	<!-- pool size is the number of threads to use for the samplers -->
-	<configuration pool-size="10">
+	<configuration>
+		<!-- here we define stuff that is shared between many consumers like pools -->
+		<shared-resources>
+			<!-- this is the thread pool used by all samplers by default (unless you explicitly specify a thread pool in the sampler --> 
+			<thread-pool name="samplers" size="10" />
+			<!-- this is a custom thread pool that some of the samplers will use -->
+			<thread-pool name="custom.samplers" size="2" />
+			<!-- specify a jdbc connection pool of 1 to 5 connections to an oracle DB -->
+			<jdbc-connection-pool name="oracle01" url="jdbc:oracle:thin:@//oracle1.metrics-sampler.org:1521/EXAMPLE" username="user" password="password" driver="oracle.jdbc.OracleDriver" min-size="1" max-size="5" />
+		</shared-resources>
 		<inputs>
 			<!-- this is an example of a template - its attributes and children will be copied to any input that references it 
 				 using the "template" attribute. It is important to set template=true so that it can never be used in a sampler 
@@ -40,7 +48,7 @@ Check out the following configuration as a quick-start:
 
 			<!-- Execute the given query(ies) over JDBC and use the first column as metric name, the second as metric value and the 
 				 third one as timestamp. You will need to have the JDBC drivers in the lib/ directory -->
-			<jdbc name="oracle01" url="jdbc:oracle:thin:@//oracle1.metrics-sampler.org:1521/EXAMPLE" username="user" password="password" driver="oracle.jdbc.OracleDriver">
+			<jdbc name="oracle01" pool="oracle01">
 				<query>select replace(T2.host_name||'.'||T2.instance_name||'.'||replace(replace(replace(replace(metric_name,'/',''),'%','Perc'),'(',''),')',''),' ','_') as metric, value, (25200 + round((end_time - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400),0))*1000 as dt from gv$sysmetric T1, gv$instance T2 where T1.intsize_csec between 1400 and 1600 and T1.inst_id = T2.INST_ID</query>
 			</jdbc>
 			
@@ -129,8 +137,8 @@ Check out the following configuration as a quick-start:
 				</selectors>
 			</sampler>
 
-			<!-- you can use ignored="true" to completely skip a sampler without removing / commenting it out. Note that it still needs to be valid. -->
-			<sampler input="oracle01" outputs="graphite" interval="10" ignored="true">
+			<!-- you can use ignored="true" to completely skip a sampler without removing / commenting it out. Note that it still needs to be valid. this sampler also uses a custom thread pool named "custom.samplers" -->
+			<sampler input="oracle01" outputs="graphite" interval="10" ignored="true" pool="custom.samplers">
 				<variables>
 					<string name="prefix" value="database.${input.name}" />
 				</variables>

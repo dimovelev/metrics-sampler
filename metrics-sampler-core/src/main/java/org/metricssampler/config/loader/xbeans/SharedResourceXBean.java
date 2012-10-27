@@ -16,6 +16,10 @@ public abstract class SharedResourceXBean extends NamedXBean {
 		this.ignored = ignored;
 	}
 
+	public boolean isIgnored() {
+		return ignored == null ? false : ignored;
+	}
+	
 	@Override
 	protected void validate() {
 		super.validate();

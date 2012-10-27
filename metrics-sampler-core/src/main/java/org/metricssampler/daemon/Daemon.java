@@ -2,11 +2,10 @@ package org.metricssampler.daemon;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.metricssampler.config.Configuration;
 import org.metricssampler.config.SamplerConfig;
+import org.metricssampler.resources.SamplerThreadPool;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.service.Bootstrapper;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ public class Daemon {
 
 	private final Bootstrapper bootstrapper;
 
-	private ScheduledThreadPoolExecutor executor;
 	private Thread controllerThread;
 	private final Map<String, SamplerTask> tasks = new HashMap<String, SamplerTask>();
 	
@@ -36,7 +34,6 @@ public class Daemon {
 	 * </ol>
 	 */
 	public void start() {
-		executor = setupThreadPool();
 		createController();
 		scheduleSamplers();
 		controllerThread.start();
@@ -44,18 +41,12 @@ public class Daemon {
 
 	private void createController() {
 		try {
-			final Runnable controller = new DefaultTCPController(bootstrapper, executor, tasks);
+			final Runnable controller = new DefaultTCPController(bootstrapper, tasks);
 			controllerThread = new Thread(controller);
 		} catch (final IllegalStateException e) {
 			logger.error(e.getMessage(), e);
 			System.exit(1);
 		}
-	}
-
-	private ScheduledThreadPoolExecutor setupThreadPool() {
-		final Configuration config = bootstrapper.getConfiguration();
-		logger.info("Starting thread pool executor with thread pool size: " + config.getPoolSize());
-		return new ScheduledThreadPoolExecutor(config.getPoolSize());
 	}
 
 	private void scheduleSamplers() {
@@ -67,7 +58,8 @@ public class Daemon {
 				task.disable();
 			}
 			tasks.put(config.getName(), task);
-			executor.scheduleAtFixedRate(task, 0L, config.getInterval(), TimeUnit.SECONDS);
+			final SamplerThreadPool threadPool = (SamplerThreadPool) bootstrapper.getSharedResource(sampler.getConfig().getPool());
+			threadPool.getExecutorService().scheduleAtFixedRate(task, 0L, config.getInterval(), TimeUnit.SECONDS);
 		}
 	}
 }

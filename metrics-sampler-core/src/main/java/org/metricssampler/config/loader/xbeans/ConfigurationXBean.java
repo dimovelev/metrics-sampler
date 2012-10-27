@@ -16,14 +16,9 @@ import org.metricssampler.config.SelectorConfig;
 import org.metricssampler.config.SharedResourceConfig;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("configuration")
 public class ConfigurationXBean {
-	@XStreamAlias("pool-size")
-	@XStreamAsAttribute
-	private int poolSize;
-
 	private List<IncludeXBean> includes;
 	private List<InputXBean> inputs;
 	private List<OutputXBean> outputs;
@@ -75,14 +70,6 @@ public class ConfigurationXBean {
 		this.selectorGroups = selectorGroups;
 	}
 
-	public int getPoolSize() {
-		return poolSize;
-	}
-
-	public void setPoolSize(final int poolSize) {
-		this.poolSize = poolSize;
-	}
-
 	public List<VariableXBean> getVariables() {
 		return variables;
 	}
@@ -106,7 +93,7 @@ public class ConfigurationXBean {
 		final Map<String, OutputConfig> outputs = configureOutputs(getOutputs());
 		final Map<String, List<SelectorConfig>> selectorGroups = configureSelectorGroups(getSelectorGroups());
 		final List<SamplerConfig> samplers = configureSamplers(getSamplers(), inputs, outputs, selectorGroups, globalVariables);
-		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, globalVariables, sharedResources);
+		return new Configuration(inputs.values(), outputs.values(), samplers, globalVariables, sharedResources);
 	}
 
 	private Map<String, InputConfig> configureInputs(final List<InputXBean> list) {

@@ -1,6 +1,7 @@
 package org.metricssampler.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.metricssampler.config.ConfigurationException;
@@ -10,7 +11,7 @@ public class DefaultBootstrapperTest {
 	public void bootstrapTiny() {
 		System.setProperty("control.port", "28123");
 		final Bootstrapper result = DefaultBootstrapper.bootstrap("src/test/resources/config.tiny.xml");
-		assertEquals(10, result.getConfiguration().getPoolSize());
+		assertNotNull(result.getConfiguration());
 	}
 
 	@Test(expected=ConfigurationException.class)

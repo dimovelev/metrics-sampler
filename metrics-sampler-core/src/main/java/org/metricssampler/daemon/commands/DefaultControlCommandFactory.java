@@ -16,7 +16,7 @@ public class DefaultControlCommandFactory implements ControlCommandFactory {
 
 	@Override
 	public ShutdownCommand shutdown() {
-		return new ShutdownCommand(controller.getClientReader(), controller.getClientWriter(), controller.getExecutor());
+		return new ShutdownCommand(controller.getClientReader(), controller.getClientWriter(), controller.getBootstrapper());
 	}
 
 	@Override

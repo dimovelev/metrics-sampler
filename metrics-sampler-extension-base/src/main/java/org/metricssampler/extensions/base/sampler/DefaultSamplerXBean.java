@@ -22,11 +22,16 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("sampler")
 public class DefaultSamplerXBean extends SamplerXBean {
+	private static final String DEFAULT_POOL_NAME = "samplers";
+
 	@XStreamAsAttribute
 	private String input;
 
 	@XStreamAsAttribute
 	private String outputs;
+	
+	@XStreamAsAttribute
+	private String pool;
 
 	@XStreamAsAttribute
 	private Boolean quiet = false;
@@ -59,6 +64,14 @@ public class DefaultSamplerXBean extends SamplerXBean {
 
 	public void setOutputs(final String outputs) {
 		this.outputs = outputs;
+	}
+
+	public String getPool() {
+		return pool;
+	}
+
+	public void setPool(final String pool) {
+		this.pool = pool;
 	}
 
 	public List<VariableXBean> getVariables() {
@@ -105,7 +118,8 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		final boolean ignored = getIgnored() != null ? getIgnored() : false;
 		final boolean disabled = getDisabled() != null ? getDisabled() : false;
 		final boolean quiet = getQuiet() != null ? getQuiet() : false;
-		return new DefaultSamplerConfig(getName(), getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, quiet);
+		final String pool = getPool() != null ? getPool() : DEFAULT_POOL_NAME;
+		return new DefaultSamplerConfig(getName(), pool, getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, quiet);
 	}
 
 	protected List<SelectorConfig> configureSelectors(final Map<String, List<SelectorConfig>> templates) {

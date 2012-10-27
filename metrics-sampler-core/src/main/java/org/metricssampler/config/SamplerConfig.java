@@ -9,15 +9,18 @@ import java.util.Map;
  * Base class for sampler configurations.
  */
 public abstract class SamplerConfig extends NamedConfig {
+	private final String pool;
 	private final int interval;
 	private final boolean ignored;
 	private final boolean disabled;
 	private final Map<String, Object> globalVariables;
 	
-	public SamplerConfig(final String name, final int interval, final boolean ignored, final boolean disabled, final Map<String, Object> globalVariables) {
+	public SamplerConfig(final String name, final String pool, final int interval, final boolean ignored, final boolean disabled, final Map<String, Object> globalVariables) {
 		super(name);
+		checkArgumentNotNull(pool, "pool");
 		checkArgument(interval > 0, "interval must be greater than 0 seconds");
 		checkArgumentNotNull(globalVariables, "globalVariables");
+		this.pool = pool;
 		this.interval = interval;
 		this.ignored = ignored;
 		this.disabled = disabled;
@@ -41,11 +44,15 @@ public abstract class SamplerConfig extends NamedConfig {
 	public Map<String, Object> getGlobalVariables() {
 		return globalVariables;
 	}
-
+	
 	/**
 	 * @return {@code true} if the sampler is temporarily disabled and should not sample but should still be scheduled.
 	 */
 	public boolean isDisabled() {
 		return disabled;
+	}
+
+	public String getPool() {
+		return pool;
 	}
 }

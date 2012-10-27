@@ -9,8 +9,6 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.commons.io.IOUtils;
 import org.metricssampler.daemon.commands.ControlCommand;
@@ -23,7 +21,6 @@ public class DefaultTCPController implements TCPController {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final ServerSocket serverSocket;
-	private final ExecutorService executor;
 	private final Bootstrapper bootstrapper;
 	private final Map<String, SamplerTask> tasks;
 	private BufferedReader clientReader = null;
@@ -31,17 +28,11 @@ public class DefaultTCPController implements TCPController {
 
 	private final ControlCommandParser commandParser;
 
-	public DefaultTCPController(final Bootstrapper bootstrapper, final ScheduledThreadPoolExecutor executor, final Map<String, SamplerTask> tasks) {
+	public DefaultTCPController(final Bootstrapper bootstrapper, final Map<String, SamplerTask> tasks) {
 		this.bootstrapper = bootstrapper;
-		this.executor = executor;
 		this.tasks = tasks;
 		this.serverSocket = createServerSocket();
 		this.commandParser = new ControlCommandParser(new DefaultControlCommandFactory(this));
-	}
-
-	@Override
-	public ExecutorService getExecutor() {
-		return executor;
 	}
 
 	@Override

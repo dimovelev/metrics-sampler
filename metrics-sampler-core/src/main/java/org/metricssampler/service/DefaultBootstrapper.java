@@ -21,6 +21,7 @@ import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupXBean;
 import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
 import org.metricssampler.config.loader.xbeans.StringVariableXBean;
+import org.metricssampler.config.loader.xbeans.ThreadPoolXBean;
 import org.metricssampler.config.loader.xbeans.VariableXBean;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
@@ -30,7 +31,7 @@ import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
+public class DefaultBootstrapper implements Bootstrapper {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final List<Class<?>> xbeanClasses = new LinkedList<Class<?>>();
@@ -50,7 +51,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		final DefaultBootstrapper result = new DefaultBootstrapper();
 		result.initialize();
 		result.loadConfiguration(filename);
-		result.createSharedResourcees();
+		result.createSharedResources();
 		result.createSamplers();
 		return result;
 	}
@@ -79,6 +80,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		xbeanClasses.add(DictionaryVariableXBean.class);		
 		xbeanClasses.add(EntryXBean.class);
 		xbeanClasses.add(SharedResourceXBean.class);
+		xbeanClasses.add(ThreadPoolXBean.class);
 	}
 
 	private void loadConfiguration(final String filename) {
@@ -97,7 +99,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 		}
 	}
 	
-	private void createSharedResourcees() {
+	private void createSharedResources() {
 		logger.debug("Creating shared resources");
 		sharedResources = new HashMap<String, SharedResource>();
 		for (final SharedResourceConfig resourceConfig : configuration.getSharedResources().values()) {
@@ -121,7 +123,7 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 				throw new ConfigurationException("Failed to create shared resource \"" + config.getName() + "\"", e);
 			}
 		}
-		throw new ConfigurationException("Unsupported shared resource: " + config.getName());
+		throw new ConfigurationException("Unsupported shared resource named \"" + config.getName() + "\"");
 	}
 
 	private void createSamplers() {
@@ -211,5 +213,13 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	@Override
 	public SharedResource getSharedResource(final String name) {
 		return sharedResources.get(name);
+	}
+
+	@Override
+	public void shutdown() {
+		logger.info("Shutting down shared resources");
+		for (final SharedResource sharedResource : sharedResources.values()) {
+			sharedResource.shutdown();
+		}
 	}
 }
