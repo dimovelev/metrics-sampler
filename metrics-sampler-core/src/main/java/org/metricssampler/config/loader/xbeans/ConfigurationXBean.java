@@ -1,6 +1,5 @@
 package org.metricssampler.config.loader.xbeans;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -102,11 +101,11 @@ public class ConfigurationXBean {
 
 	public Configuration toConfig() {
 		final Map<String, Object> globalVariables = VariableXBean.toMap(getVariables());
+		final Map<String, SharedResourceConfig> sharedResources = configureSharedResources(getSharedResources());
 		final Map<String, InputConfig> inputs = configureInputs(getInputs());
 		final Map<String, OutputConfig> outputs = configureOutputs(getOutputs());
 		final Map<String, List<SelectorConfig>> selectorGroups = configureSelectorGroups(getSelectorGroups());
 		final List<SamplerConfig> samplers = configureSamplers(getSamplers(), inputs, outputs, selectorGroups, globalVariables);
-		final List<SharedResourceConfig> sharedResources = configureSharedResources(getSharedResources());
 		return new Configuration(getPoolSize(), inputs.values(), outputs.values(), samplers, globalVariables, sharedResources);
 	}
 
@@ -175,13 +174,15 @@ public class ConfigurationXBean {
 		return result;
 	}
 
-	private List<SharedResourceConfig> configureSharedResources(final List<SharedResourceXBean> sharedResources) {
+	private Map<String, SharedResourceConfig> configureSharedResources(final List<SharedResourceXBean> sharedResources) {
 		if (sharedResources == null) {
-			return Collections.emptyList();
+			return Collections.emptyMap();
 		}
-		final List<SharedResourceConfig> result = new ArrayList<SharedResourceConfig>(sharedResources.size());
+		final Map<String, SharedResourceConfig> result = new HashMap<String, SharedResourceConfig>(sharedResources.size());
 		for (final SharedResourceXBean item : sharedResources) {
-			result.add(item.toConfig());
+			if (item.getIgnored() == null || item.getIgnored() == false) {
+				result.put(item.getName(), item.toConfig());
+			}
 		}
 		return result;
 	}

@@ -21,5 +21,10 @@ public abstract class SharedResourceXBean extends NamedXBean {
 		super.validate();
 	}
 	
-	public abstract SharedResourceConfig toConfig();
+	public SharedResourceConfig toConfig() {
+		validate();
+		return createConfig();
+	}
+
+	protected abstract SharedResourceConfig createConfig();
 }

@@ -1,13 +1,11 @@
 package org.metricssampler.extensions.jdbc;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.reader.AbstractMetricsReader;
@@ -19,25 +17,19 @@ import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
 
 public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> implements BulkMetricsReader {
+	private final JdbcConnectionPool connectionPool;
 	private Connection connection;
 
-	public JdbcMetricsReader(final JdbcInputConfig config) {
+	public JdbcMetricsReader(final JdbcInputConfig config, final JdbcConnectionPool connectionPool) {
 		super(config);
+		this.connectionPool = connectionPool;
 	}
 
 	@Override
 	public void open() throws MetricReadException {
-		connect();
-	}
-
-	protected void connect() {
-		final Properties props = new Properties();
-		props.putAll(config.getOptions());
-		props.put("user", config.getUsername());
-		props.put("password", config.getPassword());
 		try {
-			logger.debug("Connecting to {} as {}", config.getUrl(), config.getUsername());
-			connection = DriverManager.getConnection(config.getUrl(), props);
+			logger.debug("Fetching connection from pool {}", config.getPool());
+			this.connection = connectionPool.getConnection();
 		} catch (final SQLException e) {
 			throw new OpenMetricsReaderException(e);
 		}
@@ -45,19 +37,15 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 
 	@Override
 	public void close() {
-		disconnect();
-	}
-
-	protected void disconnect() {
 		if (connection != null) {
 			try {
-				logger.debug("Disconnecting from {}", config.getUrl());
+				logger.debug("Returning connection to pool {}", config.getPool());
 				connection.close();
+				connection = null;
 			} catch (final SQLException e) {
 				logger.warn("Will ignore exception thrown during connection closing", e);
 			}
 		}
-		connection = null;
 	}
 
 	protected void assertConnected() {
@@ -139,8 +127,8 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 	}
 
 	protected void reconnect() {
-		disconnect();
-		connect();
+		close();
+		open();
 	}
 
 	@Override

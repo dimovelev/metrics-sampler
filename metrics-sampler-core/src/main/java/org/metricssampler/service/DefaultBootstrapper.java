@@ -99,11 +99,9 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	
 	private void createSharedResourcees() {
 		sharedResources = new HashMap<String, SharedResource>();
-		for (final SharedResourceConfig resourceConfig : configuration.getSharedResources()) {
-			if (!resourceConfig.isIgnored()) {
-				final SharedResource sharedResource = newSharedResource(resourceConfig);
-				sharedResources.put(resourceConfig.getName(), sharedResource);
-			}
+		for (final SharedResourceConfig resourceConfig : configuration.getSharedResources().values()) {
+			final SharedResource sharedResource = newSharedResource(resourceConfig);
+			sharedResources.put(resourceConfig.getName(), sharedResource);
 		}
 	}
 
@@ -202,5 +200,10 @@ public class DefaultBootstrapper implements GlobalObjectFactory, Bootstrapper {
 	@Override
 	public int getControlPort() {
 		return controlPort;
+	}
+
+	@Override
+	public SharedResource getSharedResource(final String name) {
+		return sharedResources.get(name);
 	}
 }

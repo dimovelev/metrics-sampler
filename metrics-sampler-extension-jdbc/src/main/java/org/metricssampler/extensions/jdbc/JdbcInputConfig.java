@@ -1,5 +1,6 @@
 package org.metricssampler.extensions.jdbc;
 
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 import java.util.Collections;
@@ -9,46 +10,22 @@ import java.util.Map;
 import org.metricssampler.config.InputConfig;
 
 public class JdbcInputConfig extends InputConfig {
-	private final String url;
-	private final String driver;
-	private final String username;
-	private final String password;
+	private final String pool;
 	private final List<String> queries;
-	private final Map<String, String> options;
 	
-	public JdbcInputConfig(final String name, final Map<String, Object> variables, final String url, final String driver, final String username, final String password, final List<String> queries, final Map<String, String> options) {
+	public JdbcInputConfig(final String name, final Map<String, Object> variables, final String pool, final List<String> queries) {
 		super(name, variables);
-		checkArgumentNotNullNorEmpty(url, "url");
+		checkArgumentNotNull(pool, "pool");
 		checkArgumentNotNullNorEmpty(queries, "queries");
-		this.url = url;
-		this.driver = driver;
-		this.username = username;
-		this.password = password;
+		this.pool= pool;
 		this.queries = Collections.unmodifiableList(queries);
-		this.options = Collections.unmodifiableMap(options);
 	}
 
-	public String getUrl() {
-		return url;
-	}
-
-	public String getDriver() {
-		return driver;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
+	public String getPool() {
+		return pool;
 	}
 
 	public List<String> getQueries() {
 		return queries;
-	}
-
-	public Map<String, String> getOptions() {
-		return options;
 	}
 }

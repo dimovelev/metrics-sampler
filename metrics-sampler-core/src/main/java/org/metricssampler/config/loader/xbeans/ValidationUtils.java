@@ -45,7 +45,16 @@ public final class ValidationUtils {
 			throw new ConfigurationException("Attribute "+name+" of "+context+" is mandatory");
 		}
 		if (value < 1) {
-			throw new ConfigurationException("Attribute "+name+" of "+context+" with value "+value+" is not a valid number higher than 0");
+			throw new ConfigurationException("Attribute "+name+" of "+context+" with value "+value+" is not a valid number greater than 0");
+		}
+	}
+	
+	public static void notNegative(final String name, final String context, final Integer value) {
+		if (value == null) {
+			throw new ConfigurationException("Attribute "+name+" of "+context+" is mandatory");
+		}
+		if (value < 0) {
+			throw new ConfigurationException("Attribute "+name+" of "+context+" with value "+value+" is not a valid number greater than or equal to 0");
 		}
 	}
 }
