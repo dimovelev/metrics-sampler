@@ -1,8 +1,16 @@
 #!/bin/bash
 JAVA=java
 BASEDIR="$( cd -P "$( dirname "$0" )/.." && pwd )"
-LOGCONFIG=$BASEDIR/config/logback.xml
-LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
+if [ -f $BASEDIR/config/logback.xml ]; then
+	LOGCONFIG=$BASEDIR/config/logback.xml
+else
+	LOGCONFIG=$BASEDIR/config/logback.default.xml
+fi
+if [ -f $BASEDIR/config/logback-console.xml ]; then
+	LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.xml
+else
+	LOGCONFIG_CONSOLE=$BASEDIR/config/logback-console.default.xml
+fi
 CONTROL_PORT=28111
 CONTROL_HOST=localhost
 VERSION="${project.version}"
