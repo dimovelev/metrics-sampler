@@ -1,0 +1,21 @@
+<configuration>
+	<shared-resources>
+		<thread-pool name="jmx.samplers" size="10" />
+	</shared-resources>
+	<variables>
+		<string name="jmx.prefix" value="prefix" />
+	</variables>
+	<outputs>
+		<console name="jmx.console" />
+	</outputs>
+	<inputs>
+		<jmx name="jmx.01" url="service:jmx:rmi://localhost" />
+	</inputs>
+	<samplers>
+		<sampler input="jmx.01" outputs="jmx.console,console" interval="1000">
+			<selectors>
+				<regexp from-name="a" to-name="a" />
+			</selectors>
+		</sampler>
+	</samplers>
+</configuration>

@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
+import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SharedResourceConfig;
 import org.metricssampler.config.SocketOptionsConfig;
 import org.metricssampler.service.Bootstrapper;
@@ -47,9 +48,41 @@ public abstract class BootstrapperTestBase {
 	}
 	
 	@SuppressWarnings("unchecked")
+	protected <T extends OutputConfig> T assertOutput(final Configuration config, final String name, final Class<T> clazz) {
+		for (final OutputConfig result : config.getOutputs()) {
+			if (result.getName().equals(name)) {
+				assertEquals(clazz, result.getClass());
+				return (T) result;
+			}
+		}
+		fail("Could not find output named " + name);
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected <T extends SamplerConfig> T assertSampler(final Configuration config, final String name, final Class<T> clazz) {
+		for (final SamplerConfig result : config.getSamplers()) {
+			if (result.getName().equals(name)) {
+				assertEquals(clazz, result.getClass());
+				return (T) result;
+			}
+		}
+		fail("Could not find output named " + name);
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
 	protected <T extends SharedResourceConfig> T assertSingleSharedResource(final Configuration config, final Class<T> clazz) {
 		assertEquals(1, config.getSharedResources().size());
 		final SharedResourceConfig result = config.getSharedResources().values().iterator().next();
+		assertNotNull(result);
+		assertEquals(clazz, result.getClass());
+		return (T) result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected <T extends SharedResourceConfig> T assertSharedResource(final Configuration config, final String name, final Class<T> clazz) {
+		final SharedResourceConfig result = config.getSharedResources().get(name);
 		assertNotNull(result);
 		assertEquals(clazz, result.getClass());
 		return (T) result;
