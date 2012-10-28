@@ -1,0 +1,6 @@
+<configuration>
+	<shared-resources>
+		<thread-pool name="samplers" size="10" /> 
+		<thread-pool name="samplers" size="20" /> 
+	</shared-resources>
+</configuration>

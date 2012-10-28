@@ -1,0 +1,5 @@
+<configuration>
+	<outputs>
+		<graphite name="graphite" host="localhost" />
+	</outputs>
+</configuration>

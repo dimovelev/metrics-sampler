@@ -168,7 +168,11 @@ public class ConfigurationXBean {
 		}
 		final Map<String, SharedResourceConfig> result = new HashMap<String, SharedResourceConfig>(sharedResources.size());
 		for (final SharedResourceXBean item : sharedResources) {
-			result.put(item.getName(), item.toConfig());
+			if (result.containsKey(item.getName())) {
+				throw new ConfigurationException("Two shared resources with the same name \"" + item.getName() + "\"");
+			} else {
+				result.put(item.getName(), item.toConfig());
+			}
 		}
 		return result;
 	}

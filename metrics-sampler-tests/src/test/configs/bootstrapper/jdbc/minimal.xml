@@ -1,0 +1,10 @@
+<configuration>
+	<shared-resources>
+		<jdbc-connection-pool name="pool" url="url" username="username" password="password" driver="driver" min-size="10" max-size="20" />
+	</shared-resources>
+	<inputs>
+		<jdbc name="jdbc" pool="pool">
+			<query>select 'first' from dual</query>
+		</jdbc>
+	</inputs>
+</configuration>

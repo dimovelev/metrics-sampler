@@ -1,0 +1,16 @@
+<configuration>
+	<inputs>
+		<jmx name="jmx" url="url" username="username" password="password" provider-packages="provider.packages" persistent-connection="false">
+			<ignore-object-names>
+				<ignore-object-name regexp="ignored_.+" />
+			</ignore-object-names>
+			<connection-properties>
+				<entry key="key" value="value" />
+			</connection-properties>
+			<socket-options connect-timeout="5" so-timeout="10" keep-alive="true" send-buffer-size="16384" receive-buffer-size="32768" />
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+		</jmx> 
+	</inputs>
+</configuration>

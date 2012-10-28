@@ -132,6 +132,7 @@ public class JmxInputXBean extends InputXBean {
 		}
 		
 		final SocketOptionsConfig soConfig = socketOptions != null ? socketOptions.toConfig() : null;
-		return new JmxInputConfig(getName(), getVariablesConfig(), getUrl(), getUsername(), getPassword(), getProviderPackages(), getPersistentConnection(), ignorePatterns, configConnectionProperties, soConfig);
+		final boolean boolPersistentConnection = getPersistentConnection() != null ? getPersistentConnection() : true;
+		return new JmxInputConfig(getName(), getVariablesConfig(), getUrl(), getUsername(), getPassword(), getProviderPackages(), boolPersistentConnection, ignorePatterns, configConnectionProperties, soConfig);
 	}
 }

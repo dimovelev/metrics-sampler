@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.metricssampler.config.ConfigurationException;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public abstract class VariableXBean {
@@ -30,7 +32,11 @@ public abstract class VariableXBean {
 		final Map<String, Object> result = new HashMap<String, Object>();
 		if (variables != null) {
 			for (final VariableXBean variable : variables) {
-				result.put(variable.getName(), variable.getValue());
+				if (result.containsKey(variable.getName())) {
+					throw new ConfigurationException("Two variables with the same name " + variable.getName());
+				} else {
+					result.put(variable.getName(), variable.getValue());
+				}
 			}
 		}
 		return result;

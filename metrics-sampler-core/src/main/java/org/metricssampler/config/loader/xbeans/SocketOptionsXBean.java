@@ -23,7 +23,7 @@ public class SocketOptionsXBean {
 	@XStreamAsAttribute
 	private Integer sendBufferSize = 0;
 
-	@XStreamAlias("receive-buff-size")
+	@XStreamAlias("receive-buffer-size")
 	@XStreamAsAttribute
 	private Integer receiveBufferSize = 0;
 

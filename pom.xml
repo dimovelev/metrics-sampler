@@ -30,6 +30,7 @@
 		<module>metrics-sampler-extension-jdbc</module>
 		<module>metrics-sampler-extension-redis</module>
 		<module>metrics-sampler-extension-oracle-nosql</module>
+		<module>metrics-sampler-tests</module>
 	</modules>
 	<build>
 		<pluginManagement>

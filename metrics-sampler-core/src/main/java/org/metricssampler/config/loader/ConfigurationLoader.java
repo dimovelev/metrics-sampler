@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Collection;
 
 import org.metricssampler.config.Configuration;
+import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.loader.FileGlobProcessor.MatchingFileVisitor;
 import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
 import org.metricssampler.config.loader.xbeans.IncludeXBean;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class ConfigurationLoader {
@@ -27,8 +29,12 @@ public class ConfigurationLoader {
 	public Configuration load(final String filename) {
 		checkArgumentNotNullNorEmpty(filename, "filename");
 		final XStream xstream = createXStream();
-		final ConfigurationXBean result = loadFile(filename, xstream);
-		return result.toConfig();
+		try {
+			final ConfigurationXBean result = loadFile(filename, xstream);
+			return result.toConfig();
+		} catch (final XStreamException e) {
+			throw new ConfigurationException("Failed to load configuration from \"" + filename + "\"", e);
+		} 
 	}
 
 	protected ConfigurationXBean loadFile(final String filename, final XStream xstream) {

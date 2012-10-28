@@ -1,0 +1,5 @@
+<configuration>
+	<shared-resources>
+		<thread-pool name="samplers" size="10" max-size="20" keep-alive-time="60" /> 
+	</shared-resources>
+</configuration>
