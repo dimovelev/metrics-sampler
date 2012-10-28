@@ -55,7 +55,7 @@ public class BaseExtension extends AbstractExtension {
 	@Override
 	protected Sampler doNewSampler(final SamplerConfig config) {
 		final DefaultSamplerConfig actualConfig = (DefaultSamplerConfig) config;
-		final MetricsReader reader = getGlobalFactory().newReaderForInput(actualConfig.getReader());
+		final MetricsReader reader = getGlobalFactory().newReaderForInput(actualConfig.getInput());
 		final DefaultSampler result = new DefaultSampler(actualConfig, reader);
 		for (final OutputConfig writerConfig : actualConfig.getOutputs()) {
 			result.addWriter(getGlobalFactory().newWriterForOutput(writerConfig));

@@ -36,7 +36,7 @@ public class DefaultSamplerConfig extends SamplerConfig {
 		this.quiet = quiet;
 	}
 
-	public InputConfig getReader() {
+	public InputConfig getInput() {
 		return input;
 	}
 

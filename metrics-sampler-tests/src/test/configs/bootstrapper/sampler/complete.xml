@@ -1,0 +1,21 @@
+<configuration>
+	<selector-groups>
+		<selector-group name="group">
+			<regexp from-name="from" to-name="to" />
+		</selector-group>
+	</selector-groups>
+	<inputs>
+		<jmx name="jmx" url="service:jmx:rmi://localhost" />
+	</inputs>
+	<outputs>
+		<console name="console" />
+	</outputs>
+	<samplers>
+		<sampler name="jmx-sampler" input="jmx" outputs="console" interval="1000" pool="pool">
+			<selectors>
+				<regexp from-name="a" to-name="a" />
+				<use-group name="group" />
+			</selectors>
+		</sampler>
+	</samplers>
+</configuration>

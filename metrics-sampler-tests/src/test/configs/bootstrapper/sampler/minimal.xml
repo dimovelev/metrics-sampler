@@ -1,0 +1,16 @@
+<configuration>
+	<inputs>
+		<jmx name="jmx" url="service:jmx:rmi://localhost" />
+	</inputs>
+	<outputs>
+		<console name="console1" default="true" />
+		<console name="console2" default="true" />
+	</outputs>
+	<samplers>
+		<sampler input="jmx" interval="1000" >
+			<selectors>
+				<regexp from-name="a" to-name="a" />
+			</selectors>
+		</sampler>
+	</samplers>
+</configuration>

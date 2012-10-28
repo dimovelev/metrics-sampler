@@ -53,7 +53,6 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		return name;
 	}
 
-
 	public void setInput(final String input) {
 		this.input = input;
 	}
