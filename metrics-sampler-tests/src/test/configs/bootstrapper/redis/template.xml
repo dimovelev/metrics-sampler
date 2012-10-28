@@ -1,0 +1,10 @@
+<configuration>
+	<inputs>
+		<redis name="template" template="true" host="host" port="2811" password="password">
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+		</redis> 
+		<redis name="redis" parent="template" />
+	</inputs>
+</configuration>

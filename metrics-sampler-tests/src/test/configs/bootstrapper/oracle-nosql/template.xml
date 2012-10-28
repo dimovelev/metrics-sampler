@@ -1,0 +1,10 @@
+<configuration>
+	<inputs>
+		<oracle-nosql name="template" template="true" hosts="host1:2811 host2:2812">
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+		</oracle-nosql> 
+		<oracle-nosql name="nosql" parent="template" />
+	</inputs>
+</configuration>

@@ -1,23 +1,23 @@
 package org.metricssampler.tests.bootstrapper;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.extensions.jdbc.JdbcConnectionPoolConfig;
 import org.metricssampler.extensions.jdbc.JdbcInputConfig;
-import org.metricssampler.service.Bootstrapper;
 
 public class BootstrapperJdbcInputTest extends BootstrapperTestBase {
 	@Test
 	public void bootstrapComplete() {
-		final Bootstrapper result = bootstrap("jdbc/complete.xml");
+		final Configuration config = configure("jdbc/complete.xml");
 		
-		final Configuration config = result.getConfiguration();
-		assertNotNull(config);
 		final JdbcInputConfig item = assertSingleInput(config, JdbcInputConfig.class);
+		assertComplete(config, item);
+	}
+
+	private void assertComplete(final Configuration config, final JdbcInputConfig item) {
 		assertEquals("jdbc", item.getName());
 		assertEquals("pool", item.getPool());
 		assertEquals(2, item.getQueries().size());
@@ -37,11 +37,17 @@ public class BootstrapperJdbcInputTest extends BootstrapperTestBase {
 	}
 
 	@Test
-	public void bootstrapMinimal() {
-		final Bootstrapper result = bootstrap("jdbc/minimal.xml");
+	public void bootstrapTemplate() {
+		final Configuration config = configure("jdbc/template.xml");
 		
-		final Configuration config = result.getConfiguration();
-		assertNotNull(config);
+		final JdbcInputConfig item = assertInput(config, "jdbc", JdbcInputConfig.class);
+		assertComplete(config, item);
+	}
+
+	@Test
+	public void bootstrapMinimal() {
+		final Configuration config = configure("jdbc/minimal.xml");
+
 		final JdbcInputConfig item = assertSingleInput(config, JdbcInputConfig.class);
 		assertEquals("jdbc", item.getName());
 		assertEquals("pool", item.getPool());

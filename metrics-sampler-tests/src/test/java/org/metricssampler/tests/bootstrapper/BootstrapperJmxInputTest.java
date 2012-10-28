@@ -2,23 +2,23 @@ package org.metricssampler.tests.bootstrapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.extensions.jmx.JmxInputConfig;
-import org.metricssampler.service.Bootstrapper;
 
 public class BootstrapperJmxInputTest extends BootstrapperTestBase {
 	@Test
 	public void bootstrapComplete() {
-		final Bootstrapper result = bootstrap("jmx/complete.xml");
+		final Configuration config = configure("jmx/complete.xml");
 		
-		final Configuration config = result.getConfiguration();
-		assertNotNull(config);
 		final JmxInputConfig item = assertSingleInput(config, JmxInputConfig.class);
+		assertComplete(item);
+	}
+
+	private void assertComplete(final JmxInputConfig item) {
 		assertEquals("jmx", item.getName());
 		assertEquals("username", item.getUsername());
 		assertEquals("password", item.getPassword());
@@ -34,11 +34,17 @@ public class BootstrapperJmxInputTest extends BootstrapperTestBase {
 	}
 	
 	@Test
-	public void bootstrapMinimal() {
-		final Bootstrapper result = bootstrap("jmx/minimal.xml");
+	public void bootstrapTemplate() {
+		final Configuration config = configure("jmx/template.xml");
 		
-		final Configuration config = result.getConfiguration();
-		assertNotNull(config);
+		final JmxInputConfig item = assertInput(config, "jmx", JmxInputConfig.class);
+		assertComplete(item);
+	}
+
+	@Test
+	public void bootstrapMinimal() {
+		final Configuration config = configure("jmx/minimal.xml");
+		
 		final JmxInputConfig item = assertSingleInput(config, JmxInputConfig.class);
 		assertEquals("jmx", item.getName());
 		assertEquals("username", item.getUsername());

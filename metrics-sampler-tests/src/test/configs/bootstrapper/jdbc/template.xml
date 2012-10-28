@@ -1,0 +1,19 @@
+<configuration>
+	<shared-resources>
+		<jdbc-connection-pool name="pool" url="url" username="username" password="password" driver="driver" min-size="10" max-size="20" login-timeout="3">
+			<options>
+				<entry key="key" value="value" />
+			</options>
+		</jdbc-connection-pool>
+	</shared-resources>
+	<inputs>
+		<jdbc name="template" template="true" pool="pool">
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+			<query>select 'first' from dual</query>
+			<query>select 'second' from dual</query>
+		</jdbc>
+		<jdbc name="jdbc" parent="template" />
+	</inputs>
+</configuration>

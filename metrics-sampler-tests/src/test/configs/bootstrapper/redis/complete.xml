@@ -1,0 +1,9 @@
+<configuration>
+	<inputs>
+		<redis name="redis" host="host" port="2811" password="password">
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+		</redis> 
+	</inputs>
+</configuration>

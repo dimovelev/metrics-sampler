@@ -1,0 +1,5 @@
+<configuration>
+	<inputs>
+		<redis name="redis" host="host" port="2811" />
+	</inputs>
+</configuration>

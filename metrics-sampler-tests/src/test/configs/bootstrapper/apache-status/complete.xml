@@ -1,0 +1,12 @@
+<configuration>
+	<inputs>
+		<apache-status name="apache-status" url="http://localhost" username="username" password="password" preemptive-auth="false">
+			<headers>
+				<entry key="header" value="val" />
+			</headers>
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+		</apache-status>
+	</inputs>
+</configuration>

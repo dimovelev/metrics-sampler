@@ -2,6 +2,7 @@ package org.metricssampler.tests.bootstrapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.Map;
 
@@ -26,6 +27,14 @@ public abstract class BootstrapperTestBase {
 	
 	protected Bootstrapper bootstrap(final String filename) {
 		return DefaultBootstrapper.bootstrap(getConfig(filename));
+	}
+	
+	protected Configuration configure(final String filename) {
+		final Bootstrapper bootstrapper = bootstrap(filename);
+		assertNotNull(bootstrapper);
+		final Configuration result = bootstrapper.getConfiguration();
+		assertNotNull(result);
+		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -54,6 +63,18 @@ public abstract class BootstrapperTestBase {
 		assertEquals(clazz, result.getClass());
 		return (T) result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	protected <T extends InputConfig> T assertInput(final Configuration config, final String name, final Class<T> clazz) {
+		for (final InputConfig result : config.getInputs()) {
+			if (result.getName().equals(name)) {
+				assertEquals(clazz, result.getClass());
+				return (T) result;
+			}
+		}
+		fail("Could not find input named " + name);
+		return null;
+	}
 
 	protected void assertSocketOptions(final SocketOptionsConfig so, final int connectTimeout, final int soTimeout, final int sndBuffSize, final int rcvBuffSize) {
 		assertNotNull(so);
@@ -67,5 +88,11 @@ public abstract class BootstrapperTestBase {
 		assertNotNull(variables);
 		assertEquals(1, variables.size());
 		assertEquals(value, variables.get(name));
+	}
+	
+	protected void assertSingleEntry(final Map<String, String> entries, final String key, final String value) {
+		assertNotNull(entries);
+		assertEquals(1, entries.size());
+		assertEquals(value, entries.get(key));
 	}
 }

@@ -1,0 +1,5 @@
+<configuration>
+	<inputs>
+		<apache-status name="apache-status" url="http://localhost" />
+	</inputs>
+</configuration>
