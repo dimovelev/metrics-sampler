@@ -17,7 +17,7 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final ThreadPoolConfig config;
 	private final ScheduledExecutorService executorService;
-	
+
 	public DefaultSamplerThreadPool(final ThreadPoolConfig config) {
 		checkArgumentNotNull(config, "config");
 		this.config = config;
@@ -48,6 +48,7 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 		logger.info("Shutting down thread pool {}", config.getName());
 		try {
 			logger.debug("Waiting for the executor service to gracefully shutdown");
+			executorService.shutdown();
 			executorService.awaitTermination(20, TimeUnit.SECONDS);
 			logger.info("Executor service terminated");
 		} catch (final InterruptedException e) {
