@@ -54,12 +54,18 @@ Check out the following configuration as a quick-start:
 			
 			<!-- Apache mod_status page -->
 			<apache-status name="apache01" url="http://apache1.metrics-sampler.org:80/qos-viewer?auto" username="user" password="pass" />
+			
+			<!-- use invoke info on the given redis service -->
+			<redis name="redis" host="redis.metrics-sampler.org" port="6379" />
+
+			<!-- fetch metrics from the perfmaps of the given oracle NoSQL hosts -->			
+			<oracle-nosql name="oracle-nosql" hosts="kv1.metrics-sampler.org:5000 kv2.metrics-sampler.org:5000 kv3.metrics-sampler.org:5000 kv4.metrics-sampler.org:5000" />
 		</inputs>
 		<outputs>
 			<!-- Write to the standard output -->
 			<console name="console" />
-			<!-- Send to graphite running on port 2003 -->
-			<graphite name="graphite" host="graphite.metrics-sampler.org" port="2003" />
+			<!-- Send to graphite running on port 2003. This is the default output - if no outputs are given, all outputs marked as default will be used -->
+			<graphite name="graphite" host="graphite.metrics-sampler.org" port="2003" default="true" />
 		</outputs>
 		
 		<!-- we can also define some global variables that will be available in all samplers (unless overridden) -->
@@ -98,7 +104,7 @@ Check out the following configuration as a quick-start:
 		<samplers>
 			<!-- template defining common values for weblogic samplers. If you define any of the attributes / child elements in the 
 				 samplers that use this template, these values here will be lost (not appended to). -->
-			<sampler name="wls" template="true" outputs="graphite" interval="10">
+			<sampler name="wls" template="true" interval="10">
 				<selectors>
 					<use-group name="wls" />
 				</selectors>
@@ -114,7 +120,7 @@ Check out the following configuration as a quick-start:
 			<sampler input="wls01" parent="wls" />
 			<sampler input="wls02" parent="wls" />
 			
-			<sampler input="tomcat01" outputs="graphite" interval="10">
+			<sampler input="tomcat01" interval="10">
 				<variables>
 					<string name="prefix" value="frontend.${input.name}" />
 					<!-- we override the global variable here -->
@@ -128,7 +134,7 @@ Check out the following configuration as a quick-start:
 			<!-- setting quiet to true causes the sampler to log connection problems using debug level - thus preventing the problem 
 				 to be logged in the standard configuration. This is useful if the input is a source that is not always available but 
 				 you want to still get metrics when it is available while not flooding your logs with exceptions. -->
-			<sampler input="apache01" outputs="graphite" interval="10" quiet="true">
+			<sampler input="apache01" interval="10" quiet="true">
 				<variables>
 					<string name="prefix" value="frontend.${input.name}" />
 				</variables>
@@ -138,7 +144,7 @@ Check out the following configuration as a quick-start:
 			</sampler>
 
 			<!-- you can use ignored="true" to completely skip a sampler without removing / commenting it out. Note that it still needs to be valid. this sampler also uses a custom thread pool named "custom.samplers" -->
-			<sampler input="oracle01" outputs="graphite" interval="10" ignored="true" pool="custom.samplers">
+			<sampler input="oracle01" interval="10" ignored="true" pool="custom.samplers">
 				<variables>
 					<string name="prefix" value="database.${input.name}" />
 				</variables>
@@ -146,6 +152,18 @@ Check out the following configuration as a quick-start:
 					<!-- we can of course specify regular expressions directly here too. -->
 					<regexp from-name="(.*)" to-name="${name[1]}"/>
 				</selectors>
+			</sampler>
+			
+			<sampler input="redis" interval="10">
+	 			<selectors>
+	 				<regexp from-name="(.*)" to-name="${name[1]}" />
+	 			</selectors>
+			</sampler>
+			
+			<sampler input="oracle-nosql" interval="10">
+	 			<selectors>
+	 				<regexp from-name="(.*)" to-name="${name[1]}" />
+	 			</selectors>
 			</sampler>
 		</samplers>
 	</configuration>
