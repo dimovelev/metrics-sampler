@@ -17,16 +17,8 @@ public class RegExpSelectorConfig extends SelectorConfig {
 		this.keyExpression = keyExpression;
 	}
 
-	public boolean hasNameFilter() {
-		return namePattern != null;
-	}
-
 	public String getNamePattern() {
 		return namePattern;
-	}
-
-	public boolean hasDescriptionFilter() {
-		return descriptionPattern != null;
 	}
 
 	public String getDescriptionPattern() {

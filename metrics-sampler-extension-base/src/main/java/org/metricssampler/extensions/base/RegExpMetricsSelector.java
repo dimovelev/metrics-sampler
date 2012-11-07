@@ -2,39 +2,21 @@ package org.metricssampler.extensions.base;
 
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.metricssampler.reader.BulkMetricsReader;
-import org.metricssampler.reader.MetaDataMetricsReader;
 import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricReadException;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.MetricsMetaData;
-import org.metricssampler.reader.MetricsReader;
-import org.metricssampler.selector.MetricsSelector;
+import org.metricssampler.selector.AbstractMetricsSelector;
 import org.metricssampler.selector.SelectedMetric;
-import org.metricssampler.selector.VariableReplacer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Select metrics using regular expressions and rename them using an expression that can contain variables. 
  */
-public class RegExpMetricsSelector implements MetricsSelector {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private final VariableReplacer variableReplacer = new VariableReplacer();
-	
+public class RegExpMetricsSelector extends AbstractMetricsSelector {
 	private final RegExpSelectorConfig config;
-	private Map<String, Object> variables;
 
-	private MetricsMetaData cachedMetaData;
-	private List<SelectedMetric> cachedSelectedMetrics;
 	private Pattern namePattern;
 	private Pattern descriptionPattern;
 	
@@ -44,102 +26,22 @@ public class RegExpMetricsSelector implements MetricsSelector {
 	}
 
 	@Override
-	public Map<String, MetricValue> readMetrics(final MetricsReader reader) {
-		if (reader instanceof MetaDataMetricsReader) {
-			return readAlreadySelected((MetaDataMetricsReader) reader);
-		} else if (reader instanceof BulkMetricsReader) {
-			return readAllAndSelect((BulkMetricsReader) reader);
-		} else {
-			throw new IllegalArgumentException("Unsupported reader: " + reader);
-		}
-	}
-	
-	protected Map<String, MetricValue> readAllAndSelect(final BulkMetricsReader reader) {
-		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
-		final Map<MetricName, MetricValue> metrics = reader.readAllMetrics();
-		for (final Map.Entry<MetricName, MetricValue> entry : metrics.entrySet()) {
-			final SelectedMetric metric = match(entry.getKey());
-			if (metric != null) {
-				result.put(metric.getName(), entry.getValue());
-			}
-		}
-		return result;
-	}
-	
-	protected Map<String, MetricValue> readAlreadySelected(final MetaDataMetricsReader reader) {
-		final List<SelectedMetric> matchingMetrics = getSelectedMetrics(reader);
-		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
-		for (final SelectedMetric bean : matchingMetrics) {
-			try {
-				final MetricValue value = reader.readMetric(bean.getOriginalName());
-				result.put(bean.getName(), value);
-			} catch (final MetricReadException e) {
-				logger.warn("Failed to read " + bean.getOriginalName(), e);
-			}
-		}
-		return result;
+	protected void doAfterVariablesSet(final Map<String, Object> variables) {
+		this.namePattern = createPattern(config.getNamePattern());
+		this.descriptionPattern = createPattern(config.getDescriptionPattern());
 	}
 
-	protected void assertSelectedMetrics() {
-		if (cachedSelectedMetrics == null) {
-			throw new IllegalStateException("setMetaData not called");
+	protected Pattern createPattern(final String text) {
+		if (text != null && !"".equals(text)) {
+			final String pattern = replaceVariables(text);
+			return Pattern.compile(pattern);
+		} else {
+			return null;
 		}
 	}
-	
+
 	@Override
-	public void setVariables(final Map<String, Object> variables) {
-		this.variables = VariableReplacer.resolve(variables);
-		initializePatterns();
-	}
-
-	protected void initializePatterns() {
-		this.namePattern = createNamePattern();
-		this.descriptionPattern = createDescriptionPattern();
-	}
-
-	protected Pattern createNamePattern() {
-		if (config.hasNameFilter()) {
-			final String pattern = variableReplacer.replaceVariables(config.getNamePattern(), variables);
-			return Pattern.compile(pattern);
-		} else {
-			return null;
-		}
-	}
-
-	protected Pattern createDescriptionPattern() {
-		if (config.hasDescriptionFilter()) {
-			final String pattern = variableReplacer.replaceVariables(config.getDescriptionPattern(), variables);
-			return Pattern.compile(pattern);
-		} else { 
-			return null;
-		}
-	}
-
-	private List<SelectedMetric> getSelectedMetrics(final MetaDataMetricsReader reader) {
-		final MetricsMetaData metaData = reader.getMetaData();
-		if (this.cachedMetaData != metaData) {
-			this.cachedMetaData = metaData;
-			this.cachedSelectedMetrics = selectMetrics(metaData);
-			if (cachedSelectedMetrics.isEmpty()) {
-				logger.warn(this + " matched no metrics");
-			}
-		}
-		return cachedSelectedMetrics;
-	}
-
-	private List<SelectedMetric> selectMetrics(final Iterable<MetricName> names) {
-		logger.debug("Selecting metrics");
-		final List<SelectedMetric> result = new LinkedList<SelectedMetric>();
-		for (final MetricName name : names) {
-			final SelectedMetric metric = match(name);
-			if (metric != null) {
-				result.add(metric);
-			}
-		}
-		return Collections.unmodifiableList(result);
-	}
-
-	protected SelectedMetric match(final MetricName from) {
+	protected SelectedMetric selectMetric(final MetricName from) {
 		Map<String, Object> context = null;
 
 		if (namePattern != null) {
@@ -156,8 +58,8 @@ public class RegExpMetricsSelector implements MetricsSelector {
 			}
 			context = addGroups(descriptionMatcher, "description", context);
 		}
-		context.putAll(variables);
-		final String newName = variableReplacer.replaceVariables(config.getKeyExpression(), context);
+		addVariables(context);
+		final String newName = replaceVariables(config.getKeyExpression(), context);
 		return new SelectedMetric(from, newName);
 		
 	}
@@ -168,20 +70,6 @@ public class RegExpMetricsSelector implements MetricsSelector {
 			result.put(prefix+"["+i+"]", matcher.group(i));
 		}
 		return result;
-	}
-
-	@Override
-	public int getMetricCount(final MetricsReader reader) {
-		Iterable<MetricName> names;
-		if (reader instanceof MetaDataMetricsReader) {
-			names = ((MetaDataMetricsReader) reader).getMetaData();
-		} else if (reader instanceof BulkMetricsReader) {
-			names = ((BulkMetricsReader) reader).readAllMetrics().keySet();
-		} else {
-			throw new IllegalArgumentException("Unsupported metrics reader: " + reader);
-		}
-		final List<SelectedMetric> matchingMetrics = selectMetrics(names); 
-		return matchingMetrics.size();
 	}
 
 	@Override
