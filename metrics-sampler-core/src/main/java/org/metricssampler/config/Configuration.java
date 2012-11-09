@@ -1,9 +1,10 @@
 package org.metricssampler.config;
 
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableMap;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -22,23 +23,23 @@ public class Configuration {
 		checkArgumentNotNull(samplers, "samplers");
 		checkArgumentNotNull(variables, "variables");
 		checkArgumentNotNull(sharedResources, "sharedResources");
-		this.inputs = inputs;
-		this.outputs = outputs;
-		this.samplers = samplers;
-		this.variables = Collections.unmodifiableMap(variables);
-		this.sharedResources = Collections.unmodifiableMap(sharedResources);
+		this.inputs = unmodifiableCollection(inputs);
+		this.outputs = unmodifiableCollection(outputs);
+		this.samplers = unmodifiableCollection(samplers);
+		this.variables = unmodifiableMap(variables);
+		this.sharedResources = unmodifiableMap(sharedResources);
 	}
 
 	public Collection<InputConfig> getInputs() {
-		return Collections.unmodifiableCollection(inputs);
+		return inputs;
 	}
 
 	public Collection<OutputConfig> getOutputs() {
-		return Collections.unmodifiableCollection(outputs);
+		return outputs;
 	}
 
 	public Collection<SamplerConfig> getSamplers() {
-		return Collections.unmodifiableCollection(samplers);
+		return samplers;
 	}
 
 	public Map<String, SharedResourceConfig> getSharedResources() {

@@ -22,6 +22,9 @@ public class SocketOptionsConfig {
 		return connectTimeout > 0;
 	}
 	
+	/**
+	 * @return the connect timeout in milliseconds. {@code 0} means infinite. {@code -1} means not specified.
+	 */
 	public int getConnectTimeout() {
 		return connectTimeout;
 	}
@@ -49,10 +52,16 @@ public class SocketOptionsConfig {
 		return sndBuffSize > 0;
 	}
 	
+	/**
+	 * @return the size of the send buffer (SO_SNDBUF)
+	 */
 	public int getSndBuffSize() {
 		return sndBuffSize;
 	}
 
+	/**
+	 * @return the size of the receive buffer (SO_RCVBUF)
+	 */
 	public int getRcvBuffSize() {
 		return rcvBuffSize;
 	}

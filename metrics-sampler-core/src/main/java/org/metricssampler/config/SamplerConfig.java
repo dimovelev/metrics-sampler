@@ -1,8 +1,8 @@
 package org.metricssampler.config;
+import static java.util.Collections.unmodifiableMap;
 import static org.metricssampler.util.Preconditions.checkArgument;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -24,7 +24,7 @@ public abstract class SamplerConfig extends NamedConfig {
 		this.interval = interval;
 		this.ignored = ignored;
 		this.disabled = disabled;
-		this.globalVariables = Collections.unmodifiableMap(globalVariables);
+		this.globalVariables = unmodifiableMap(globalVariables);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public abstract class SamplerConfig extends NamedConfig {
 	}
 
 	/**
-	 * @return {@code true} if the sampler should be excluded when sampling
+	 * @return {@code true} if the sampler will be excluded when sampling. Such samplers will not be scheduled at all.
 	 */
 	public boolean isIgnored() {
 		return ignored;
@@ -46,12 +46,15 @@ public abstract class SamplerConfig extends NamedConfig {
 	}
 	
 	/**
-	 * @return {@code true} if the sampler is temporarily disabled and should not sample but should still be scheduled.
+	 * @return {@code true} if the sampler is temporarily disabled and will not sample but will still be scheduled.
 	 */
 	public boolean isDisabled() {
 		return disabled;
 	}
 
+	/**
+	 * @return the name of the pool where the sampler will be scheduled
+	 */
 	public String getPool() {
 		return pool;
 	}

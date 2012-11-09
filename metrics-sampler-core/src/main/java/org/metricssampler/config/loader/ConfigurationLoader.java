@@ -17,6 +17,9 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * Utility class to load a XML configuration file into a {@link ConfigurationXBean} and then convert it to a {@link Configuration}
+ */
 public class ConfigurationLoader {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final Collection<Class<?>> xbeanClasses;
@@ -26,7 +29,11 @@ public class ConfigurationLoader {
 		this.xbeanClasses = xbeanClasses;
 	}
 
-	public Configuration load(final String filename) {
+	public static Configuration fromFile(final String filename, final Collection<Class<?>> xbeanClasses) {
+		return new ConfigurationLoader(xbeanClasses).load(filename);
+	}
+	
+	protected Configuration load(final String filename) {
 		checkArgumentNotNullNorEmpty(filename, "filename");
 		final XStream xstream = createXStream();
 		try {

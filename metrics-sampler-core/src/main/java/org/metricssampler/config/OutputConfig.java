@@ -12,6 +12,9 @@ public abstract class OutputConfig extends NamedConfig {
 		this.default_ = default_;
 	}
 	
+	/**
+	 * @return {@code true} if the output should be used for samplers that do not explicitly specify their outputs
+	 */
 	public boolean isDefault() {
 		return default_;
 	}

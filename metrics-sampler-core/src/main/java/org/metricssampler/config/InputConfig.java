@@ -1,8 +1,8 @@
 package org.metricssampler.config;
 
+import static java.util.Collections.unmodifiableMap;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -14,11 +14,11 @@ public abstract class InputConfig extends NamedConfig {
 	public InputConfig(final String name, final Map<String, Object> variables) {
 		super(name);
 		checkArgumentNotNull(variables, "variables");
-		this.variables = Collections.unmodifiableMap(variables);
+		this.variables = unmodifiableMap(variables);
 	}
 
 	/**
-	 * @return an unmodifiable map of variables by their name. This map must only contains the variables defined in the configuration file
+	 * @return an unmodifiable map of variables by their name. This map only contains the variables defined in the configuration file
 	 *         and nothing else.
 	 */
 	public Map<String, Object> getVariables() {

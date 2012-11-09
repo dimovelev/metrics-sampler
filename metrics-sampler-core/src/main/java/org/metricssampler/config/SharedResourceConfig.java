@@ -1,5 +1,8 @@
 package org.metricssampler.config;
 
+/**
+ * Base class for configurations of shared resources. 
+ */
 public abstract class SharedResourceConfig extends NamedConfig {
 	private final boolean ignored;
 

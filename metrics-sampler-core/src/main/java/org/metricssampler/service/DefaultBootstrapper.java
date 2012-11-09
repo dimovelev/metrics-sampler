@@ -17,11 +17,11 @@ import org.metricssampler.config.loader.ConfigurationLoader;
 import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
 import org.metricssampler.config.loader.xbeans.DictionaryVariableXBean;
 import org.metricssampler.config.loader.xbeans.EntryXBean;
+import org.metricssampler.config.loader.xbeans.SamplerThreadPoolXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupXBean;
 import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
 import org.metricssampler.config.loader.xbeans.StringVariableXBean;
-import org.metricssampler.config.loader.xbeans.SamplerThreadPoolXBean;
 import org.metricssampler.config.loader.xbeans.VariableXBean;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
@@ -85,8 +85,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 
 	private void loadConfiguration(final String filename) {
 		loadFromEnvironment();
-		final ConfigurationLoader loader = new ConfigurationLoader(xbeanClasses);
-		configuration = loader.load(filename);
+		configuration = ConfigurationLoader.fromFile(filename, xbeanClasses);
 	}
 
 	private void loadFromEnvironment() {
