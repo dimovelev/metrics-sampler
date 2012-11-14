@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.reader.AbstractMetricsReader;
 import org.metricssampler.reader.BulkMetricsReader;
 import org.metricssampler.reader.MetricName;
@@ -19,7 +20,7 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 
 public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> implements BulkMetricsReader {
 	private Jedis jedis = null;
-	
+
 	public RedisMetricsReader(final RedisInputConfig config) {
 		super(config);
 	}
@@ -68,16 +69,42 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 		try {
 			final long timestamp = System.currentTimeMillis();
 			final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
-			final String info = jedis.info();
-			for (final LineIterator lines = IOUtils.lineIterator(new StringReader(info)); lines.hasNext(); ) {
-				final String line = lines.next();
-				final String[] cols = line.split(":", 2);
-				result.put(new SimpleMetricName(cols[0], ""), new MetricValue(timestamp, cols[1]));
-			}
+			fetchMetricsFromInfo(timestamp, result);
+			fetchMetricsFromCommands(timestamp, result);
 			return result;
 		} catch (final JedisConnectionException e) {
 			disconnect();
 			throw new MetricReadException(e);
+		}
+	}
+
+	protected void fetchMetricsFromInfo(final long timestamp, final Map<MetricName, MetricValue> result) {
+		final String info = jedis.info();
+		for (final LineIterator lines = IOUtils.lineIterator(new StringReader(info)); lines.hasNext(); ) {
+			final String line = lines.next();
+			final String[] cols = line.split(":", 2);
+			result.put(new SimpleMetricName(cols[0], ""), new MetricValue(timestamp, cols[1]));
+		}
+	}
+
+	protected void fetchMetricsFromCommands(final long timestamp, final Map<MetricName, MetricValue> result) {
+		for (final RedisCommand command : config.getCommands()) {
+			jedis.select(command.getDatabase());
+			if (command instanceof RedisLLenCommand) {
+				final RedisLLenCommand llen = (RedisLLenCommand) command;
+				final Long len = jedis.llen(llen.getKey());
+				if (len != null) {
+					result.put(new SimpleMetricName(llen.getKey() + ".len", "llen(" + llen.getKey() + ")"), new MetricValue(timestamp, len));
+				}
+			} else if (command instanceof RedisHLenCommand) {
+				final RedisHLenCommand hlen = (RedisHLenCommand) command;
+				final Long len = jedis.hlen(hlen.getKey());
+				if (len != null) {
+					result.put(new SimpleMetricName(hlen.getKey() + ".len", "hlen(" + hlen.getKey() + ")"), new MetricValue(timestamp, len));
+				}
+			} else {
+				throw new ConfigurationException("Unsupported redis command: " + command);
+			}
 		}
 	}
 

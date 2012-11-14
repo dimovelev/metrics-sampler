@@ -14,6 +14,9 @@ public class RedisExtension extends AbstractExtension {
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
 		result.add(RedisInputXBean.class);
+		result.add(RedisCommandXBean.class);
+		result.add(RedisHLenCommandXBean.class);
+		result.add(RedisLLenCommandXBean.class);
 		return result;
 	}
 
