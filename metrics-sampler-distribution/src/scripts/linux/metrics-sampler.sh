@@ -14,7 +14,7 @@ fi
 CONTROL_PORT=28111
 CONTROL_HOST=localhost
 VERSION="${project.version}"
-CLASSPATH="lib/*"
+CLASSPATH="lib/*:lib.local/*"
 JAVA_OPTS="-Dlogback.configurationFile=$LOGCONFIG -Dcontrol.host=$CONTROL_HOST -Dcontrol.port=$CONTROL_PORT"
 
 if [ -x $BASEDIR/bin/local.sh ]; then
