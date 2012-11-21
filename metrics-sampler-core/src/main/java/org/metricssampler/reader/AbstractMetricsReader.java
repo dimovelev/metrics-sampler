@@ -66,4 +66,11 @@ public abstract class AbstractMetricsReader<T extends InputConfig> implements Me
 	public String toString() {
 		return getClass().getSimpleName() + "[" + config.getName() + "]";
 	}
+
+	@Override
+	public void reset() {
+		// do nothing in this case
+	}
+	
+	
 }

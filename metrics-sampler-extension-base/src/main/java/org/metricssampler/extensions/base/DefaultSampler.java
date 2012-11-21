@@ -162,4 +162,12 @@ public class DefaultSampler implements Sampler {
 	public DefaultSamplerConfig getConfig() {
 		return config;
 	}
+
+	@Override
+	public void reset() {
+		reader.close();
+		for (final MetricsSelector selector : selectors) {
+			selector.reset();
+		}
+	}
 }

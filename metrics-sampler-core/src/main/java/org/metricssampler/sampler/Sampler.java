@@ -17,4 +17,6 @@ public interface Sampler {
 	boolean check();
 	
 	SamplerConfig getConfig();
+	
+	void reset();
 }

@@ -23,6 +23,11 @@ public class DefaultControlCommandFactory implements ControlCommandFactory {
 	public DisableSamplerControlCommand disableSampler(final String name) {
 		return new DisableSamplerControlCommand(controller.getClientReader(), controller.getClientWriter(), controller.getTasks(), name);
 	}
+	
+	@Override
+	public ResetSamplerControlCommand resetSampler(final String name) {
+		return new ResetSamplerControlCommand(controller.getClientReader(), controller.getClientWriter(), controller.getTasks(), name);
+	}
 
 	@Override
 	public EnableSamplerCommand enableSamplerForever(final String name) {

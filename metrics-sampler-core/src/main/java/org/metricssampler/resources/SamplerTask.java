@@ -77,6 +77,11 @@ public class SamplerTask implements Runnable {
 		repetitionsLock.unlock();
 	}
 
+	public void reset() {
+		if (sampler != null) {
+			sampler.reset();
+		}
+	}
 	public String getName() {
 		return sampler.getConfig().getName();
 	}

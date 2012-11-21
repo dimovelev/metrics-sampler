@@ -64,6 +64,11 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 	}
 
 	@Override
+	public void reset() {
+		disconnect();
+	}
+
+	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
 		reconnectIfNecessary();
 		try {

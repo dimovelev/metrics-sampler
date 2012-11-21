@@ -134,4 +134,10 @@ public abstract class AbstractMetricsSelector implements MetricsSelector {
 	protected void addVariables(final Map<String, Object> map) {
 		map.putAll(variables);
 	}
+
+	@Override
+	public void reset() {
+		this.cachedMetaData = null;
+		this.cachedSelectedMetrics = null;
+	}
 }

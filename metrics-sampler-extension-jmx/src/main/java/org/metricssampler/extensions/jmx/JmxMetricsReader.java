@@ -203,7 +203,13 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 
 	@Override
 	public void close() throws MetricReadException {
-		if (connection.isEstablished() && !config.isPersistentConnection()) {
+		if (!config.isPersistentConnection()) {
+			forceDisconnect();
+		}
+	}
+
+	protected void forceDisconnect() {
+		if (connection.isEstablished()) {
 			connection.disconnect();
 			metadata = null;
 		}
@@ -212,5 +218,10 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 	@Override
 	public Iterable<MetricName> readNames() {
 		return metadata;
+	}
+
+	@Override
+	public void reset() {
+		forceDisconnect();
 	}
 }

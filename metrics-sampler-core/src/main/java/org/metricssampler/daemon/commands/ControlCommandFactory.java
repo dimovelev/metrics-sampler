@@ -7,5 +7,6 @@ public interface ControlCommandFactory {
 	ControlCommand enableSamplerForever(String name);
 	ControlCommand enableSamplerForTimes(String name, int times);
 	ControlCommand enableSamplerForDuration(String name, long seconds);
+	ControlCommand resetSampler(String name);
 	ControlCommand invalidSyntax(String line, String msg);
 }

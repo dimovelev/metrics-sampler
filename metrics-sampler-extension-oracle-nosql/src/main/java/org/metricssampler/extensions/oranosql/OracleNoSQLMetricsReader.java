@@ -56,6 +56,11 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 	}
 
 	@Override
+	public void reset() {
+		services.clear();
+	}
+
+	@Override
 	public Iterable<MetricName> readNames() {
 		return readAllMetrics().keySet();
 	}

@@ -22,4 +22,6 @@ public interface MetricsSelector {
 	 * @return the number of matching metrics
 	 */
 	int getMetricCount(MetricsReader reader);
+
+	void reset();
 }

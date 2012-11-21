@@ -13,6 +13,7 @@ public class ControlCommandParser {
 
 	private static final Pattern PATTERN_SAMPLER_DISABLE = Pattern.compile("^sampler (.+) disable$");
 	private static final Pattern PATTERN_SAMPLER_ENABLE = Pattern.compile("^sampler (.+) enable$");
+	private static final Pattern PATTERN_SAMPLER_RESET = Pattern.compile("^sampler (.+) reset$");
 	private static final Pattern PATTERN_SAMPLER_ENABLE_FOR_TIMES = Pattern.compile("^sampler (.+) enable for ([0-9]+) times$");
 	private static final Pattern PATTERN_SAMPLER_ENABLE_FOR_DURATION = Pattern.compile("^sampler (.+) enable for ([0-9]+) (hour|minute|second)s?$");
 
@@ -31,6 +32,11 @@ public class ControlCommandParser {
 		} else if (line.equals(CMD_STATUS)) {
 			return factory.status();
 		} else {
+			final Matcher resetMatcher = PATTERN_SAMPLER_RESET.matcher(line);
+			if (resetMatcher.matches()) {
+				final String name = resetMatcher.group(1);
+				return factory.resetSampler(name);
+			}
 			final Matcher disableMatcher = PATTERN_SAMPLER_DISABLE.matcher(line);
 			if (disableMatcher.matches()) {
 				final String name = disableMatcher.group(1);
