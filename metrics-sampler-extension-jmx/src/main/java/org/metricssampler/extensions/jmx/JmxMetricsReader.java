@@ -71,7 +71,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 
 	protected List<MetricName> readMetaData() {
 		final long start = System.currentTimeMillis();
-		logger.debug("Loading metadata from "+config.getUrl());
+		logger.debug("Loading metadata from " + config.getUrl());
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
 		final List<MetricName> result = new LinkedList<MetricName>();
 		try {
@@ -105,10 +105,16 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 		} catch (final IOException e) {
 			throw new MetricReadException("Failed to establish connection", e);
 		}
-		logger.debug("Loaded "+result.size()+" attributes");
+		logger.debug("Loaded {} attributes", result.size());
 		final long end = System.currentTimeMillis();
 		timingsLogger.debug("Discovered {} metrics in {} ms", result.size(), end - start);
-		return result;
+		if (result.isEmpty()) {
+			logger.warn("No metrics selected - disconnecting in the hope that we will select some upon a new connect.");
+			connection.disconnect();
+			return null;
+		} else {
+			return result;
+		}
 	}
 
 	protected boolean isIgnored(final ObjectName objectName) {
@@ -138,7 +144,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 	@Override
 	public MetricValue readMetric(final MetricName metric) {
 		final JmxMetricName actualMetric = (JmxMetricName) metric;
-		logger.debug("Reading "+metric.getName());
+		logger.debug("Reading " + metric.getName());
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
 		try {
 			final long start = System.currentTimeMillis();
