@@ -21,6 +21,7 @@ import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.resources.SamplerStats;
 
 import com.sleepycat.utilint.Latency;
 
@@ -37,6 +38,7 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 			if(!services.containsKey(host)) {
 				logger.info("Connecting to {}", host);
 				try {
+					SamplerStats.get().incConnectCount();
 					final CommandServiceAPI service = RegistryUtils.getAdmin(host.getHost(), host.getPort());
 					if (service != null) {
 						services.put(host, service);
@@ -78,6 +80,7 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 		    		logger.debug("Perfmon map contains {} entries. Converting them to metrics", map.size());
 	    		} catch (final RemoteException e) {
 	    			logger.warn("Failed to fetch perfmon map from " + host, e);
+					SamplerStats.get().incDisconnectCount();
 	    			services.remove(host);
 	    		}
 			}

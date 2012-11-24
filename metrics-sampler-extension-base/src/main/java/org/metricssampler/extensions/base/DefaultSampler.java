@@ -12,6 +12,7 @@ import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.reader.OpenMetricsReaderException;
+import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.writer.MetricWriteException;
@@ -85,6 +86,7 @@ public class DefaultSampler implements Sampler {
 			timingsLogger.debug("Sampled {} metrics in {} ms", metrics.size(), readEnd-readStart);
 			writeMetrics(metrics);
 			timingsLogger.debug("Metrics sent to writers in {} ms", System.currentTimeMillis()-readEnd);
+			SamplerStats.get().setMetricsCount(metrics.size());
 		} catch (final OpenMetricsReaderException e) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Failed to open reader", e);

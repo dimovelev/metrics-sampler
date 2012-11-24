@@ -4,11 +4,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.metricssampler.extensions.base.DefaultSampler;
-import org.metricssampler.extensions.base.DefaultSamplerConfig;
 import org.metricssampler.reader.BulkMetricsReader;
+import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.writer.MetricsWriter;
 
@@ -37,6 +37,12 @@ public class DefaultSamplerTest {
 		testee.addWriter(writer2);
 		testee.addSelector(transformer1);
 		testee.addSelector(transformer2);
+		SamplerStats.set(new SamplerStats());
+	}
+	
+	@After
+	public void cleanup() {
+		SamplerStats.unset();
 	}
 	
 	@Test

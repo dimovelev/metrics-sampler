@@ -14,6 +14,7 @@ import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.resources.SamplerStats;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
@@ -40,6 +41,7 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 				}
 			}
 			 try {
+				SamplerStats.get().incConnectCount();
 				 jedis.connect();
 			 } catch (final JedisConnectionException e) {
 				 jedis = null;
@@ -50,6 +52,7 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 
 	private void disconnect() {
 		if (jedis != null) {
+			SamplerStats.get().incDisconnectCount();
 			try {
 				jedis.disconnect();
 			} catch (final JedisConnectionException e) {

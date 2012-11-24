@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
@@ -24,9 +25,20 @@ public class BaseExtension extends AbstractExtension {
 		result.add(ConsoleOutputXBean.class);
 		result.add(RegExpSelectorXBean.class);
 		result.add(DefaultSamplerXBean.class);
+		result.add(SelfInputXBean.class);
 		return result;
 	}
 	
+	@Override
+	public boolean supportsInput(final InputConfig config) {
+		return config instanceof SelfInputConfig;
+	}
+
+	@Override
+	protected MetricsReader doNewReader(final InputConfig config) {
+		return new SelfMetricsReader((SelfInputConfig) config);
+	}
+
 	@Override
 	public boolean supportsOutput(final OutputConfig config) {
 		return config instanceof ConsoleOutputConfig;

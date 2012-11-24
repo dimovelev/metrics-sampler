@@ -12,6 +12,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.naming.Context;
 
+import org.metricssampler.resources.SamplerStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,20 +57,23 @@ public class JmxConnection {
 		}
 	}
 
+	protected void establishConnection() throws IOException {
+		SamplerStats.get().incConnectCount();
+		logger.debug("Connecting to ", config.getUrl());
+		connector = JMXConnectorFactory.connect(url, environment);
+		logger.debug("Getting MBean server connection");
+		serverConnection = connector.getMBeanServerConnection();
+		logger.debug("Connected");
+	}
+
 	public void disconnect() {
 		if (serverConnection != null) {
+			SamplerStats.get().incDisconnectCount();
 			serverConnection = null;
 			logger.debug("Disconnecting");
 			closeQuietly(connector);
 			connector = null;
 		}
-	}
-	protected void establishConnection() throws IOException {
-		logger.debug("Connecting to " + config.getUrl());
-		connector = JMXConnectorFactory.connect(url, environment);
-		logger.debug("Getting MBean server connection");
-		serverConnection = connector.getMBeanServerConnection();
-		logger.debug("Connected");
 	}
 
 	public MBeanServerConnection getServerConnection() {
