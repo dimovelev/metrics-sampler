@@ -9,7 +9,7 @@ Check out the following configuration as a quick-start:
 	<configuration>
 		<!-- here we define stuff that is shared between many consumers like pools -->
 		<shared-resources>
-			<!-- this is the thread pool used by all samplers by default (unless you explicitly specify a thread pool in the sampler --> 
+			<!-- this is the thread pool used by all samplers by default (unless you explicitly specify a thread pool in the sampler) --> 
 			<thread-pool name="samplers" size="10" />
 			<!-- this is a custom thread pool that some of the samplers will use -->
 			<thread-pool name="custom.samplers" size="2" />
@@ -60,6 +60,9 @@ Check out the following configuration as a quick-start:
 
 			<!-- fetch metrics from the perfmaps of the given oracle NoSQL hosts -->			
 			<oracle-nosql name="oracle-nosql" hosts="kv1.metrics-sampler.org:5000 kv2.metrics-sampler.org:5000 kv3.metrics-sampler.org:5000 kv4.metrics-sampler.org:5000" />
+			
+			<!-- self-monitoring of the metrics-sampler. you can configure what you want as usual in the sampler and send the data the any output -->
+			<self name="self" />
 		</inputs>
 		<outputs>
 			<!-- Write to the standard output -->
