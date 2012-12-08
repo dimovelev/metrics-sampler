@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.metrics-sampler</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.5.3</version>
+		<version>0.5.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>metrics-sampler-distribution</artifactId>
 	<packaging>pom</packaging>
@@ -46,42 +46,42 @@
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.5.3</version>
+			<version>0.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-extension-base</artifactId>
-			<version>0.5.3</version>
+			<version>0.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-extension-graphite</artifactId>
-			<version>0.5.3</version>
+			<version>0.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-extension-jmx</artifactId>
-			<version>0.5.3</version>
+			<version>0.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-extension-apache-status</artifactId>
-			<version>0.5.3</version>
+			<version>0.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-extension-jdbc</artifactId>
-			<version>0.5.3</version>
+			<version>0.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-extension-redis</artifactId>
-			<version>0.5.3</version>
+			<version>0.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-extension-oracle-nosql</artifactId>
-			<version>0.5.3</version>
+			<version>0.5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
