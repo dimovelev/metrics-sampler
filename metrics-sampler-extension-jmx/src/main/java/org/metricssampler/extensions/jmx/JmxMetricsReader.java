@@ -89,7 +89,6 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 		logger.debug("Loading metadata from " + config.getUrl());
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
 		final List<MetricName> result = new LinkedList<MetricName>();
-		System.out.println("LOADING METADATA");
 		try {
 			final Set<ObjectName> objectNames = serverConnection.queryNames(null, null);
 			for (final ObjectName objectName : objectNames) {
