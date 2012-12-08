@@ -12,6 +12,9 @@ public class SamplerStats {
 	private long sampleEndTime = 0L;
 	private int metricsCount = 0;
 	
+	public static void init() {
+		set(new SamplerStats());
+	}
 	public static void set(final SamplerStats value) {
 		stats.set(value);
 	}

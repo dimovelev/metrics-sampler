@@ -15,10 +15,11 @@ public class Test extends NormalRunner {
 
 	@Override
 	protected void runBootstrapped(final Bootstrapper bootstrapper) {
-		SamplerStats.set(new SamplerStats());
 		for (final Sampler sampler : bootstrapper.getSamplers()) {
 			try {
+				SamplerStats.init();
 				sampler.sample();
+				SamplerStats.unset();
 			} catch (final RuntimeException e) {
 				logger.warn("Sampler threw exception. Ignoring", e);
 			}

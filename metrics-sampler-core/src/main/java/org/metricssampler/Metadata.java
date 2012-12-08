@@ -15,9 +15,9 @@ public class Metadata extends NormalRunner {
 
 	@Override
 	protected void runBootstrapped(final Bootstrapper bootstrapper) {
-		SamplerStats.set(new SamplerStats());
 		final GlobalObjectFactory factory = bootstrapper;
 		for(final InputConfig input : bootstrapper.getConfiguration().getInputs()) {
+			SamplerStats.init();
 			final MetricsReader reader = factory.newReaderForInput(input);
 			reader.open();
 			System.out.println("Reader: " + input.getName());
@@ -26,6 +26,7 @@ public class Metadata extends NormalRunner {
 				System.out.println("\tDescription:" + item.getDescription());
 			}
 			reader.close();
+			SamplerStats.unset();
 		}
 	}
 

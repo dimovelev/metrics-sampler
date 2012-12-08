@@ -1,6 +1,7 @@
 package org.metricssampler;
 
 import org.metricssampler.reader.MetricReadException;
+import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.service.Bootstrapper;
 import org.slf4j.Logger;
@@ -19,8 +20,10 @@ public class Check extends NormalRunner {
 		for (final Sampler sampler : bootstrapper.getSamplers()) {
 			logger.info("Checking {}", sampler);
 			try { 
+				SamplerStats.init();
 				final boolean valid = sampler.check();
 				allValid = allValid && valid;
+				SamplerStats.unset();
 			} catch (final MetricReadException e) {
 				logger.warn("Sampler threw exception during check", e);
 				allValid = false;
