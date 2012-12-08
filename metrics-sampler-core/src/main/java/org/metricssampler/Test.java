@@ -1,5 +1,6 @@
 package org.metricssampler;
 
+import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.service.Bootstrapper;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ public class Test extends NormalRunner {
 
 	@Override
 	protected void runBootstrapped(final Bootstrapper bootstrapper) {
+		SamplerStats.set(new SamplerStats());
 		for (final Sampler sampler : bootstrapper.getSamplers()) {
 			try {
 				sampler.sample();

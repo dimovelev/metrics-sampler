@@ -2,6 +2,8 @@ package org.metricssampler.extensions.jmx;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.management.AttributeNotFoundException;
+import javax.management.Descriptor;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
@@ -16,9 +19,13 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import javax.management.RuntimeMBeanException;
 import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularType;
 import javax.management.remote.JMXServiceURL;
 
 import org.metricssampler.reader.AbstractMetricsReader;
@@ -36,6 +43,15 @@ import org.metricssampler.util.VariableUtils;
 public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> implements MetaDataMetricsReader {
 	private MetricsMetaData metadata;
 	private final JmxConnection connection;
+
+	/**
+	 * Cache for data read from the JMX server in the current session (time between open() and close()). This is necessary because we expose
+	 * more metric names than actually available JMX metrics (we introspect each value and generate multiple metric names for each property
+	 * and property of the property (recursively)). If we do not cache the values we would read the same data from JMX multiple times (which
+	 * probably also has minor performance impact) to return different properties of the same data which could make the results inconsistent
+	 * (one property read from one instance and another property from another instance).
+	 */
+	private final Map<JmxMetricId, Object> values = new HashMap<JmxMetricId, Object>();
 
 	public JmxMetricsReader(final JmxInputConfig config) {
 		super(config);
@@ -56,7 +72,6 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 		}
 	}
 
-
 	@Override
 	public MetricsMetaData getMetaData() {
 		assertConnected();
@@ -74,6 +89,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 		logger.debug("Loading metadata from " + config.getUrl());
 		final MBeanServerConnection serverConnection = connection.getServerConnection();
 		final List<MetricName> result = new LinkedList<MetricName>();
+		System.out.println("LOADING METADATA");
 		try {
 			final Set<ObjectName> objectNames = serverConnection.queryNames(null, null);
 			for (final ObjectName objectName : objectNames) {
@@ -82,25 +98,14 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 					continue;
 				}
 				try {
-	                final MBeanInfo info = serverConnection.getMBeanInfo(objectName);
-	                final MBeanAttributeInfo[] attributes = info.getAttributes();
-	                for(final MBeanAttributeInfo attribute : attributes) {
-	                	if ("javax.management.openmbean.CompositeData".equals(attribute.getType())) {
-	                		final CompositeType compositeType = getCompositeTypeForAttribute(serverConnection, objectName, attribute);
-	                		if (compositeType != null) {
-		                		for (final String key : compositeType.keySet()) {
-				                	result.add(new JmxMetricName(objectName, attribute.getName(), key, compositeType.getDescription(key)));
-		                		}
-	                		} else {
-	                			logger.debug("Could not get composite type for attribute {} of {}", attribute, objectName.getCanonicalName());
-	                		}
-	                	} else {
-		                	result.add(new JmxMetricName(objectName, attribute.getName(), null, attribute.getDescription()));
-	                	}
-	                }
-	            } catch (final Exception e) {
-	            	logger.warn("Failed to read metadata of JMX bean with name \"" + objectName.getCanonicalName() + "\". Skipping.", e);
-	            }
+					final MBeanInfo info = serverConnection.getMBeanInfo(objectName);
+					final MBeanAttributeInfo[] attributes = info.getAttributes();
+					for (final MBeanAttributeInfo attribute : attributes) {
+						introspectAttribute(serverConnection, objectName, attribute, result);
+					}
+				} catch (final Exception e) {
+					logger.warn("Failed to read metadata of JMX bean with name \"" + objectName.getCanonicalName() + "\". Skipping.", e);
+				}
 			}
 		} catch (final IOException e) {
 			throw new MetricReadException("Failed to establish connection", e);
@@ -114,6 +119,91 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 			return null;
 		} else {
 			return result;
+		}
+	}
+
+	protected void introspectAttribute(final MBeanServerConnection serverConnection, final ObjectName objectName,
+			final MBeanAttributeInfo attribute, final List<MetricName> result) throws AttributeNotFoundException,
+			InstanceNotFoundException, MBeanException, ReflectionException, IOException {
+		final Descriptor descriptor = attribute.getDescriptor();
+		final Object openTypeField = descriptor.getFieldValue("openType");
+		if (openTypeField != null) {
+			// open type attribute => try to introspect the data
+			final OpenType<?> openType = (OpenType<?>) openTypeField;
+			final Boolean enabled = (Boolean) descriptor.getFieldValue("enabled");
+			final boolean useAttribute = enabled == null || enabled;
+			if (useAttribute) {
+				if (openType instanceof SimpleType) {
+					// no need to introspect simple types
+					result.add(new JmxMetricName(objectName, attribute.getName(), PropertyPath.empty(), attribute.getDescription()));
+				} else {
+					// lets introspect the open type value
+					final Object value = serverConnection.getAttribute(objectName, attribute.getName());
+					final Set<PropertyPath> properties = new HashSet<PropertyPath>();
+					introspectAttributeWithValue(PropertyPath.empty(), value, openType, properties);
+					for (final PropertyPath path : properties) {
+						result.add(new JmxMetricName(objectName, attribute.getName(), path, null));
+					}
+				}
+			}
+		} else {
+			// not an open type => just add it as it is
+			result.add(new JmxMetricName(objectName, attribute.getName(), PropertyPath.empty(), null));
+		}
+	}
+
+	private void introspectAttributeWithValue(final PropertyPath propertyPath, final Object value, final OpenType<?> openType,
+			final Set<PropertyPath> result) {
+		if (openType instanceof SimpleType) {
+			// this can only happen when we are called recursively. for the first call we have already made sure this is not a simple type
+			result.add(propertyPath);
+		} else if (openType instanceof CompositeType) {
+			processCompositeProperty(propertyPath, value, (CompositeType) openType, result);
+		} else if (openType instanceof TabularType) {
+			processTableProperty(propertyPath, value, (TabularType) openType, result);
+		} else {
+			// we do not support arrays (yet)
+			logger.warn("Unsupported open type {} for property path {}", openType, propertyPath);
+		}
+	}
+
+	/**
+	 * Some of the columns are used as an index to uniquely identify a row. We use their values as property path in the form [value-1,
+	 * value-2]. The cells of the table can be again complex types so we need to go recursively into them
+	 */
+	protected void processTableProperty(final PropertyPath propertyPath, final Object value, final TabularType type,
+			final Set<PropertyPath> result) {
+		if (value instanceof TabularData) {
+			final TabularData tabularValue = (TabularData) value;
+			final Set<String> valueColumns = new HashSet<String>();
+			valueColumns.addAll(type.getRowType().keySet());
+			valueColumns.removeAll(type.getIndexNames());
+			for (final Object untypedRow : tabularValue.values()) {
+				final CompositeData row = (CompositeData) untypedRow;
+				final RowPathSegment segment = RowPathSegment.fromRow(type, row);
+				final PropertyPath childPropertyPath = propertyPath.add(segment);
+				for (final String column : valueColumns) {
+					final Object cellValue = row.get(column);
+					final OpenType<?> cellType = row.getCompositeType().getType(column);
+					introspectAttributeWithValue(childPropertyPath.add(new PropertyPathSegment(column)), cellValue, cellType, result);
+				}
+			}
+		} else {
+			if (value != null) {
+				logger.warn("Unsupported value {} for property path {}", value, propertyPath);
+			}
+		}
+	}
+
+	/**
+	 * Process a composite property. Its value can in turn be of composite type so we need to do this recursively
+	 */
+	protected void processCompositeProperty(final PropertyPath propertyPath, final Object value, final CompositeType type,
+			final Set<PropertyPath> result) {
+		for (final String propertyName : type.keySet()) {
+			final PropertyPath childPropertyPath = propertyPath.add(new PropertyPathSegment(propertyName));
+			final Object propertyValue = value instanceof CompositeData ? ((CompositeData) value).get(propertyName) : value;
+			introspectAttributeWithValue(childPropertyPath, propertyValue, type.getType(propertyName), result);
 		}
 	}
 
@@ -145,36 +235,52 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 	public MetricValue readMetric(final MetricName metric) {
 		final JmxMetricName actualMetric = (JmxMetricName) metric;
 		logger.debug("Reading " + metric.getName());
-		final MBeanServerConnection serverConnection = connection.getServerConnection();
-		try {
-			final long start = System.currentTimeMillis();
-			final Object value = serverConnection.getAttribute(actualMetric.getObjectName(), actualMetric.getAttributeName());
-			if (actualMetric.isComposite()) {
-				if (value instanceof CompositeDataSupport) {
-					final CompositeDataSupport compositeData = (CompositeDataSupport) value;
-					final Object compositeValue = compositeData.get(actualMetric.getKey());
-					return new MetricValue(System.currentTimeMillis(), compositeValue);
-				} else {
-					logger.warn("Expected a composite value for \"" + actualMetric.getName() + "\" but got "+value);
-				}
+		final JmxMetricId jmxId = actualMetric.getJmxId();
+		Object value = values.get(jmxId);
+		if (value != null) {
+			logger.debug("Value already read before. Reusing it.");
+		} else {
+			final MBeanServerConnection serverConnection = connection.getServerConnection();
+			try {
+				final long start = System.currentTimeMillis();
+				value = serverConnection.getAttribute(actualMetric.getObjectName(), actualMetric.getAttributeName());
+				values.put(new JmxMetricId(actualMetric.getObjectName(), actualMetric.getAttributeName()), value);
+				final long end = System.currentTimeMillis();
+				timingsLogger.debug("Read metric {} in {} ms", metric.getName(), end - start);
+			} catch (final AttributeNotFoundException e) {
+				throw new MetricReadException(e);
+			} catch (final InstanceNotFoundException e) {
+				throw new MetricReadException(e);
+			} catch (final MBeanException e) {
+				throw new MetricReadException(e);
+			} catch (final RuntimeMBeanException e) {
+				throw new MetricReadException(e);
+			} catch (final ReflectionException e) {
+				throw new MetricReadException(e);
+			} catch (final NullPointerException e) {
+				throw new MetricReadException(e);
+			} catch (final IOException e) {
+				reconnect();
+				throw new MetricReadException(e);
 			}
-			final long end = System.currentTimeMillis();
-			timingsLogger.debug("Read metric {} in {} ms", metric.getName(), end-start);
-			return new MetricValue(System.currentTimeMillis(), value);
-		} catch (final AttributeNotFoundException e) {
-			throw new MetricReadException(e);
-		} catch (final InstanceNotFoundException e) {
-			throw new MetricReadException(e);
-		} catch (final MBeanException e) {
-			throw new MetricReadException(e);
-		} catch (final ReflectionException e) {
-			throw new MetricReadException(e);
-		} catch (final NullPointerException e) {
-			throw new MetricReadException(e);
-		} catch (final IOException e) {
-			reconnect();
-			throw new MetricReadException(e);
 		}
+		if (value != null) {
+			final Object result = evaluatePath(actualMetric.getProperty(), value);
+			return new MetricValue(System.currentTimeMillis(), result);
+		} else {
+			return new MetricValue(System.currentTimeMillis(), null);
+		}
+	}
+
+	protected Object evaluatePath(final PropertyPath path, final Object value) {
+		Object result = value;
+		for (final PathSegment segment : path.getSegments()) {
+			result = segment.getValue(result);
+			if (result == null) {
+				return null;
+			}
+		}
+		return result;
 	}
 
 	private void reconnect() {
@@ -199,6 +305,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 			}
 			metadata = new MetricsMetaData(readMetaData());
 		}
+		values.clear();
 	}
 
 	@Override
@@ -206,6 +313,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 		if (!config.isPersistentConnection()) {
 			forceDisconnect();
 		}
+		values.clear();
 	}
 
 	protected void forceDisconnect() {

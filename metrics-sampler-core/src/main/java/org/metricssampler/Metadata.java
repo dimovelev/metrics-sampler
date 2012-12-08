@@ -3,6 +3,7 @@ package org.metricssampler;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricsReader;
+import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.service.Bootstrapper;
 import org.metricssampler.service.GlobalObjectFactory;
 
@@ -14,7 +15,8 @@ public class Metadata extends NormalRunner {
 
 	@Override
 	protected void runBootstrapped(final Bootstrapper bootstrapper) {
-		final GlobalObjectFactory factory = (GlobalObjectFactory) bootstrapper;
+		SamplerStats.set(new SamplerStats());
+		final GlobalObjectFactory factory = bootstrapper;
 		for(final InputConfig input : bootstrapper.getConfiguration().getInputs()) {
 			final MetricsReader reader = factory.newReaderForInput(input);
 			reader.open();

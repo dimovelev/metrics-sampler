@@ -10,28 +10,31 @@ import org.metricssampler.reader.MetricName;
 public class JmxMetricName implements MetricName {
 	private final ObjectName objectName;
 	private final String attributeName;
-	private final String key;
+	private final PropertyPath propertyPath;
 	private final String description;
 	
 	private final String name;
 	
-	public JmxMetricName(final ObjectName objectName, final String attributeName, final String key, final String description) {
+	public JmxMetricName(final ObjectName objectName, final String attributeName, final PropertyPath propertyPath, final String description) {
 		checkArgumentNotNull(objectName, "objectName");
+		checkArgumentNotNull(propertyPath, "propertyPath");
 		checkArgumentNotNullNorEmpty(attributeName, "attributeName");
 		this.objectName = objectName;
 		this.attributeName = attributeName;
-		this.key = key;
+		this.propertyPath = propertyPath;
 		this.description = description;
-		this.name = generateName(objectName, attributeName, key);
+		this.name = generateName();
 	}
 
-	private String generateName(final ObjectName objectName, final String attributeName, final String key) {
+	private String generateName() {
 		final StringBuilder result = new StringBuilder(objectName.getCanonicalName());
 		result.append('.').append(attributeName);
-		if (key != null) {
-			result.append('#').append(key);
-		}
+		result.append(propertyPath.toString());
 		return result.toString();
+	}
+	
+	public JmxMetricId getJmxId() {
+		return new JmxMetricId(objectName, attributeName);
 	}
 	
 	@Override
@@ -51,18 +54,16 @@ public class JmxMetricName implements MetricName {
 		return attributeName;
 	}
 
-	public String getKey() {
-		return key;
+	public PropertyPath getProperty() {
+		return propertyPath;
 	}
 	
 	public boolean isComposite() {
-		return key != null;
+		return propertyPath != null;
 	}
 
 	@Override
 	public String toString() {
 		return  getClass().getSimpleName() + "[" + name + "]";
 	}
-	
-	
 }
