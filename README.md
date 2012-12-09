@@ -7,6 +7,14 @@ Example Configuration
 Check out the following configuration as a quick-start:
 
 	<configuration>
+		<!-- here we include all XML files in the selectors/ directory (relative to the location of the configuration file). Includes can be used in any file (so an
+		     included file may include further files itself. Typically included files are just fragments of the whole configuration - they are just parsed and then merged
+		     into one XML representation in memory which is then evaluated. As a result you can refer to elements defined in other files. -->
+		<includes>
+			<!-- the location is actually a glob pattern so you can use ** to denote any number of directories, e.g. fragments/**/*.xml
+			<include location="selectors/*.xml" />
+		</includes>
+	
 		<!-- here we define stuff that is shared between many consumers like pools -->
 		<shared-resources>
 			<!-- this is the thread pool used by all samplers by default (unless you explicitly specify a thread pool in the sampler) --> 
@@ -55,8 +63,11 @@ Check out the following configuration as a quick-start:
 			<!-- Apache mod_status page -->
 			<apache-status name="apache01" url="http://apache1.metrics-sampler.org:80/qos-viewer?auto" username="user" password="pass" />
 			
-			<!-- use invoke info on the given redis service -->
-			<redis name="redis" host="redis.metrics-sampler.org" port="6379" />
+			<!-- use metrics from the "info" command on the given redis instance. also count the number of elements in the hash with key "hash1" and the size of the list with key "list1" -->
+			<redis name="redis" host="redis.metrics-sampler.org" port="6379">
+				<redis-hlen database="0" key="hash1" />
+				<redis-llen key="list1" />
+			</redis>
 
 			<!-- fetch metrics from the perfmaps of the given oracle NoSQL hosts -->			
 			<oracle-nosql name="oracle-nosql" hosts="kv1.metrics-sampler.org:5000 kv2.metrics-sampler.org:5000 kv3.metrics-sampler.org:5000 kv4.metrics-sampler.org:5000" />
@@ -67,7 +78,7 @@ Check out the following configuration as a quick-start:
 		<outputs>
 			<!-- Write to the standard output -->
 			<console name="console" />
-			<!-- Send to graphite running on port 2003. This is the default output - if no outputs are given, all outputs marked as default will be used -->
+			<!-- Send to graphite running on port 2003. This is the default output - if no outputs are given in the samplers, all outputs marked as default will be used -->
 			<graphite name="graphite" host="graphite.metrics-sampler.org" port="2003" default="true" />
 		</outputs>
 		
@@ -183,6 +194,7 @@ Supported Inputs
 * apache-status - parses the output of the apache and mod_qos status page (with option ?auto) and exposes the values in a more usable format. The reader uses non-persistent HTTP connection and queries both metadata and data when opened.
 * oracle-nosql - fetches the perfmap from a list of hosts/ports running in an Oralce NoSQL (KVStore) cluster and exposes the values in a more usable format as metrics. The reader caches the RMI connections and only reloads them in case of failures.
 * redis - executes the info command using jedis and exposes the parsed values as metrics. Keeps the connection until a failure is detected.
+* self - expose metrics on the samplers and the input readers
 
 Supported Selectors
 -------------------
@@ -205,11 +217,15 @@ Quick start
 3. Create a configuration in config/config.xml using config/config.xml.example and this readme as starting point and reference
 4. If you want to list all the metrics from your configured inputs you can call "bin/metrics-sampler.sh metadata". This will output all names and descriptions of the available metrics for each input. You can use those to define your regexp selectors. 
 5. If you have to tune some startup parameter create the file bin/local.sh and override the environment variables there (e.g. JAVA or JAVA_OPTS)
-6. Run "bin/metrics-sampler.sh check" to verify that each selector of each enabled sampler matches at least one metric. You can also run the script with test to fetch just one sample.
+6. Run "bin/metrics-sampler.sh check" to verify that each selector of each enabled sampler matches at least one metric. You can also run the script with "test" to fetch just one sample.
 7. Start the daemon using "bin/metrics-sampler.sh start". Logs are located in logs/metrics-sampler.log and in logs/console.out
 8. To check whether the daemon is running execute "bin/metrics-sampler.sh status". The output should be clear enough. If you want to process the result - exit code 0 means running, anything else means stopped.
 9. You can stop the daemon using "bin/metrics-sampler.sh stop"
-
+10. Additional configuration
+* if you want to use a JVM that is not on the path and/or change the startup parameters you can create an executable bash script in bin/local.sh and set the JAVA and JAVA_OPTS variables. This file (if existing and executable) automatically gets sources into the startup script. Using this will help you keep customizations and default startup separate and thus ease up the upgrade.
+* if you need additional JARs on your classpath (e.g. for JDBC drivers, T3 protocol, etc). you should create a directory lib.local and put them there. This way you can safely delete all JARs in lib before upgrading.
+* if you want to tune the logging configuration then save it in the file config/logback.xml (config/logback-console.xml for the non-daemon commands like check, metadata, etc.)
+ 
 Extensions
 ==========
 It should be pretty easy to extend the program with new inputs, outputs, samplers and selectors. For this you will need to create a new module/project like this (you could also check out the extensions-* modules which use the same mechanism):

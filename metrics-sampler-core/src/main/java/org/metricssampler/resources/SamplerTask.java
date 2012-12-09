@@ -50,7 +50,7 @@ public class SamplerTask implements Runnable {
 			logger.debug("Sampler disabled thus not sampling");
 		}
 
-		stats.unset();
+		SamplerStats.unset();
 		MDC.remove("sampler");
 	}
 
