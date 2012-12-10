@@ -20,6 +20,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.RuntimeMBeanException;
+import javax.management.openmbean.ArrayType;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenType;
@@ -160,8 +161,10 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 			processCompositeProperty(propertyPath, value, (CompositeType) openType, result);
 		} else if (openType instanceof TabularType) {
 			processTableProperty(propertyPath, value, (TabularType) openType, result);
+		} else if (openType instanceof ArrayType) {
+			// do do not support arrays (yet)
+			logger.debug("Property path {} denotes an array which is not supported (yet): {}", propertyPath, openType);
 		} else {
-			// we do not support arrays (yet)
 			logger.warn("Unsupported open type {} for property path {}", openType, propertyPath);
 		}
 	}
