@@ -46,7 +46,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 	private DefaultBootstrapper() {
 		ApplicationInfo.initialize();
 	}
-	
+
 	public static Bootstrapper bootstrap(final String filename) {
 		final DefaultBootstrapper result = new DefaultBootstrapper();
 		result.initialize();
@@ -64,7 +64,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 
 	private void initialize() {
 		addDefaultXBeanClasses();
-		
+
 		final ServiceLoader<Extension> services = ServiceLoader.load(Extension.class);
 		for (final Extension extension : services) {
 			registerExtension(extension);
@@ -75,9 +75,9 @@ public class DefaultBootstrapper implements Bootstrapper {
 		xbeanClasses.add(ConfigurationXBean.class);
 		xbeanClasses.add(SelectorGroupXBean.class);
 		xbeanClasses.add(SelectorGroupRefXBean.class);
-		xbeanClasses.add(VariableXBean.class);		
-		xbeanClasses.add(StringVariableXBean.class);		
-		xbeanClasses.add(DictionaryVariableXBean.class);		
+		xbeanClasses.add(VariableXBean.class);
+		xbeanClasses.add(StringVariableXBean.class);
+		xbeanClasses.add(DictionaryVariableXBean.class);
 		xbeanClasses.add(EntryXBean.class);
 		xbeanClasses.add(SharedResourceXBean.class);
 		xbeanClasses.add(SamplerThreadPoolXBean.class);
@@ -97,7 +97,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 			throw new ConfigurationException("Please provide a valid control port using -Dcontrol.port");
 		}
 	}
-	
+
 	private void createSharedResources() {
 		logger.debug("Creating shared resources");
 		sharedResources = new HashMap<String, SharedResource>();
@@ -211,7 +211,11 @@ public class DefaultBootstrapper implements Bootstrapper {
 
 	@Override
 	public SharedResource getSharedResource(final String name) {
-		return sharedResources.get(name);
+		final SharedResource result = sharedResources.get(name);
+		if (result == null) {
+			throw new ConfigurationException("Shared resource \"" + name + "\" not found");
+		}
+		return result;
 	}
 
 	@Override

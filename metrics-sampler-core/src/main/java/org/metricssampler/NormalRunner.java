@@ -20,9 +20,14 @@ public abstract class NormalRunner implements Runner {
 			System.exit(2);
 		}
 		final Bootstrapper bootstrapper = DefaultBootstrapper.bootstrap(configFile.getAbsolutePath());
-		runBootstrapped(bootstrapper);
+		try {
+			runBootstrapped(bootstrapper);
+		} catch (final Exception e) {
+			System.err.println("Exception raised during bootstrapping. Check out the logs for more information.");
+			System.exit(3);
+		}
 	}
-	
+
 	private void outputHelp() {
 		try {
 			final String usage = IOUtils.toString(getClass().getResource("usage.txt"));
