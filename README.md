@@ -117,8 +117,14 @@ Check out the following configuration as a quick-start:
 		     interval) to a thread pool of the size defined above. -->
 		<samplers>
 			<!-- template defining common values for weblogic samplers. If you define any of the attributes / child elements in the 
-				 samplers that use this template, these values here will be lost (not appended to). -->
-			<sampler name="wls" template="true" interval="10">
+				 samplers that use this template, these values here will be lost (not appended to).
+				 The reset-timeout is an optional attribute. If set to any positive value (the time unit is seconds) it will cause the
+				 sampler to keep track of the number of selected metrics after each reconnect of its input. If this number of selected 
+				 metrics differs, a reset of the input and the selectors will be reset after a random timeout in the range 
+				 between 0.8*reset-timeout and 1.2*reset-timeout. This is useful if you are sampling e.g. a JMX input which takes long to
+				 startup and exposes a partial number of matching JMX beans during startup.   
+			 -->
+			<sampler name="wls" template="true" interval="10" reset-timeout="60">
 				<selectors>
 					<use-group name="wls" />
 				</selectors>
