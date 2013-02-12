@@ -40,14 +40,23 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 	@Override
 	public void close() {
 		if (connection != null) {
-			try {
-				logger.debug("Returning connection to pool {}", config.getPool());
-				connection.close();
-				connection = null;
-			} catch (final SQLException e) {
-				logger.warn("Will ignore exception thrown during connection closing", e);
-			}
+			forceDisconnect();
 		}
+	}
+
+	private void forceDisconnect() {
+		try {
+			logger.debug("Returning connection to pool {}", config.getPool());
+			connection.close();
+			connection = null;
+		} catch (final SQLException e) {
+			logger.warn("Will ignore exception thrown during connection closing", e);
+		}
+	}
+
+	@Override
+	public void reset() {
+		forceDisconnect();
 	}
 
 	protected void assertConnected() {
@@ -66,7 +75,6 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 		return result;
 	}
 
-	@SuppressWarnings("resource")
 	protected void readMetricsFromQuery(final String query, final Map<MetricName, MetricValue> result) {
 		Statement statement = null;
 		try {

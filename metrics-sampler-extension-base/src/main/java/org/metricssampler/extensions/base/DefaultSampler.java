@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
@@ -24,12 +25,25 @@ public class DefaultSampler implements Sampler {
 	private final Logger logger;
 	private final Logger timingsLogger;
 
+	private final Random random = new Random(System.currentTimeMillis());
+
 	private final DefaultSamplerConfig config;
 	private final MetricsReader reader;
 	private final List<MetricsWriter> writers = new LinkedList<MetricsWriter>();
 	private final List<MetricsSelector> selectors = new LinkedList<MetricsSelector>();
 
 	private final Map<String, Object> variables;
+
+	/**
+	 * close will actually disconnect even persistent connections if the current timestamp >= this value. Long.MAX_VALUE effectively disables
+	 * that.
+	 */
+	private long resetAfterTimestamp = Long.MAX_VALUE;
+
+	/**
+	 * The number of matched metric names (stored in metadata) after the last successful connection
+	 */
+	private int prevNumberOfSelectedMetrics = 0;
 
 	public DefaultSampler(final DefaultSamplerConfig config, final MetricsReader reader) {
 		checkArgumentNotNull(config, "config");
@@ -133,7 +147,38 @@ public class DefaultSampler implements Sampler {
 
 		reader.close();
 
+		scheduleResetIfNecessary(result.size());
+
+		if (System.currentTimeMillis() >= resetAfterTimestamp) {
+			reset();
+		}
+
 		return result;
+	}
+
+	protected void scheduleResetIfNecessary(final int newNumberOfSelectedMetrics) {
+		final boolean noMetricsSelected = newNumberOfSelectedMetrics == 0;
+		if (noMetricsSelected) {
+			logger.warn("No metrics selected. Scheduling immediate reset so that metrics are selected again next time.");
+			resetAfterTimestamp = Long.MIN_VALUE;
+		} else if (config.getResetTimeout() > 0 && prevNumberOfSelectedMetrics != newNumberOfSelectedMetrics) {
+			// there is a difference between the metrics we matched this time and the ones we matched last time
+			// => reconnect after a timeout
+			if (resetAfterTimestamp == Long.MAX_VALUE) {
+				final int timeout = computeRandomResetTimeoutMs();
+				logger.info("Scheduling reset after {} ms to reload the selected metrics as their count differs from the last time. The delta (new-old) is {}", timeout, newNumberOfSelectedMetrics-prevNumberOfSelectedMetrics);
+				prevNumberOfSelectedMetrics = newNumberOfSelectedMetrics;
+				resetAfterTimestamp = System.currentTimeMillis() + timeout;
+			} else {
+				logger.debug("Reset already scheduled");
+			}
+		}
+	}
+
+	protected int computeRandomResetTimeoutMs() {
+		final int min = (int) (config.getResetTimeout()*1000*0.8f);
+		final int max = (int) (config.getResetTimeout()*1000*1.2f);
+		return min + random.nextInt(max-min);
 	}
 
 	@Override
@@ -157,7 +202,7 @@ public class DefaultSampler implements Sampler {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName()+"["+reader+"->"+writers+ "]";
+		return getClass().getSimpleName() + "[" + reader + "->" + writers + "]";
 	}
 
 	@Override
@@ -167,7 +212,9 @@ public class DefaultSampler implements Sampler {
 
 	@Override
 	public void reset() {
-		reader.close();
+		logger.info("Resetting");
+		resetAfterTimestamp = Long.MAX_VALUE;
+		reader.reset();
 		for (final MetricsSelector selector : selectors) {
 			selector.reset();
 		}

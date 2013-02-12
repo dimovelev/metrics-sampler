@@ -110,16 +110,11 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 		} catch (final IOException e) {
 			throw new MetricReadException("Failed to establish connection", e);
 		}
-		logger.debug("Loaded {} attributes", result.size());
+		final int count = result.size();
+		logger.info("Loaded {} attributes", count);
 		final long end = System.currentTimeMillis();
-		timingsLogger.debug("Discovered {} metrics in {} ms", result.size(), end - start);
-		if (result.isEmpty()) {
-			logger.warn("No metrics selected - disconnecting in the hope that we will select some upon a new connect.");
-			connection.disconnect();
-			return null;
-		} else {
-			return result;
-		}
+		timingsLogger.debug("Discovered {} metrics in {} ms", count, end - start);
+		return result;
 	}
 
 	protected void introspectAttribute(final MBeanServerConnection serverConnection, final ObjectName objectName,
@@ -162,7 +157,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 		} else if (openType instanceof TabularType) {
 			processTableProperty(propertyPath, value, (TabularType) openType, result);
 		} else if (openType instanceof ArrayType) {
-			// do do not support arrays (yet)
+			// we do not support arrays (yet)
 			logger.debug("Property path {} denotes an array which is not supported (yet): {}", propertyPath, openType);
 		} else {
 			logger.warn("Unsupported open type {} for property path {}", openType, propertyPath);
@@ -318,10 +313,12 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 		values.clear();
 	}
 
-	protected void forceDisconnect() {
+	private void forceDisconnect() {
 		if (connection.isEstablished()) {
+			logger.info("Disconnecting");
 			connection.disconnect();
 			metadata = null;
+			values.clear();
 		}
 	}
 

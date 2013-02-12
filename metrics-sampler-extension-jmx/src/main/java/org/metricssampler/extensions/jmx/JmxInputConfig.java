@@ -17,7 +17,7 @@ public class JmxInputConfig extends InputConfig {
 	private final List<Pattern> ignoredObjectNames;
 	private final Map<String, String> connectionProperties;
 	private final SocketOptionsConfig socketOptions;
-	
+
 	public JmxInputConfig(final String name, final  Map<String, Object> variables, final String url, final String username,
 			final String password, final String providerPackages,
 			final boolean persistentConnection, final List<Pattern> ignoredObjectNames, final Map<String, String> connectionProperties, final SocketOptionsConfig socketOptions) {
@@ -66,7 +66,7 @@ public class JmxInputConfig extends InputConfig {
 	public boolean hasSocketOptions() {
 		return socketOptions != null;
 	}
-	
+
 	/**
 	 * @return the socket options for the low level sockets. If set, the reader will override the socket factory with one that will set those options.
 	 */

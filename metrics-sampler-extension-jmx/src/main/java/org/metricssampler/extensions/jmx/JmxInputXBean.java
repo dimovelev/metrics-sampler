@@ -41,13 +41,13 @@ public class JmxInputXBean extends InputXBean {
 
 	@XStreamAlias("ignore-object-names")
 	private List<IgnoreObjectNameXBean> ignore;
-	
+
 	@XStreamAlias("connection-properties")
 	private List<EntryXBean> connectionProperties;
-	
+
 	@XStreamAlias("socket-options")
 	private SocketOptionsXBean socketOptions;
-	
+
 	public String getUrl() {
 		return url;
 	}
@@ -90,7 +90,7 @@ public class JmxInputXBean extends InputXBean {
 	public void setEnvironment(final List<EntryXBean> environment) {
 		this.connectionProperties = environment;
 	}
-	
+
 	public List<EntryXBean> getConnectionProperties() {
 		return connectionProperties;
 	}
@@ -103,12 +103,13 @@ public class JmxInputXBean extends InputXBean {
 	public void setSocketOptions(final SocketOptionsXBean socketOptions) {
 		this.socketOptions = socketOptions;
 	}
+
 	@Override
 	protected void validate() {
 		super.validate();
 		notEmpty(this, "url", getUrl());
 	}
-	
+
 	@Override
 	protected InputConfig createConfig() {
 		List<Pattern> ignorePatterns;
@@ -130,7 +131,7 @@ public class JmxInputXBean extends InputXBean {
 				configConnectionProperties.put(entry.getKey(), entry.getValue());
 			}
 		}
-		
+
 		final SocketOptionsConfig soConfig = socketOptions != null ? socketOptions.toConfig() : null;
 		final boolean boolPersistentConnection = getPersistentConnection() != null ? getPersistentConnection() : true;
 		return new JmxInputConfig(getName(), getVariablesConfig(), getUrl(), getUsername(), getPassword(), getProviderPackages(), boolPersistentConnection, ignorePatterns, configConnectionProperties, soConfig);

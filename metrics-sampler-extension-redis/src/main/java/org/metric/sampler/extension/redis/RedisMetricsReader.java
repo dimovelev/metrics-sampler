@@ -50,7 +50,7 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 		}
 	}
 
-	private void disconnect() {
+	public void forceDisconnect() {
 		if (jedis != null) {
 			SamplerStats.get().incDisconnectCount();
 			try {
@@ -68,7 +68,7 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 
 	@Override
 	public void reset() {
-		disconnect();
+		forceDisconnect();
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 			fetchMetricsFromCommands(timestamp, result);
 			return result;
 		} catch (final JedisConnectionException e) {
-			disconnect();
+			forceDisconnect();
 			throw new MetricReadException(e);
 		}
 	}

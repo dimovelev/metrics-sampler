@@ -1,5 +1,6 @@
 package org.metricssampler.extensions.base;
 
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 import java.util.LinkedList;
@@ -29,15 +30,19 @@ public class DefaultSamplerXBean extends SamplerXBean {
 
 	@XStreamAsAttribute
 	private String outputs;
-	
+
 	@XStreamAsAttribute
 	private String pool;
 
 	@XStreamAsAttribute
 	private Boolean quiet = false;
-	
+
+	@XStreamAlias("reset-timeout")
+	@XStreamAsAttribute
+	private Integer resetTimeout;
+
 	private List<VariableXBean> variables;
-	
+
 	private List<SelectorXBean> selectors;
 
 	public String getInput() {
@@ -97,12 +102,23 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		this.quiet = quiet;
 	}
 
+	public Integer getResetTimeout() {
+		return resetTimeout;
+	}
+
+	public void setResetTimeout(final Integer resetTimeout) {
+		this.resetTimeout = resetTimeout;
+	}
+
 	@Override
 	protected void validate() {
 		super.validate();
 		if (isInstantiatable()) {
 			notEmpty(this, "input", getInput());
 			notEmpty(this, "selectors", getSelectors());
+			if (resetTimeout != null) {
+				greaterThanZero(this, "reload-timeout", resetTimeout);
+			}
 		}
 	}
 	@Override
@@ -117,7 +133,8 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		final boolean disabled = getDisabled() != null ? getDisabled() : false;
 		final boolean quiet = getQuiet() != null ? getQuiet() : false;
 		final String pool = getPool() != null ? getPool() : DEFAULT_POOL_NAME;
-		return new DefaultSamplerConfig(getName(), pool, getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, quiet);
+		final int resetTimeoutInt = resetTimeout != null ? resetTimeout : -1;
+		return new DefaultSamplerConfig(getName(), pool, getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, quiet, resetTimeoutInt);
 	}
 
 	protected List<SelectorConfig> configureSelectors(final Map<String, List<SelectorConfig>> templates) {

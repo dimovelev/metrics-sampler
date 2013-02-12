@@ -18,10 +18,11 @@ public class DefaultSamplerConfig extends SamplerConfig {
 	private final Map<String, Object> variables;
 	private final Map<String, Object> globalVariables;
 	private final boolean quiet;
+	private final int resetTimeout;
 
 	public DefaultSamplerConfig(final String name, final String pool, final int interval, final boolean ignored, final boolean disabled, final InputConfig input,
 			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final Map<String, Object> variables,
-			final Map<String, Object> globalVariables, final boolean quiet) {
+			final Map<String, Object> globalVariables, final boolean quiet, final int resetTimeout) {
 		super(name, pool, interval, ignored, disabled, globalVariables);
 		checkArgumentNotNull(input, "input");
 		checkArgumentNotNull(outputs, "outputs");
@@ -34,6 +35,7 @@ public class DefaultSamplerConfig extends SamplerConfig {
 		this.variables = Collections.unmodifiableMap(variables);
 		this.globalVariables = Collections.unmodifiableMap(globalVariables);
 		this.quiet = quiet;
+		this.resetTimeout = resetTimeout;
 	}
 
 	public InputConfig getInput() {
@@ -55,6 +57,14 @@ public class DefaultSamplerConfig extends SamplerConfig {
 	@Override
 	public Map<String, Object> getGlobalVariables() {
 		return globalVariables;
+	}
+
+	/**
+	 * @return the timeout in seconds that the sampler will wait after successfully connecting the input to reset if so that the matched JMX beans are reloaded. This will be
+	 * repeated until the number of the matched beans remains unchanged for two consecutive reconnects.
+	 */
+	public int getResetTimeout() {
+		return resetTimeout;
 	}
 
 	@Override

@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public class MetricsMetaData implements Iterable<MetricName> {
 	private final Collection<MetricName> names;
-	
+
 	public MetricsMetaData(final Collection<MetricName> names) {
 		this.names = names;
 	}
@@ -15,4 +15,7 @@ public class MetricsMetaData implements Iterable<MetricName> {
 		return names.iterator();
 	}
 
+	public int size() {
+		return names.size();
+	}
 }
