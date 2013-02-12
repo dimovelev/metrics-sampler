@@ -1,6 +1,10 @@
 <configuration scan="true" scanPeriod="10 seconds">
-	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>logs/metrics-sampler.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>metrics-sampler.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>14</maxHistory>
+		</rollingPolicy>
 		<encoder>
 			<pattern>%d %-5level [%X{sampler}] %logger{36} - %msg%n</pattern>
 		</encoder>
