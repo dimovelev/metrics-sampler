@@ -31,6 +31,7 @@
 		<module>metrics-sampler-extension-redis</module>
 		<module>metrics-sampler-extension-oracle-nosql</module>
 		<module>metrics-sampler-tests</module>
+		<module>metrics-sampler-extension-webmethods</module>
 	</modules>
 	<build>
 		<pluginManagement>
@@ -74,7 +75,7 @@
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
-				<version>1.4.2</version>
+				<version>1.4.4</version>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>

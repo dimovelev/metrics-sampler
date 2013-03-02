@@ -1,48 +1,14 @@
 package org.metricssampler.extensions.apachestatus;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
 import java.net.URL;
-import java.util.Collections;
 import java.util.Map;
 
-import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.HttpInputConfig;
 
-public class ApacheStatusInputConfig extends InputConfig {
-	private final URL url;
-	private final String username;
-	private final String password;
-	private final Map<String, String> headers;
-	private final boolean preemptiveAuthEnabled;
+public class ApacheStatusInputConfig extends HttpInputConfig {
 
-	public ApacheStatusInputConfig(final String name, final  Map<String, Object> variables, final URL url, final String username, final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled) {
-		super(name, variables);
-		checkArgumentNotNull(url, "url");
-		checkArgumentNotNull(headers, "headers");
-		this.url = url;
-		this.username = username;
-		this.password = password;
-		this.headers = Collections.unmodifiableMap(headers);
-		this.preemptiveAuthEnabled = preemptiveAuthEnabled;
-	}
-
-	public URL getUrl() {
-		return url;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public Map<String, String> getHeaders() {
-		return headers;
-	}
-
-	public boolean isPreemtiveAuthEnabled() {
-		return preemptiveAuthEnabled;
+	protected ApacheStatusInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username, final String password,
+			final Map<String, String> headers, final boolean preemptiveAuthEnabled) {
+		super(name, variables, url, username, password, headers, preemptiveAuthEnabled);
 	}
 }
