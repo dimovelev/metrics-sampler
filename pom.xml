@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.metrics-sampler</groupId>
 	<artifactId>metrics-sampler</artifactId>
-	<version>0.5.5-SNAPSHOT</version>
+	<version>0.5.5</version>
 	<packaging>pom</packaging>
 	<developers>
 		<developer>
@@ -15,7 +15,7 @@
 		<connection>scm:git:https://github.com/dimovelev/metrics-sampler.git</connection>
 		<developerConnection>scm:git:https://github.com/dimovelev/metrics-sampler.git</developerConnection>
 		<url>https://github.com/dimovelev/metrics-sampler</url>
-		<tag>HEAD</tag>
+		<tag>v0.5.5</tag>
 	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
