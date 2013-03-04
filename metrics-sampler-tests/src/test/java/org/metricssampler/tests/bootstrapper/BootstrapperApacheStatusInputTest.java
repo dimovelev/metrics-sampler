@@ -19,7 +19,7 @@ public class BootstrapperApacheStatusInputTest extends BootstrapperTestBase {
 		assertEquals("username", item.getUsername());
 		assertEquals("password", item.getPassword());
 		assertEquals("http://localhost", item.getUrl().toExternalForm());
-		assertFalse(item.isPreemtiveAuthEnabled());
+		assertFalse(item.isPreemptiveAuthEnabled());
 		assertSingleStringVariable(item.getVariables(), "string", "value");
 		assertSingleEntry(item.getHeaders(), "header", "val");
 	}
@@ -33,7 +33,7 @@ public class BootstrapperApacheStatusInputTest extends BootstrapperTestBase {
 		assertNull(item.getUsername());
 		assertNull(item.getPassword());
 		assertEquals("http://localhost", item.getUrl().toExternalForm());
-		assertTrue(item.isPreemtiveAuthEnabled());
+		assertTrue(item.isPreemptiveAuthEnabled());
 		assertTrue(item.getVariables().isEmpty());
 		assertTrue(item.getHeaders().isEmpty());
 	}

@@ -72,6 +72,10 @@ Check out the following configuration as a quick-start:
 			<!-- fetch metrics from the perfmaps of the given oracle NoSQL hosts -->			
 			<oracle-nosql name="oracle-nosql" hosts="kv1.metrics-sampler.org:5000 kv2.metrics-sampler.org:5000 kv3.metrics-sampler.org:5000 kv4.metrics-sampler.org:5000" />
 			
+			<!-- fetch metrics from the diagnostics data of the given webmethods server. Only extract ZIP entries if they would require less then 10'000'000 bytes when uncomprossed. Use "yyyy-MM-dd HH:mm:ss z" as simple
+			     date format when parsing timestamps in the files -->      
+			<webmethods name="webmethods1" url="http://webmethods1.example.com:1234/invoke/wm.server.admin/getDiagnosticData" username="user" password="pass" max-entry-size="10000000" date-format="yyyy-MM-dd HH:mm:ss z" />
+ 
 			<!-- self-monitoring of the metrics-sampler. you can configure what you want as usual in the sampler and send the data the any output -->
 			<self name="self" />
 		</inputs>
@@ -185,6 +189,13 @@ Check out the following configuration as a quick-start:
 	 				<regexp from-name="(.*)" to-name="${name[1]}" />
 	 			</selectors>
 			</sampler>
+			
+			<sampler input="webmethods1" interval="60">
+	 			<selectors>
+	 				<!-- lets say we are just interested in the memory stats here -->
+	 				<regexp from-name="ServerStats\.Memory\.(.+)" to-name="${input.name}.memory.${name[1]}" />
+	 			</selectors>
+			</sampler>
 		</samplers>
 	</configuration>
 
@@ -201,6 +212,7 @@ Supported Inputs
 * oracle-nosql - fetches the perfmap from a list of hosts/ports running in an Oralce NoSQL (KVStore) cluster and exposes the values in a more usable format as metrics. The reader caches the RMI connections and only reloads them in case of failures.
 * redis - executes the info command using jedis and exposes the parsed values as metrics. Keeps the connection until a failure is detected.
 * self - expose metrics on the samplers and the input readers
+* webmethods - fetch diagnostics data over HTTP from a running webmethods instances, parse the runtime files in it and expose the data as metrics
 
 Supported Selectors
 -------------------
@@ -241,6 +253,7 @@ It should be pretty easy to extend the program with new inputs, outputs, sampler
 * You will have to implement an org.metricssampler.service.LocalObjectFactory (e.g. by extending org.metricssampler.service.AbstractLocalObjectFactory) so that you can create the actual input readers, output writers etc. from their configurations
 * Put the resulting JAR file on your classpath and you are ready to go (e.g. copy it to the lib/ directory of your installation)
 * If you think the extension might be of any use to anyone else - please share it.
+* If you are going to fetch and parse data from HTTP consider using org.metricssampler.reader.HttpMetricsReader as base class (and its config and xbeans)
 
 Internals
 =========

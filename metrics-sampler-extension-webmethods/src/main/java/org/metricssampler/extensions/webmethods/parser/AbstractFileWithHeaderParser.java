@@ -12,7 +12,15 @@ import org.metricssampler.extensions.webmethods.WebMethodsInputConfig;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricValue;
 
+/**
+ * Base class for parsers of files that start with a 3-line header containing the timestamp on the second line. The file is read into a list
+ * of lines in the beginning the they are processed one by one by the subclasses.
+ */
 public abstract class AbstractFileWithHeaderParser extends AbstractFileParser {
+	/**
+	 * The prefix to use for each metric discovered on the current line. This would be a prefix corresponding to the section / subsection
+	 * that we are in. <code>null</code> if we are at the top level.
+	 */
 	protected String lastSection;
 
 	protected AbstractFileWithHeaderParser(final WebMethodsInputConfig config, final String prefix) {

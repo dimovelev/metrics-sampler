@@ -64,7 +64,7 @@ public abstract class HttpMetricsReader<T extends HttpInputConfig> extends Abstr
 
 	protected HttpContext setupContext() {
 	    final BasicHttpContext result = new BasicHttpContext();
-		if (config.isPreemtiveAuthEnabled()) {
+		if (config.isPreemptiveAuthEnabled()) {
 	        final AuthCache authCache = new BasicAuthCache();
 	        final BasicScheme basicAuth = new BasicScheme();
 	        authCache.put(new HttpHost(config.getUrl().getHost(), config.getUrl().getPort()), basicAuth);

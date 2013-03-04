@@ -14,6 +14,9 @@ import org.metricssampler.reader.SimpleMetricName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Base class for parsers of files zipped in the webmethods diagnostics data file.
+ */
 public abstract class AbstractFileParser {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -71,6 +74,11 @@ public abstract class AbstractFileParser {
 		}
 	}
 
+	/**
+	 * Sanitize the give name removing and replacing stuff. Also adds the configured prefix for the file.
+	 * @param name
+	 * @return
+	 */
 	protected MetricName createMetricName(final StringBuilder name) {
 		final StringBuilder result = new StringBuilder(prefix).append('.');
 		for (int i=0; i<name.length(); i++) {
@@ -88,5 +96,9 @@ public abstract class AbstractFileParser {
 
 	protected abstract void doParse(final InputStream stream, final Map<MetricName, MetricValue> metrics) throws IOException, ParseException;
 
+	/**
+	 * @param name a name of a ZIP file entry
+	 * @return {@code true} if this parse can parse the given entry
+	 */
 	public abstract boolean canParseEntry(final String name);
 }
