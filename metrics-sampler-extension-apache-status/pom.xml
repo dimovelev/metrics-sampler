@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>org.metrics-sampler</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.5.5</version>
+		<version>0.5.6-SNAPSHOT</version>
 	</parent>
 	<artifactId>metrics-sampler-extension-apache-status</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>org.metrics-sampler</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-  			<version>0.5.5</version>
+  			<version>0.5.6-SNAPSHOT</version>
   			<exclusions>
   				<exclusion>
   					<artifactId>commons-logging</artifactId>
