@@ -23,7 +23,7 @@ public abstract class NormalRunner implements Runner {
 		try {
 			runBootstrapped(bootstrapper);
 		} catch (final Exception e) {
-			System.err.println("Exception raised during bootstrapping. Check out the logs for more information.");
+			System.err.println("Exception raised during bootstrapping. Check out the logs for more information. Message: " + e.getMessage());
 			System.exit(3);
 		}
 	}
