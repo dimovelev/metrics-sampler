@@ -1,9 +1,10 @@
 package org.metricssampler.extensions.webmethods;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.Collections;
 
@@ -30,16 +31,16 @@ public class WebMethodsMetricsReader extends HttpMetricsReader<WebMethodsInputCo
 			final File file = File.createTempFile("diagnostic_data_", ".zip");
 			file.deleteOnExit();
 			try {
-				FileWriter writer = null;
+				OutputStream fileOutputStream = null;
 
 				InputStream content = null;
 				try {
-					writer = new FileWriter(file);
+					fileOutputStream = new FileOutputStream(file);
 					content = entity.getContent();
-					IOUtils.copy(content, writer);
+					IOUtils.copy(content, fileOutputStream);
 				} finally {
 					IOUtils.closeQuietly(content);
-					IOUtils.closeQuietly(writer);
+					IOUtils.closeQuietly(fileOutputStream);
 				}
 				final Unzipper unzipper = new Unzipper(file, config.getMaxEntrySize());
 				values = parser.parse(unzipper);

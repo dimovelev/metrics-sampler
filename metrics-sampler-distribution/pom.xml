@@ -84,6 +84,11 @@
 			<version>0.5.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>org.metrics-sampler</groupId>
+			<artifactId>metrics-sampler-extension-webmethods</artifactId>
+			<version>0.5.5-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
