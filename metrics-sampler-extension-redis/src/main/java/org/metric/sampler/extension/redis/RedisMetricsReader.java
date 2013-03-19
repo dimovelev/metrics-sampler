@@ -91,7 +91,11 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 		for (final LineIterator lines = IOUtils.lineIterator(new StringReader(info)); lines.hasNext(); ) {
 			final String line = lines.next();
 			final String[] cols = line.split(":", 2);
-			result.put(new SimpleMetricName(cols[0], ""), new MetricValue(timestamp, cols[1]));
+			if (cols.length == 2) {
+				result.put(new SimpleMetricName(cols[0], ""), new MetricValue(timestamp, cols[1]));
+			} else {
+				logger.debug("Failed to parse line \"{}\"", line);
+			}
 		}
 	}
 
