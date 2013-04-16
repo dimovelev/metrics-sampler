@@ -1,7 +1,5 @@
 package org.metricssampler.resources;
 
-import java.util.Map;
-
 import org.metricssampler.sampler.Sampler;
 
 public interface SamplerThreadPool extends SharedResource  {
@@ -11,8 +9,6 @@ public interface SamplerThreadPool extends SharedResource  {
 	 * @return the actual runnable task that can be used to control the sampler
 	 */
 	SamplerTask schedule(Sampler sampler);
-	
-	String getName();
 
-	Map<String, Object> getStats();
+	String getName();
 }

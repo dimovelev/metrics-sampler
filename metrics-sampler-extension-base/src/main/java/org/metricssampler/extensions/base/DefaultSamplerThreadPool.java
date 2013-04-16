@@ -24,7 +24,7 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 		checkArgumentNotNull(config, "config");
 		this.config = config;
 		this.executorService = createExecutorService(config);
-		GlobalRegistry.getInstance().addSamplerThreadPool(this);
+		GlobalRegistry.getInstance().addSharedResource(this);
 	}
 
 	private ScheduledThreadPoolExecutor createExecutorService(final ThreadPoolConfig config) {
@@ -59,17 +59,19 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 			logger.warn("Thread pool failed to gracefully shutdown within 20 seconds. Forcing shtudown");
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return config.getName();
 	}
 
+	@Override
 	public Map<String, Object> getStats() {
+		final String prefix = "thread-pools." + getName() + ".";
 		final Map<String, Object> result = new HashMap<String, Object>();
-		result.put("activeCount", executorService.getActiveCount());
-		result.put("poolSize", executorService.getPoolSize());
-		result.put("completedTaskCount", executorService.getCompletedTaskCount());
+		result.put(prefix + "activeCount", executorService.getActiveCount());
+		result.put(prefix + "poolSize", executorService.getPoolSize());
+		result.put(prefix + "completedTaskCount", executorService.getCompletedTaskCount());
 		return result;
 	}
 }

@@ -11,7 +11,7 @@ import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.SimpleMetricName;
 import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.resources.SamplerTask;
-import org.metricssampler.resources.SamplerThreadPool;
+import org.metricssampler.resources.SharedResource;
 import org.metricssampler.service.GlobalRegistry;
 
 public class SelfMetricsReader extends AbstractMetricsReader<SelfInputConfig> implements BulkMetricsReader{
@@ -50,11 +50,11 @@ public class SelfMetricsReader extends AbstractMetricsReader<SelfInputConfig> im
 			result.put(new SimpleMetricName(prefix + "metricsCount", "The total number of metrics sampled the last time"), new MetricValue(timestamp, stats.getMetricsCount()));
 			result.put(new SimpleMetricName(prefix + "sampleDuration", "The last sample duration in seconds"), new MetricValue(timestamp, stats.getSampleDuration()));
 		}
-		for (final SamplerThreadPool threadPool : registry.getSamplerThreadPools()) {
-			final String prefix = "thread-pools." + threadPool.getName() + ".";
-			final Map<String, Object> stats = threadPool.getStats();
+
+		for (final SharedResource sharedResource : registry.getSharedResources()) {
+			final Map<String, Object> stats = sharedResource.getStats();
 			for (final Entry<String, Object> entry : stats.entrySet()) {
-				result.put(new SimpleMetricName(prefix + entry.getKey(), ""), new MetricValue(timestamp, entry.getValue()));
+				result.put(new SimpleMetricName(entry.getKey(), ""), new MetricValue(timestamp, entry.getValue()));
 			}
 		}
 		return result;

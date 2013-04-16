@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.metricssampler.resources.SamplerTask;
-import org.metricssampler.resources.SamplerThreadPool;
+import org.metricssampler.resources.SharedResource;
 
 public class GlobalRegistry {
 	private static GlobalRegistry instance = new GlobalRegistry();
@@ -15,7 +15,7 @@ public class GlobalRegistry {
 	}
 
 	private final Set<SamplerTask> tasks = new CopyOnWriteArraySet<SamplerTask>();
-	private final Set<SamplerThreadPool> samplerThreadPools = new HashSet<SamplerThreadPool>();
+	private final Set<SharedResource> sharedResources = new HashSet<SharedResource>();
 
 	public void addSamplerTask(final SamplerTask task) {
 		tasks.add(task);
@@ -25,11 +25,11 @@ public class GlobalRegistry {
 		return tasks;
 	}
 
-	public void addSamplerThreadPool(final SamplerThreadPool samplerThreadPool) {
-		samplerThreadPools.add(samplerThreadPool);
+	public Iterable<SharedResource> getSharedResources() {
+		return sharedResources;
 	}
 
-	public Iterable<SamplerThreadPool> getSamplerThreadPools() {
-		return samplerThreadPools;
+	public void addSharedResource(final SharedResource sharedResource) {
+		sharedResources.add(sharedResource);
 	}
 }

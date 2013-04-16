@@ -1,12 +1,19 @@
 package org.metricssampler.extensions.jdbc;
 
 import java.beans.PropertyVetoException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.resources.SharedResource;
+import org.metricssampler.service.GlobalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +21,17 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.PooledDataSource;
 
 public class JdbcConnectionPool implements SharedResource {
+	private static final List<String> STATS_DATASOURCE_PROPERTIES = Arrays.asList(
+			"numBusyConnectionsAllUsers",
+			"numConnectionsAllUsers",
+			"numConnectionsAllUsers",
+			"numFailedCheckinsDefaultUser",
+			"numFailedCheckoutsDefaultUser",
+			"numFailedIdleTestsDefaultUser",
+			"numHelperThreads",
+			"numIdleConnectionsAllUsers",
+			"numUnclosedOrphanedConnectionsAllUsers"
+	);
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final JdbcConnectionPoolConfig config;
 	private final PooledDataSource datasource;
@@ -21,6 +39,7 @@ public class JdbcConnectionPool implements SharedResource {
 	public JdbcConnectionPool(final JdbcConnectionPoolConfig config) {
 		this.config = config;
 		datasource = createDataSource(config);
+		GlobalRegistry.getInstance().addSharedResource(this);
 	}
 
 	protected ComboPooledDataSource createDataSource(final JdbcConnectionPoolConfig config) {
@@ -62,5 +81,24 @@ public class JdbcConnectionPool implements SharedResource {
 		} catch (final SQLException e) {
 			logger.warn("Failed to close JDBC connection pool " + config.getName(), e);
 		}
+	}
+
+	@Override
+	public Map<String, Object> getStats() {
+		final String prefix = "jdbc-pools." + config.getName() + ".";
+		final Map<String, Object> result = new HashMap<String, Object>();
+		for (final String property : STATS_DATASOURCE_PROPERTIES) {
+			try {
+				final String value = BeanUtils.getProperty(datasource, property);
+				result.put(prefix + property, value);
+			} catch (final IllegalAccessException e) {
+				result.put(property, -1);
+			} catch (final InvocationTargetException e) {
+				result.put(property, -1);
+			} catch (final NoSuchMethodException e) {
+				result.put(property, -1);
+			}
+		}
+		return result;
 	}
 }
