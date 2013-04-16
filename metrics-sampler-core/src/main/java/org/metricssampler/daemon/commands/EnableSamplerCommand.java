@@ -25,12 +25,15 @@ public class EnableSamplerCommand extends SamplerTaskCommand {
 				if (seconds != -1) {
 					logger.info("Enabling sampler \"{}\" for {} seconds", task.getName(), seconds);
 					task.enableForDuration(seconds);
+					respond("Sampler \"" + task.getName() + "\" enabled for " + seconds + " seconds");
 				} else if (times == -1) {
 					logger.info("Enabling sampler \"{}\"", task.getName(), times);
 					task.enable();
+					respond("Sampler \"" + task.getName() + "\" enabled");
 				} else {
 					logger.info("Enabling sampler \"{}\" for {} samplings", task.getName(), times);
 					task.enableForTimes(times);
+					respond("Sampler \"" + task.getName() + "\" enabled for " + times + " times");
 				}
 			}
 		});
