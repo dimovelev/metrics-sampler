@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dimovelev/metrics-sampler.png?branch=master)](https://travis-ci.org/dimovelev/metrics-sampler)
+
 Overview
 ========
 metrics-sampler is a java program which regularly queries metrics from a configured set of inputs, selects and renames them using regular expressions and sends them to a configured set of outputs. It supports JMX and JDBC as inputs and Graphite as output out of the box. Writing new extensions containing new inputs, outputs, samplers and selectors is pretty straight-forward.
