@@ -89,6 +89,11 @@
 			<version>0.5.8-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>com.github.dimovelev</groupId>
+			<artifactId>metrics-sampler-extension-exec</artifactId>
+			<version>0.5.8-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
