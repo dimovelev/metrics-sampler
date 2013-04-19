@@ -12,11 +12,12 @@ import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 
 /**
- * Write metrics to the standard output. This class is not thread safe and should not be used by multiple samplers.
+ * Write metrics to the standard output. This class is not thread safe and one instance should not be used by multiple samplers. Currently,
+ * each sampler gets its own instance so that is not a problem.
  */
 public class ConsoleMetricsWriter implements MetricsWriter {
 	private final ConsoleOutputConfig config;
-	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public ConsoleMetricsWriter(final ConsoleOutputConfig config) {
 		checkArgumentNotNull(config, "config");
@@ -28,7 +29,7 @@ public class ConsoleMetricsWriter implements MetricsWriter {
 		checkArgumentNotNull(metrics, "metrics");
 		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
 			final MetricValue value = entry.getValue();
-			final String timestampPrefix = dateFormat.format(new Date(value.getTimestamp()))+" ";
+			final String timestampPrefix = dateFormat.format(new Date(value.getTimestamp())) + " ";
 			System.out.println(timestampPrefix + entry.getKey() + "=" + value.getValue());
 		}
 	}
