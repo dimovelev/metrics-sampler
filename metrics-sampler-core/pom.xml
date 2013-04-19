@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.github.dimovelev</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.5.7</version>
+		<version>0.5.8-SNAPSHOT</version>
 	</parent>
 	<artifactId>metrics-sampler-core</artifactId>
 	<dependencies>
