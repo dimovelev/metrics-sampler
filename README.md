@@ -9,33 +9,35 @@ Example Configuration
 Check out the following configuration as a quick-start:
 
 	<configuration>
-		<!-- here we include all XML files in the selectors/ directory (relative to the location of the configuration file). Includes can be used in any file (so an
-		     included file may include further files itself. Typically included files are just fragments of the whole configuration - they are just parsed and then merged
-		     into one XML representation in memory which is then evaluated. As a result you can refer to elements defined in other files. -->
+		<!-- Here we include all XML files in the selectors/ directory (relative to the location of the configuration file). Includes can be used in any file (so an
+		     included file may include further files itself. Included files are typically just fragments of the overall configuration - they are parsed and then merged
+		     into one XML representation in memory which is then evaluated. As a result you can do anything you would be able to do in one single file - for example
+		     refer to elements defined in other files. -->
 		<includes>
-			<!-- the location is actually a glob pattern so you can use ** to denote any number of directories, e.g. fragments/**/*.xml
+			<!-- The location attribute is actually a glob pattern so you can use ** to denote any number of directories, e.g. fragments/**/*.xml -->
 			<include location="selectors/*.xml" />
 		</includes>
 	
-		<!-- here we define stuff that is shared between many consumers like pools -->
+		<!-- Here we define pools that have their own life cycle, independent of the sampler they are used in. -->
 		<shared-resources>
-			<!-- this is the thread pool used by all samplers by default (unless you explicitly specify a thread pool in the sampler) --> 
+			<!-- This is the default thread pool used by all samplers (unless you explicitly specify a thread pool in the sampler) --> 
 			<thread-pool name="samplers" size="10" />
-			<!-- this is a custom thread pool that some of the samplers will use -->
+			<!-- This is a custom thread pool that some of the samplers will use -->
 			<thread-pool name="custom.samplers" size="2" />
-			<!-- specify a jdbc connection pool of 1 to 5 connections to an oracle DB -->
+			<!-- This is a JDBC connection pool of 1 to 5 connections to an Oracle Database. -->
 			<jdbc-connection-pool name="oracle01" url="jdbc:oracle:thin:@//oracle1.metrics-sampler.org:1521/EXAMPLE" username="user" password="password" driver="oracle.jdbc.OracleDriver" min-size="1" max-size="5" />
 		</shared-resources>
+		
 		<inputs>
-			<!-- this is an example of a template - its attributes and children will be copied to any input that references it 
-				 using the "template" attribute. It is important to set template=true so that it can never be used in a sampler 
-				 and is not forced to define all mandatory fields -->
+			<!-- This is an example of a template - its attributes and child elements will be copied to any input that references it 
+				 using its "parent" attribute. It is important to set template="true" so that it can never be used in a sampler
+				 and is not forced to define all mandatory fields. -->
 			<jmx name="wls-template" template="true" username="admin" password="weblogic1" provider-packages="weblogic.management.remote" persistent-connection="true">
-				<!-- we can choose to ignore certain object names using a list of regular expressions -->
+				<!-- We can choose to ignore certain object names using a list of regular expressions. -->
 				<ignore-object-names>
 					<ignore-object-name regexp="^com\.oracle\.jrockit:type=Flight.+" />
 				</ignore-object-names>
-				<!-- a map of properties to pass to the JMX connector factory. You usually do not need this.
+				<!-- A map of properties to pass to the JMX connector factory. You usually do not need this. -->
 				<connection-properties>
 					<entry key="jmx.remote.x.request.waiting.timeout" value="100" />
 				</connection-properties>
@@ -57,46 +59,50 @@ Check out the following configuration as a quick-start:
 			<jmx name="tomcat01" url="service:jmx:rmi:///jndi/rmi://tomcat.metrics-sampler.org:7001/jmxrmi" persistent-connection="true" />
 
 			<!-- Execute the given query(ies) over JDBC and use the first column as metric name, the second as metric value and the 
-				 third one as timestamp. You will need to have the JDBC drivers in the lib/ directory -->
+				 third one as timestamp. You will need to have the JDBC drivers in the lib/ directory. If the query returns only two
+				 columns the timestamp is set automatically to the current time when the query returned this row. -->
 			<jdbc name="oracle01" pool="oracle01">
 				<query>select replace(T2.host_name||'.'||T2.instance_name||'.'||replace(replace(replace(replace(metric_name,'/',''),'%','Perc'),'(',''),')',''),' ','_') as metric, value, (25200 + round((end_time - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400),0))*1000 as dt from gv$sysmetric T1, gv$instance T2 where T1.intsize_csec between 1400 and 1600 and T1.inst_id = T2.INST_ID</query>
 			</jdbc>
 			
-			<!-- Apache mod_status page -->
+			<!-- Apache mod_status page containing information about the state of an apache httpd server. -->
 			<apache-status name="apache01" url="http://apache1.metrics-sampler.org:80/qos-viewer?auto" username="user" password="pass" />
 			
-			<!-- use metrics from the "info" command on the given redis instance. also count the number of elements in the hash with key "hash1" and the size of the list with key "list1" -->
+			<!-- Use metrics from the "info" command on the given redis instance -->
 			<redis name="redis" host="redis.metrics-sampler.org" port="6379">
-				<redis-hlen database="0" key="hash1" />
-				<redis-llen key="list1" />
+				<commands>
+					<!-- Additionally to the info statistics, sample the number of elements in the hash with key "hash1" and the number of elements in the list with key "list1" -->
+					<redis-hlen database="0" key="hash1" />
+					<redis-llen key="list1" />
+				</commands>
 			</redis>
 
-			<!-- fetch metrics from the perfmaps of the given oracle NoSQL hosts -->			
+			<!-- Fetch metrics from the perfmaps of the given oracle NoSQL hosts -->			
 			<oracle-nosql name="oracle-nosql" hosts="kv1.metrics-sampler.org:5000 kv2.metrics-sampler.org:5000 kv3.metrics-sampler.org:5000 kv4.metrics-sampler.org:5000" />
 			
-			<!-- fetch metrics from the diagnostics data of the given webmethods server. Only extract ZIP entries if they would require less then 10'000'000 bytes when uncomprossed. Use "yyyy-MM-dd HH:mm:ss z" as simple
+			<!-- Fetch metrics from the diagnostics data of the given webmethods server. Only extract ZIP entries if they would require less then 10'000'000 bytes when uncompressed. Use "yyyy-MM-dd HH:mm:ss z" as simple
 			     date format when parsing timestamps in the files -->      
 			<webmethods name="webmethods1" url="http://webmethods1.example.com:1234/invoke/wm.server.admin/getDiagnosticData" username="user" password="pass" max-entry-size="10000000" date-format="yyyy-MM-dd HH:mm:ss z" />
  
-			<!-- self-monitoring of the metrics-sampler. you can configure what you want as usual in the sampler and send the data the any output -->
+			<!-- Provide self-monitoring metrics of the application - statistics about every sampler, thread-pool and jdbc connection pool utilizations, etc. -->
 			<self name="self" />
 		</inputs>
 		<outputs>
 			<!-- Write to the standard output -->
 			<console name="console" />
-			<!-- Send to graphite running on port 2003. This is the default output - if no outputs are given in the samplers, all outputs marked as default will be used -->
+			<!-- Send metrics to graphite running on port 2003. This is the default output - if no outputs are specified in the samplers, all outputs marked as default will be used -->
 			<graphite name="graphite" host="graphite.metrics-sampler.org" port="2003" default="true" />
 		</outputs>
 		
-		<!-- we can also define some global variables that will be available in all samplers (unless overridden) -->
+		<!-- We can also define some global variables that will be available in all samplers (unless overridden) -->
 		<variables>
 			<string name="tomcat.port" value="8080" />
 		</variables>
 		
-		<!-- we define some regular expressions in groups so that we can reuse them later in the samplers -->
+		<!-- We define some regular expressions in groups so that we can reuse them later in the samplers -->
 		<selector-groups>
 			<selector-group name="wls">
-				<!-- from-name is a regular expression that is matched against e.g. the JMX Metric Name (consisting of canonical 
+				<!-- "from-name" is a regular expression that is matched against e.g. the JMX Metric Name (consisting of canonical 
 					 object name # attribute name). The string can also contain references to variables in the form ${name}. 
 				     to-name is an expression (not a regular expression) that can use variables for things like captured groups 
 				     from the name's regular expression. -->
@@ -106,7 +112,7 @@ Check out the following configuration as a quick-start:
 				<regexp from-name="com\.bea:Name=.*,ServerRuntime=.*,Type=JRockitRuntime\.(JvmProcessorLoad|TotalGarbageCollectionCount|TotalGarbageCollectionTime|FreePhysicalMemory|UsedPhysicalMemory|Uptime)" to-name="${prefix}.jrockit.${name[1]}" />
 			</selector-group>
 			<selector-group name="tomcat">
-				<!-- note that you can use variables in the from-name too (in this case tomcat.port). These must be explicitly 
+				<!-- Note that you can use variables in the "from-name" too (in this case tomcat.port). These must be explicitly 
 					 defined in the sampler (or in the input / global context) -->
 				<regexp from-name="Catalina:type=GlobalRequestProcessor,name=http-${tomcat.port}.\.(requestCount|bytesSent|bytesReceived)" to-name="${prefix}.http.${name[1]}"/>
 			</selector-group>
@@ -122,7 +128,7 @@ Check out the following configuration as a quick-start:
 		     sampler does not do anything or consume any resources. The samplers are scheduled at a constant rate (with the given 
 		     interval) to a thread pool of the size defined above. -->
 		<samplers>
-			<!-- template defining common values for weblogic samplers. If you define any of the attributes / child elements in the 
+			<!-- Template defining common values for weblogic samplers. If you define any of the attributes / child elements in the 
 				 samplers that use this template, these values here will be lost (not appended to).
 				 The reset-timeout is an optional attribute. If set to any positive value (the time unit is seconds) it will cause the
 				 sampler to keep track of the number of selected metrics after each reconnect of its input. If this number of selected 
@@ -140,16 +146,16 @@ Check out the following configuration as a quick-start:
 				</variables>
 			</sampler>
 			
-			<!-- fetch data from wls01 input, use the regular expressions in a group named "wls" to select and rename metrics and 
+			<!-- Fetch data from "wls01" input, use the regular expressions in a group named "wls" to select and rename metrics and 
 				 send them to graphite every 10 seconds. If you specify a child element (e.g. selectors) its value will replace
-			     the values from the template - lists of selectors will not be merged but rather replaced -->
+			     the selectors defined in the template - lists of selectors will not be merged but rather replaced -->
 			<sampler input="wls01" parent="wls" />
 			<sampler input="wls02" parent="wls" />
 			
 			<sampler input="tomcat01" interval="10">
 				<variables>
 					<string name="prefix" value="frontend.${input.name}" />
-					<!-- we override the global variable here -->
+					<!-- We override the global variable here -->
 					<string name="tomcat.port" value="9080" />
 				</variables>
 				<selectors>
@@ -157,7 +163,7 @@ Check out the following configuration as a quick-start:
 				</selectors>
 			</sampler>
 
-			<!-- setting quiet to true causes the sampler to log connection problems using debug level - thus preventing the problem 
+			<!-- Setting quiet to true causes the sampler to log connection problems using debug level - thus preventing the problem 
 				 to be logged in the standard configuration. This is useful if the input is a source that is not always available but 
 				 you want to still get metrics when it is available while not flooding your logs with exceptions. -->
 			<sampler input="apache01" interval="10" quiet="true">
@@ -169,13 +175,14 @@ Check out the following configuration as a quick-start:
 				</selectors>
 			</sampler>
 
-			<!-- you can use ignored="true" to completely skip a sampler without removing / commenting it out. Note that it still needs to be valid. this sampler also uses a custom thread pool named "custom.samplers" -->
+			<!-- You can use ignored="true" to completely deactivate a sampler without removing / commenting it out. Note that it still needs to be valid. 
+			     This sampler also uses a custom thread pool named "custom.samplers" -->
 			<sampler input="oracle01" interval="10" ignored="true" pool="custom.samplers">
 				<variables>
 					<string name="prefix" value="database.${input.name}" />
 				</variables>
 				<selectors>
-					<!-- we can of course specify regular expressions directly here too. -->
+					<!-- We can of course specify regular expressions directly here too. -->
 					<regexp from-name="(.*)" to-name="${name[1]}"/>
 				</selectors>
 			</sampler>
@@ -194,7 +201,7 @@ Check out the following configuration as a quick-start:
 			
 			<sampler input="webmethods1" interval="60">
 	 			<selectors>
-	 				<!-- lets say we are just interested in the memory stats here -->
+	 				<!-- Lets say we are just interested in the memory stats here -->
 	 				<regexp from-name="ServerStats\.Memory\.(.+)" to-name="${input.name}.memory.${name[1]}" />
 	 			</selectors>
 			</sampler>
@@ -203,7 +210,7 @@ Check out the following configuration as a quick-start:
 
 Shared Resources
 ----------------
-* JDBC connection pools to use with e.g. the jdbc input. Utilizes c3p0 under the hood.
+* JDBC connection pools to use with e.g. the JDBC input. c3p0 used under the hood.
 * Thread pools for the samplers that make it possible to distribute the samplers on different thread pools. You will need to define at least one called "samplers".
 
 Supported Inputs
@@ -267,6 +274,15 @@ Internals
 * The graphite writer currently disconnects on each sampling but could be improved to keep the connection (or even better let that be configurable)
 * XStream is used to load the XML configuration. The XML is mapped to *XBean instances which are basically POJOs with the some added abilities like validating their data and converting themselves to the configuration format independent *Config POJOs. The *Config POJOs are value objects used by the rest of the system (e.g. samplers, readers, writers, selectors).
 * You will need to install some artifacts in your maven repository to be able to build using maven because some of the required artifacts (e.g. the oracle nosql kvstore jars)
+
+Publishing new versions to maven central
+========================================
+* Release the project using mvn release:prepare, mvn release:perform
+* Switch to the released tag using git checkout v<VERSION>
+* Build and deploy the artifacts to sonatype mvn clean deploy -Dgpg.passphrase="YOUR GPG PASS" -Dmaven.test.skip=tru -P publish
+* Switch back to master using git checkout master
+* Close and release the repository at oss.sonatype.org
+* Push the changes to github. Also push the tags.
  
 Compatibility
 =============
