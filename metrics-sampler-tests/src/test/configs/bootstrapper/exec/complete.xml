@@ -1,0 +1,17 @@
+<configuration>
+	<inputs>
+		<exec name="exec_complete" command="command" directory="directory">
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+			<arguments>
+				<argument>arg1</argument>
+				<argument>arg2</argument>
+			</arguments>
+			<environment>
+				<entry key="ENV1" value="one" />
+				<entry key="ENV2" value="two" />
+			</environment>
+		</exec> 
+	</inputs>
+</configuration>

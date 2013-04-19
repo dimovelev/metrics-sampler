@@ -53,6 +53,7 @@
 		<module>metrics-sampler-extension-oracle-nosql</module>
 		<module>metrics-sampler-tests</module>
 		<module>metrics-sampler-extension-webmethods</module>
+		<module>metrics-sampler-extension-exec</module>
 	</modules>
 	<build>
 		<pluginManagement>

@@ -86,6 +86,18 @@ Check out the following configuration as a quick-start:
  
 			<!-- Provide self-monitoring metrics of the application - statistics about every sampler, thread-pool and jdbc connection pool utilizations, etc. -->
 			<self name="self" />
+			
+			<!-- Execute 'cmd /C "echo %METRIC%=28"' in the current working directory, passing it METRIC=a.b.c as environment (additionally to the current processes' environment) and
+			     parsing the output as metrics. In this case always the metric "a.b.c" with value "28". You could also provide a working directory with attribute named directory -->
+			<exec name="exec1" command="cmd">
+				<arguments>
+					<argument>/C</argument>
+					<argument>echo %METRIC%=28</argument>
+				</arguments>
+				<environment>
+					<entry key="METRIC" value="a.b.c" />
+				</environment>
+			</exec>
 		</inputs>
 		<outputs>
 			<!-- Write to the standard output -->
@@ -205,6 +217,11 @@ Check out the following configuration as a quick-start:
 	 				<regexp from-name="ServerStats\.Memory\.(.+)" to-name="${input.name}.memory.${name[1]}" />
 	 			</selectors>
 			</sampler>
+			<sampler input="exec1" interval="10">
+				<selectors>
+					<regexp from-name="(.*)" to-name="${name[1]}" />
+				</selectors>
+			</sampler>
 		</samplers>
 	</configuration>
 
@@ -222,6 +239,7 @@ Supported Inputs
 * redis - executes the info command using jedis and exposes the parsed values as metrics. Keeps the connection until a failure is detected.
 * self - expose metrics on the samplers and the input readers
 * webmethods - fetch diagnostics data over HTTP from a running webmethods instances, parse the runtime files in it and expose the data as metrics
+* exec - execute process and parse its standard output / error looking for metrics in the form [<timestamp>:]<name>=<value>
 
 Supported Selectors
 -------------------
@@ -279,7 +297,7 @@ Publishing new versions to maven central
 ========================================
 * Release the project using mvn release:prepare, mvn release:perform
 * Switch to the released tag using git checkout v<VERSION>
-* Build and deploy the artifacts to sonatype mvn clean deploy -Dgpg.passphrase="YOUR GPG PASS" -Dmaven.test.skip=tru -P publish
+* Build and deploy the artifacts to sonatype mvn clean deploy -Dgpg.passphrase="YOUR GPG PASS" -Dmaven.test.skip=true -P publish
 * Switch back to master using git checkout master
 * Close and release the repository at oss.sonatype.org
 * Push the changes to github. Also push the tags.

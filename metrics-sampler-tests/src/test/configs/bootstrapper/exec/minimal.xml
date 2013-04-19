@@ -1,0 +1,5 @@
+<configuration>
+	<inputs>
+		<exec name="exec_minimal" command="command" />
+	</inputs>
+</configuration>
