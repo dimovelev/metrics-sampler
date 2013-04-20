@@ -4,6 +4,11 @@
 			<variables>
 				<string name="string" value="value" />
 			</variables>
+			<commands>
+				<redis-llen database="1" key="list" />
+				<redis-hlen database="2" key="hash" />
+				<redis-slen database="3" key="set" />
+			</commands>
 		</redis> 
 	</inputs>
 </configuration>

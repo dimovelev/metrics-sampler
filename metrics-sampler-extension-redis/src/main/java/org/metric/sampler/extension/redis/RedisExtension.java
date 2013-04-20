@@ -17,6 +17,7 @@ public class RedisExtension extends AbstractExtension {
 		result.add(RedisCommandXBean.class);
 		result.add(RedisHLenCommandXBean.class);
 		result.add(RedisLLenCommandXBean.class);
+		result.add(RedisSLenCommandXBean.class);
 		return result;
 	}
 

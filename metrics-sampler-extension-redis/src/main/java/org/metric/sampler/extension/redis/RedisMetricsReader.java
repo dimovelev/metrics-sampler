@@ -114,6 +114,12 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 				if (len != null) {
 					result.put(new SimpleMetricName(hlen.getKey() + ".len", "hlen(" + hlen.getKey() + ")"), new MetricValue(timestamp, len));
 				}
+			} else if (command instanceof RedisSLenCommand) {
+				final RedisSLenCommand slen = (RedisSLenCommand) command;
+				final Long len = jedis.scard(slen.getKey());
+				if (len != null) {
+					result.put(new SimpleMetricName(slen.getKey() + ".len", "scard(" + slen.getKey() + ")"), new MetricValue(timestamp, len));
+				}
 			} else {
 				throw new ConfigurationException("Unsupported redis command: " + command);
 			}
