@@ -12,7 +12,6 @@ public class StringVariableXBean extends VariableXBean {
 
 	@Override
 	public String getValue() {
-		this.validate();
 		return value;
 	}
 

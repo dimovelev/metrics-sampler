@@ -28,4 +28,16 @@ public final class StringUtils {
 		}
 		return result.toString();
 	}
+	
+	public static boolean isEmptyOrNull(final String value) {
+		return value == null || value.equals("");
+	}
+	
+	public static boolean isNotEmptyNorNull(final String value) {
+		return !isEmptyOrNull(value);
+	}
+	
+	public static String trim(final String value) {
+		return value != null ? value.trim() : null;
+	}
 }

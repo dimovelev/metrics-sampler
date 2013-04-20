@@ -32,10 +32,12 @@ public abstract class VariableXBean {
 		final Map<String, Object> result = new HashMap<String, Object>();
 		if (variables != null) {
 			for (final VariableXBean variable : variables) {
-				if (result.containsKey(variable.getName())) {
-					throw new ConfigurationException("Two variables with the same name " + variable.getName());
+				variable.validate();
+				final String variableName = variable.getName();
+				if (result.containsKey(variableName)) {
+					throw new ConfigurationException("Two variables with the same name " + variableName);
 				} else {
-					result.put(variable.getName(), variable.getValue());
+					result.put(variableName, variable.getValue());
 				}
 			}
 		}
