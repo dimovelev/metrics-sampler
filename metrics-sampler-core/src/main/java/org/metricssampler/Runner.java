@@ -35,7 +35,11 @@ public class Runner {
 			jc.parse(args);
 		} catch (final ParameterException e) {
 			System.err.println(e.getMessage());
-			jc.usage();
+			if (jc.getParsedCommand() == null) {
+				jc.usage();
+			} else {
+				jc.usage(jc.getParsedCommand());
+			}
 			System.exit(1);
 		}
 		if (mainCommand.isHelp()) {
@@ -46,7 +50,6 @@ public class Runner {
 			}
 			System.exit(0);
 		}
-		System.out.println(jc.getParsedCommand());
 		if (jc.getParsedCommand() != null) {
 			final JCommander parsedCommander = jc.getCommands().get(jc.getParsedCommand());
 			final Runnable cmd = (Runnable) parsedCommander.getObjects().get(0);

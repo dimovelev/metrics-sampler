@@ -66,7 +66,7 @@ public class ConfigurationLoader {
 				for (final IncludeXBean include : result.getIncludes()) {
 					logger.info("Including files matching \"{}\"", include.getLocation());
 					final File basedir = file.getParentFile();
-					include(basedir, include.getLocation(), xstream, result);
+					include(basedir != null ? basedir : new File("."), include.getLocation(), xstream, result);
 				}
 			}
 			return result;

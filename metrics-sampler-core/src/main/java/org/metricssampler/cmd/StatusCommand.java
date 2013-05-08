@@ -16,7 +16,6 @@ import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="status", separators = "=", commandDescription = "Checks whether the daemon is running or no.")
 public class StatusCommand extends ControlCommand {
-
 	public StatusCommand(final MainCommand mainCommand) {
 		super(mainCommand);
 	}

@@ -14,7 +14,6 @@ import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="stop", separators = "=", commandDescription = "Stops a running daemon (if any).")
 public class StopCommand extends ControlCommand {
-
 	public StopCommand(final MainCommand mainCommand) {
 		super(mainCommand);
 	}

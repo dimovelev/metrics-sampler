@@ -1,8 +1,13 @@
 package org.metricssampler.cmd;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.beust.jcommander.Parameters;
 
+@Parameters(separators="=")
 public abstract class AbstractCommand implements Runnable {
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private final MainCommand mainCommand;
 
 	public AbstractCommand(final MainCommand mainCommand) {

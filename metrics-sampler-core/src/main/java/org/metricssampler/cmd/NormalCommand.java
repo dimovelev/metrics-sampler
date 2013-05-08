@@ -4,7 +4,6 @@ import org.metricssampler.service.Bootstrapper;
 import org.metricssampler.service.DefaultBootstrapper;
 
 public abstract class NormalCommand extends AbstractCommand {
-
 	public NormalCommand(final MainCommand mainCommand) {
 		super(mainCommand);
 	}
