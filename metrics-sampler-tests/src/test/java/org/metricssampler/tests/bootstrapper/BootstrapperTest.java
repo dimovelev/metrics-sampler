@@ -18,18 +18,6 @@ public class BootstrapperTest extends BootstrapperTestBase {
 		configure("invalid.xml");
 	}
 	
-	@Test(expected=ConfigurationException.class)
-	public void bootstrapMissingControlPort() {
-		System.clearProperty("control.port");
-		bootstrap("minimal.xml");
-	}
-	
-	@Test(expected=ConfigurationException.class)
-	public void bootstrapIllegalControlPort() {
-		System.setProperty("control.port", "INVALID");
-		bootstrap("minimal.xml");
-	}
-	
 	@Test
 	public void bootstrapMinimal() {
 		final Configuration config = configure("minimal.xml");

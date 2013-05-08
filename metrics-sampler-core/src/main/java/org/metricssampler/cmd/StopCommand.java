@@ -1,4 +1,4 @@
-package org.metricssampler;
+package org.metricssampler.cmd;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
@@ -8,15 +8,20 @@ import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
-public class Stop extends ControlRunner {
+import org.metricssampler.service.Bootstrapper;
 
-	public static void main(final String[] args) {
-		new Stop().run(args);
+import com.beust.jcommander.Parameters;
+
+@Parameters(commandNames="stop", separators = "=", commandDescription = "Stops a running daemon (if any).")
+public class StopCommand extends ControlCommand {
+
+	public StopCommand(final MainCommand mainCommand) {
+		super(mainCommand);
 	}
 
 	@Override
-	protected void runControl(final String host, final int port, final String... args) {
-		shutdown(host, port);
+	protected void runControl(final Bootstrapper bootstrapper) {
+		shutdown(bootstrapper.getControlHost(), bootstrapper.getControlPort());
 	}
 
 	protected String shutdown(final String host, final int port) {
@@ -34,5 +39,5 @@ public class Stop extends ControlRunner {
 			return "Failed to stop: " + e.getMessage();
 		}
 	}
-
+	
 }

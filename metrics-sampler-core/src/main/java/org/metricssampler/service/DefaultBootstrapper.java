@@ -40,15 +40,17 @@ public class DefaultBootstrapper implements Bootstrapper {
 	private Configuration configuration;
 	private List<Sampler> samplers;
 	private Map<String, SharedResource> sharedResources;
-	private String controlHost;
-	private int controlPort;
+	private final String controlHost;
+	private final int controlPort;
 
-	private DefaultBootstrapper() {
+	private DefaultBootstrapper(final String controlHost, final int controlPort) {
 		ApplicationInfo.initialize();
+		this.controlHost = controlHost;
+		this.controlPort = controlPort;
 	}
 
-	public static Bootstrapper bootstrap(final String filename) {
-		final DefaultBootstrapper result = new DefaultBootstrapper();
+	public static Bootstrapper bootstrap(final String filename, final String controlHost, final int controlPort) {
+		final DefaultBootstrapper result = new DefaultBootstrapper(controlHost, controlPort);
 		result.initialize();
 		result.loadConfiguration(filename);
 		result.createSharedResources();
@@ -56,10 +58,8 @@ public class DefaultBootstrapper implements Bootstrapper {
 		return result;
 	}
 
-	public static Bootstrapper bootstrap() {
-		final DefaultBootstrapper result = new DefaultBootstrapper();
-		result.loadFromEnvironment();
-		return result;
+	public static Bootstrapper bootstrap(final String controlHost, final int controlPort) {
+		return new DefaultBootstrapper(controlHost, controlPort);
 	}
 
 	private void initialize() {
@@ -84,18 +84,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 	}
 
 	private void loadConfiguration(final String filename) {
-		loadFromEnvironment();
 		configuration = ConfigurationLoader.fromFile(filename, xbeanClasses);
-	}
-
-	private void loadFromEnvironment() {
-		controlHost = System.getProperty("control.host", "localhost");
-		controlPort = 0;
-		try {
-			controlPort = Integer.parseInt(System.getProperty("control.port", "undefined"));
-		} catch (final NumberFormatException e) {
-			throw new ConfigurationException("Please provide a valid control port using -Dcontrol.port");
-		}
 	}
 
 	private void createSharedResources() {

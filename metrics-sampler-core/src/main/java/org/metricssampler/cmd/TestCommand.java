@@ -1,4 +1,4 @@
-package org.metricssampler;
+package org.metricssampler.cmd;
 
 import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.sampler.Sampler;
@@ -6,11 +6,14 @@ import org.metricssampler.service.Bootstrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Test extends NormalRunner {
+import com.beust.jcommander.Parameters;
+
+@Parameters(commandNames="test", separators = "=", commandDescription = "Calls all enabled samplers once and exits.")
+public class TestCommand extends NormalCommand {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	public static void main(final String[] args) {
-		new Test().run(args);
+	public TestCommand(final MainCommand mainCommand) {
+		super(mainCommand);
 	}
 
 	@Override
@@ -25,5 +28,4 @@ public class Test extends NormalRunner {
 			}
 		}
 	}
-
 }

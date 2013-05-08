@@ -1,4 +1,4 @@
-package org.metricssampler;
+package org.metricssampler.cmd;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
@@ -10,15 +10,20 @@ import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
-public class Status extends ControlRunner {
+import org.metricssampler.service.Bootstrapper;
 
-	public static void main(final String[] args) {
-		new Status().run(args);
+import com.beust.jcommander.Parameters;
+
+@Parameters(commandNames="status", separators = "=", commandDescription = "Checks whether the daemon is running or no.")
+public class StatusCommand extends ControlCommand {
+
+	public StatusCommand(final MainCommand mainCommand) {
+		super(mainCommand);
 	}
 
 	@Override
-	protected void runControl(final String host, final int port, final String... args) {
-		final String msg = checkStatus(host, port);
+	protected void runControl(final Bootstrapper bootstrapper) {
+		final String msg = checkStatus(bootstrapper.getControlHost(), bootstrapper.getControlPort());
 		System.out.println(msg);
 		System.exit(msg.startsWith("Running [") ? 0 : 1);
 	}
@@ -49,5 +54,4 @@ public class Status extends ControlRunner {
 			closeQuietly(socket);
 		}
 	}
-
 }

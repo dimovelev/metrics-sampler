@@ -1,4 +1,4 @@
-package org.metricssampler;
+package org.metricssampler.cmd;
 
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.resources.SamplerStats;
@@ -7,11 +7,14 @@ import org.metricssampler.service.Bootstrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Check extends NormalRunner {
+import com.beust.jcommander.Parameters;
+
+@Parameters(commandNames="check", separators = "=", commandDescription = "Goes through all samplers and checks whether each rule matches at least one metric. Everything is logged to STDOUT.")
+public class CheckCommand extends NormalCommand {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	public static void main(final String[] args) {
-		new Check().run(args);
+	public CheckCommand(final MainCommand mainCommand) {
+		super(mainCommand);
 	}
 
 	@Override
@@ -34,7 +37,5 @@ public class Check extends NormalRunner {
 		} else {
 			logger.info("There were problems. See the logs.");
 		}
-
 	}
-
 }

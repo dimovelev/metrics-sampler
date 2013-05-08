@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import java.util.Map;
 
-import org.junit.Before;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
@@ -17,17 +16,12 @@ import org.metricssampler.service.Bootstrapper;
 import org.metricssampler.service.DefaultBootstrapper;
 
 public abstract class BootstrapperTestBase {
-	@Before
-	public void setup() {
-		System.setProperty("control.port", "28111");
-	}
-
 	protected String getConfig(final String path) {
 		return "src/test/configs/bootstrapper/" + path;
 	}
 	
 	protected Bootstrapper bootstrap(final String filename) {
-		return DefaultBootstrapper.bootstrap(getConfig(filename));
+		return DefaultBootstrapper.bootstrap(getConfig(filename), "localhost", 28111);
 	}
 	
 	protected Configuration configure(final String filename) {

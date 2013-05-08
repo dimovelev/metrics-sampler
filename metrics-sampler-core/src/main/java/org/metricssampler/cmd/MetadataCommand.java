@@ -1,4 +1,4 @@
-package org.metricssampler;
+package org.metricssampler.cmd;
 
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.reader.MetricName;
@@ -7,10 +7,12 @@ import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.service.Bootstrapper;
 import org.metricssampler.service.GlobalObjectFactory;
 
-public class Metadata extends NormalRunner {
+import com.beust.jcommander.Parameters;
 
-	public static void main(final String[] args) {
-		new Metadata().run(args);
+@Parameters(commandNames="metadata", separators = "=", commandDescription = "Goes through all samplers and outputs the metadata of their readers. Use it to see what metrics are available and build your rules based on that.")
+public class MetadataCommand extends NormalCommand {
+	public MetadataCommand(final MainCommand mainCommand) {
+		super(mainCommand);
 	}
 
 	@Override
@@ -29,5 +31,4 @@ public class Metadata extends NormalRunner {
 			SamplerStats.unset();
 		}
 	}
-
 }

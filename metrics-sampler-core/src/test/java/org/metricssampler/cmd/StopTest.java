@@ -1,16 +1,17 @@
-package org.metricssampler;
+package org.metricssampler.cmd;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.metricssampler.TCPControllerTestUtil;
 
 public class StopTest {
-	private Stop testee;
+	private StopCommand testee;
 	
 	@Before
 	public void setup() {
-		testee = new Stop();
+		testee = new StopCommand(new MainCommand());
 	}
 	
 	@Test

@@ -1,4 +1,4 @@
-package org.metricssampler;
+package org.metricssampler.cmd;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,13 +6,14 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.metricssampler.TCPControllerTestUtil;
 
 public class StatusTest {
-	private Status testee;
+	private StatusCommand testee;
 
 	@Before
 	public void setup() throws IOException {
-		testee = new Status();
+		testee = new StatusCommand(new MainCommand());
 	}
 
 
