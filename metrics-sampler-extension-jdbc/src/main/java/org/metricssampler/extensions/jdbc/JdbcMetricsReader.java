@@ -75,6 +75,7 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 		return result;
 	}
 
+	@SuppressWarnings("resource")
 	protected void readMetricsFromQuery(final String query, final Map<MetricName, MetricValue> result) {
 		Statement statement = null;
 		try {
