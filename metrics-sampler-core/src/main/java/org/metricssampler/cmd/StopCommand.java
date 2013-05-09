@@ -1,12 +1,7 @@
 package org.metricssampler.cmd;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.ConnectException;
-import java.net.Socket;
 
 import com.beust.jcommander.Parameters;
 
@@ -19,12 +14,7 @@ public class StopCommand extends ControlCommand {
 
 	protected String shutdown(final String host, final int port) {
 		try {
-			final Socket socket = new Socket(host, port);
-			final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			writer.write("shutdown\n");
-			writer.flush();
-			closeQuietly(writer);
-			closeQuietly(socket);
+			execute(host, port, "shutdown");
 			return "Stopped";
 		} catch (final ConnectException e) {
 			return "No daemon running on port " + port;

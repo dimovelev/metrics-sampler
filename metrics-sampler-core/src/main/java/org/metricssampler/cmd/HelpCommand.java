@@ -26,6 +26,7 @@ public class HelpCommand extends AbstractCommand {
 
 	public void error(final String key) {
 		usage(bundle.getString(key), true);
+		System.exit(1);
 	}
 
 	public void usage(final String msg, final boolean error) {
@@ -42,9 +43,11 @@ public class HelpCommand extends AbstractCommand {
 		} else {
 			commander.usage();
 		}
+		System.exit(0);
 	}
 	
 	public void error(final ParameterException e) {
 		usage(e.getMessage(), true);
+		System.exit(1);
 	}
 }

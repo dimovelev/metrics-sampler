@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import org.metricssampler.cmd.CheckCommand;
 import org.metricssampler.cmd.HelpCommand;
 import org.metricssampler.cmd.MetadataCommand;
+import org.metricssampler.cmd.SamplerCommand;
 import org.metricssampler.cmd.StartCommand;
 import org.metricssampler.cmd.StatusCommand;
 import org.metricssampler.cmd.StopCommand;
@@ -54,6 +55,7 @@ public class MetricsSampler {
 		commander.addCommand(new StartCommand());
 		commander.addCommand(new StopCommand());
 		commander.addCommand(new StatusCommand());
+		commander.addCommand(new SamplerCommand());
 		commander.addCommand(new MetadataCommand());
 		commander.addCommand(new CheckCommand());
 		commander.addCommand(new TestCommand());

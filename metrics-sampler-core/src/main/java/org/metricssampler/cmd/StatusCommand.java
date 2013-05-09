@@ -1,14 +1,7 @@
 package org.metricssampler.cmd;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.ConnectException;
-import java.net.Socket;
 
 import com.beust.jcommander.Parameters;
 
@@ -22,16 +15,8 @@ public class StatusCommand extends ControlCommand {
 	}
 
 	protected String checkStatus(final String host, final int port) {
-		Socket socket = null;
-		BufferedWriter writer = null;
-		BufferedReader reader = null;
 		try {
-			socket = new Socket(host, port);
-			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			writer.write("status\n");
-			writer.flush();
-			final String response = reader.readLine();
+			final String response = execute(host, port, "status");
 			if ("ok".equals(response)) {
 				return "Running [port " + port + "]";
 			} else {
@@ -41,10 +26,6 @@ public class StatusCommand extends ControlCommand {
 			return "Stopped";
 		} catch (final IOException e) {
 			return "Unknown state: " + e.getMessage();
-		} finally {
-			closeQuietly(writer);
-			closeQuietly(reader);
-			closeQuietly(socket);
 		}
 	}
 }
