@@ -8,18 +8,12 @@ import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
-import org.metricssampler.service.Bootstrapper;
-
 import com.beust.jcommander.Parameters;
 
-@Parameters(commandNames="stop", separators = "=", commandDescription = "Stops a running daemon (if any).")
+@Parameters(commandNames="stop", commandDescriptionKey="help.stop.command")
 public class StopCommand extends ControlCommand {
-	public StopCommand(final MainCommand mainCommand) {
-		super(mainCommand);
-	}
-
 	@Override
-	protected void runControl(final Bootstrapper bootstrapper) {
+	protected void runBootstrapped() {
 		shutdown(bootstrapper.getControlHost(), bootstrapper.getControlPort());
 	}
 

@@ -7,20 +7,19 @@ import java.util.Set;
 
 import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.sampler.Sampler;
-import org.metricssampler.service.Bootstrapper;
 
 import com.beust.jcommander.Parameter;
 
-public abstract class SamplersCommand extends NormalCommand {
-	@Parameter(names="--samplers", description = "<name>* - The names of the samplers to check. Leave empty for all.")
+/**
+ * A command that can operate on a subset of the samplers given as command line argument. If the argument is not specified then the command
+ * operates on all samplers.
+ */
+public abstract class SamplersCommand extends ConfigurationCommand {
+	@Parameter(names = "-s", descriptionKey="help.param.samplers")
 	protected List<String> samplers = new LinkedList<String>();
 
-	public SamplersCommand(final MainCommand mainCommand) {
-		super(mainCommand);
-	}
-
 	@Override
-	protected void runBootstrapped(final Bootstrapper bootstrapper) {
+	protected void runBootstrapped() {
 		final Set<String> names = new HashSet<String>();
 		names.addAll(samplers);
 		preProcess();
@@ -38,12 +37,23 @@ public abstract class SamplersCommand extends NormalCommand {
 		postProcess();
 	}
 
+	/**
+	 * Override this method if you require processing before the loop over the samplers
+	 */
 	protected void preProcess() {
 		// do nothing by default
 	}
-	
+
+	/**
+	 * Invoked within the loop over the samplers
+	 * 
+	 * @param sampler
+	 */
 	protected abstract void process(Sampler sampler);
-	
+
+	/**
+	 * Override this method if you require processing after the loop over the samplers
+	 */
 	protected void postProcess() {
 		// do nothing by default
 	}

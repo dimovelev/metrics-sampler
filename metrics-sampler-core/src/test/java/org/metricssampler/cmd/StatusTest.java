@@ -13,9 +13,8 @@ public class StatusTest {
 
 	@Before
 	public void setup() throws IOException {
-		testee = new StatusCommand(new MainCommand());
+		testee = new StatusCommand();
 	}
-
 
 	@Test
 	public void checkStatusRunning() {

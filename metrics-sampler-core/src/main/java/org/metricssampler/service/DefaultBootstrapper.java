@@ -48,7 +48,22 @@ public class DefaultBootstrapper implements Bootstrapper {
 		this.controlHost = controlHost;
 		this.controlPort = controlPort;
 	}
+	
+	private DefaultBootstrapper() {
+		ApplicationInfo.initialize();
+		this.controlHost = null;
+		this.controlPort = -1;
+	}
 
+	public static Bootstrapper bootstrap(final String filename) {
+		final DefaultBootstrapper result = new DefaultBootstrapper();
+		result.initialize();
+		result.loadConfiguration(filename);
+		result.createSharedResources();
+		result.createSamplers();
+		return result;
+	}
+	
 	public static Bootstrapper bootstrap(final String filename, final String controlHost, final int controlPort) {
 		final DefaultBootstrapper result = new DefaultBootstrapper(controlHost, controlPort);
 		result.initialize();

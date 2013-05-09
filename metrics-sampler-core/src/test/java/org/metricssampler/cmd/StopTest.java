@@ -11,7 +11,7 @@ public class StopTest {
 	
 	@Before
 	public void setup() {
-		testee = new StopCommand(new MainCommand());
+		testee = new StopCommand();
 	}
 	
 	@Test

@@ -1,7 +1,12 @@
 package org.metricssampler;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+
 import org.metricssampler.cmd.CheckCommand;
-import org.metricssampler.cmd.MainCommand;
+import org.metricssampler.cmd.HelpCommand;
 import org.metricssampler.cmd.MetadataCommand;
 import org.metricssampler.cmd.StartCommand;
 import org.metricssampler.cmd.StatusCommand;
@@ -13,51 +18,71 @@ import com.beust.jcommander.ParameterException;
 
 public class Runner {
 	public static void main(final String[] args) {
-		final MainCommand mainCommand = new MainCommand();
-		final CheckCommand checkCommand = new CheckCommand(mainCommand);
-		final StartCommand startCommand = new StartCommand(mainCommand);
-		final StopCommand stopCommand = new StopCommand(mainCommand);
-		final StatusCommand statusCommand = new StatusCommand(mainCommand);
-		final TestCommand testCommand = new TestCommand(mainCommand);
-		final MetadataCommand metadataCommand = new MetadataCommand(mainCommand);
-
-		final JCommander jc = new JCommander(mainCommand);
-		jc.setAcceptUnknownOptions(false);
-		jc.setCaseSensitiveOptions(false);
-		jc.setProgramName("metrics-sampler");
-		jc.addCommand(checkCommand);
-		jc.addCommand(startCommand);
-		jc.addCommand(stopCommand);
-		jc.addCommand(statusCommand);
-		jc.addCommand(testCommand);
-		jc.addCommand(metadataCommand);
+		final ResourceBundle bundle = ResourceBundle.getBundle("help");
+		final JCommander commander = createCommander(bundle);
+		final HelpCommand help = addCommands(bundle, commander);
+		
 		try {
-			jc.parse(args);
+			commander.parse(args);
 		} catch (final ParameterException e) {
-			System.err.println(e.getMessage());
-			if (jc.getParsedCommand() == null) {
-				jc.usage();
-			} else {
-				jc.usage(jc.getParsedCommand());
-			}
-			System.exit(1);
+			help.error(e.getMessage());
 		}
-		if (mainCommand.isHelp()) {
-			if (jc.getParsedCommand() != null) {
-				jc.usage(jc.getParsedCommand());
-			} else {
-				jc.usage();
-			}
-			System.exit(0);
-		}
-		if (jc.getParsedCommand() != null) {
-			final JCommander parsedCommander = jc.getCommands().get(jc.getParsedCommand());
+
+		if (commander.getParsedCommand() != null) {
+			final JCommander parsedCommander = commander.getCommands().get(commander.getParsedCommand());
 			final Runnable cmd = (Runnable) parsedCommander.getObjects().get(0);
 			cmd.run();
 		} else {
-			System.err.println("Please specify a command");
-			jc.usage();
-			System.exit(2);
+			help.error("help.missingCommand");
+		}
+	}
+
+	protected static JCommander createCommander(final ResourceBundle bundle) {
+		final JCommander result = new JCommander();
+		result.setAcceptUnknownOptions(false);
+		result.setCaseSensitiveOptions(false);
+		result.setProgramName("metrics-sampler");
+		result.setColumnSize(120);
+		result.setDescriptionsBundle(bundle);
+		return result;
+	}
+
+	protected static HelpCommand addCommands(final ResourceBundle bundle, final JCommander commander) {
+		final HelpCommand result = new HelpCommand(commander, bundle);
+
+		commander.addCommand(result);
+		commander.addCommand(new StartCommand());
+		commander.addCommand(new StopCommand());
+		commander.addCommand(new StatusCommand());
+		commander.addCommand(new MetadataCommand());
+		commander.addCommand(new CheckCommand());
+		commander.addCommand(new TestCommand());
+
+		fixResourceBundleBug(commander, bundle);
+		return result;
+	}
+
+	/**
+	 * Reinvoke the createDescriptions of the sub-commanders as they will otherwise not have their descriptions taken from the bundle. 
+	 * @param jc
+	 * @param bundle
+	 */
+	protected static void fixResourceBundleBug(final JCommander jc, final ResourceBundle bundle) {
+		for (final Entry<String,JCommander> entry : jc.getCommands().entrySet()) {
+			final JCommander subJc = entry.getValue();
+			subJc.setDescriptionsBundle(bundle);
+			subJc.setAcceptUnknownOptions(false);
+			subJc.setColumnSize(jc.getColumnSize());
+			try {
+				final Method method = subJc.getClass().getDeclaredMethod("createDescriptions");
+				method.setAccessible(true);
+				method.invoke(subJc);
+			} catch (final NoSuchMethodException e) {
+			} catch (final SecurityException e) {
+			} catch (final IllegalAccessException e) {
+			} catch (final IllegalArgumentException e) {
+			} catch (final InvocationTargetException e) {
+			}
 		}
 	}
 }

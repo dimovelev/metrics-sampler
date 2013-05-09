@@ -5,14 +5,10 @@ import org.metricssampler.sampler.Sampler;
 
 import com.beust.jcommander.Parameters;
 
-@Parameters(commandNames="check", separators = "=", commandDescription = "Goes through the samplers and checks whether each rule matches at least one metric. Everything is logged to STDOUT.")
+@Parameters(commandNames="check", commandDescriptionKey="help.check.command")
 public class CheckCommand extends SamplersCommand {
 	private boolean allValid;
 	
-	public CheckCommand(final MainCommand mainCommand) {
-		super(mainCommand);
-	}
-
 	@Override
 	protected void preProcess() {
 		allValid = true;

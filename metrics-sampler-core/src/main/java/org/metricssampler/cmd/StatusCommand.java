@@ -10,18 +10,12 @@ import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 
-import org.metricssampler.service.Bootstrapper;
-
 import com.beust.jcommander.Parameters;
 
-@Parameters(commandNames="status", separators = "=", commandDescription = "Checks whether the daemon is running or no.")
+@Parameters(commandNames="status", commandDescriptionKey="help.status.command")
 public class StatusCommand extends ControlCommand {
-	public StatusCommand(final MainCommand mainCommand) {
-		super(mainCommand);
-	}
-
 	@Override
-	protected void runControl(final Bootstrapper bootstrapper) {
+	protected void runBootstrapped() {
 		final String msg = checkStatus(bootstrapper.getControlHost(), bootstrapper.getControlPort());
 		System.out.println(msg);
 		System.exit(msg.startsWith("Running [") ? 0 : 1);

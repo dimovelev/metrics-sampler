@@ -27,8 +27,6 @@ if [ -x $BASEDIR/bin/local.sh ]; then
 	. $BASEDIR/bin/local.sh
 fi
 
-OPTS="--config=$CONFIG --control-host=$CONTROL_HOST --control-port=$CONTROL_PORT"
-
 pushd $BASEDIR > /dev/null
 
 if [ ! -e logs ]; then
@@ -37,11 +35,11 @@ fi
 
 case "$1" in
 	start)
-		nohup $JAVA -cp "$CLASSPATH" $JAVA_OPTS $MAIN_CLASS $OPTS $1 > logs/console.out 2>&1 &
+		nohup $JAVA -cp "$CLASSPATH" $JAVA_OPTS $MAIN_CLASS $1 -c $CONFIG -h $CONTROL_HOST -p $CONTROL_PORT > logs/console.out 2>&1 &
 		echo "Started with pid $!"
 		;;
 	stop)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $OPTS $1
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $1 -h $CONTROL_HOST -p $CONTROL_PORT
 		echo "Stopped"
 		;;
 	restart)
@@ -52,32 +50,32 @@ case "$1" in
 		exit
 		;;
 	status)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $OPTS $1
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $1 -h $CONTROL_HOST -p $CONTROL_PORT
 		echo $MSG
 		RETURN_CODE=$(echo "$MSG" | grep 'Stopped' | wc -l)
 		exit $RETURN_CODE
  		;;
 	check)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $OPTS $1
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $1 -c $CONFIG -s $3
 		;;
 	test)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $OPTS $1
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $1 -c $CONFIG -s $3
 		;;
 	metadata)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $OPTS $1
+		$JAVA -cp "$CLASSPATH" $JAVA_OPTS -Dlogback.configurationFile=$LOGCONFIG_CONSOLE $MAIN_CLASS $1 -c $CONFIG -i $3
 		;;
-	*)
+	*) 
 		cat <<EOF
 metrics-sampler version $VERSION
-Usage: `basename $0` [start|stop|restart|status|check|test|metadata] [<config.xml>]
+Usage: `basename $0` [start|stop|restart|status|check|test|metadata] [<config.xml>] [options]
 
-start     Starts the application as a daemon in the background.
-stop      Stops a running daemon (if any).
-status    Checks whether the daemon is running or no.
-restart   Stops the running daemon (if any) and then starts it.
-check     Goes through all samplers and checks whether each rule matches at least one metric. Everything is logged to STDOUT.
-test      Calls all enabled samplers once and exits.
-metadata  Goes through all samplers and outputs the metadata of their readers. Use it to see what metrics are available and build
+start              Start the application as a daemon in the background.
+stop               Stop the application running as a daemon.
+status             Check whether the applicatin is running as a daemon in the background.
+restart            Stop and start the application.
+check <samplers>   Go through the given samplers and check whether each rule matches at least one metric. Samplers is a comma separated list of sampler names. If not given, will use all. Everything is logged to STDOUT.
+test  <samplers>   Calls the given samplers once and exits. Samplers is a comma separated list of sampler names.
+metadata <inputs>  Goes through all samplers and outputs the metadata of their readers. Use it to see what metrics are available and build
           your rules based on that.
 EOF
 		;;
