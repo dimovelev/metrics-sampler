@@ -2,7 +2,12 @@
 JAVA=java
 BASEDIR="$( cd -P "$( dirname "$0" )/.." && pwd )"
 VERSION="${project.version}"
-CLASSPATH="lib/*:lib.local/*"
+if [[ "$OS" == Windows* ]]; then
+        CLASSPATH_SEPARATOR=";"
+else
+        CLASSPATH_SEPARATOR=":"
+fi
+CLASSPATH="lib/*${CP_SEPARATOR}lib.local/*"
 MAIN_CLASS=org.metricssampler.MetricsSampler
 OPTS_CONTROL=
 OPTS_ALL=
