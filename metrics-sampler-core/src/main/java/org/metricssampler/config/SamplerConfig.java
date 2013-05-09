@@ -1,8 +1,10 @@
 package org.metricssampler.config;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.metricssampler.util.Preconditions.checkArgument;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,17 +16,20 @@ public abstract class SamplerConfig extends NamedConfig {
 	private final boolean ignored;
 	private final boolean disabled;
 	private final Map<String, Object> globalVariables;
+	private final List<ValueTransformerConfig> valueTransformers;
 	
-	public SamplerConfig(final String name, final String pool, final int interval, final boolean ignored, final boolean disabled, final Map<String, Object> globalVariables) {
+	public SamplerConfig(final String name, final String pool, final int interval, final boolean ignored, final boolean disabled, final Map<String, Object> globalVariables, final List<ValueTransformerConfig> valueTransformers) {
 		super(name);
 		checkArgumentNotNull(pool, "pool");
 		checkArgument(interval > 0, "interval must be greater than 0 seconds");
 		checkArgumentNotNull(globalVariables, "globalVariables");
+		checkArgumentNotNull(valueTransformers, "valueTransformers");
 		this.pool = pool;
 		this.interval = interval;
 		this.ignored = ignored;
 		this.disabled = disabled;
 		this.globalVariables = unmodifiableMap(globalVariables);
+		this.valueTransformers = unmodifiableList(valueTransformers);
 	}
 
 	/**
@@ -45,6 +50,10 @@ public abstract class SamplerConfig extends NamedConfig {
 		return globalVariables;
 	}
 	
+	public List<ValueTransformerConfig> getValueTransformers() {
+		return valueTransformers;
+	}
+
 	/**
 	 * @return {@code true} if the sampler is temporarily disabled and will not sample but will still be scheduled.
 	 */

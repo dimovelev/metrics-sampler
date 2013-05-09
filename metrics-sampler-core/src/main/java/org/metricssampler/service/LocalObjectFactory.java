@@ -5,6 +5,7 @@ import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
 import org.metricssampler.config.SharedResourceConfig;
+import org.metricssampler.config.ValueTransformerConfig;
 
 /**
  * A factory intended to be implemented by extensions.
@@ -41,4 +42,10 @@ public interface LocalObjectFactory extends ObjectFactory {
 	 * @return {@code true} if the extension can create a shared resource for the given shared resource configuration.
 	 */
 	boolean supportsSharedResource(SharedResourceConfig config);
+
+	/**
+	 * @param config
+	 * @return {@code true} if the extension can create a value transformer for the given configuration.
+	 */
+	boolean supportsValueTransformer(ValueTransformerConfig config);
 }

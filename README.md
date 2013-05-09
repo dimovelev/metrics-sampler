@@ -156,6 +156,10 @@ Check out the following configuration as a quick-start:
 				<variables>
 					<string name="prefix" value="backend.${input.name}" />
 				</variables>
+	 			<value-transformers>
+	 				<!-- divide the GC pauseTime and time by 1000000 -->
+	 				<el-value-transformer name=".*\.jrockit\.gc.*\.(pauseTime|time)" expression="value / 1000000" />
+	 			</value-transformers>
 			</sampler>
 			
 			<!-- Fetch data from "wls01" input, use the regular expressions in a group named "wls" to select and rename metrics and 

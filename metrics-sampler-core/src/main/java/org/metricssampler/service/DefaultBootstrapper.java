@@ -13,6 +13,7 @@ import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
 import org.metricssampler.config.SharedResourceConfig;
+import org.metricssampler.config.ValueTransformerConfig;
 import org.metricssampler.config.loader.ConfigurationLoader;
 import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
 import org.metricssampler.config.loader.xbeans.DictionaryVariableXBean;
@@ -27,6 +28,7 @@ import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
+import org.metricssampler.values.ValueTransformer;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -177,6 +179,16 @@ public class DefaultBootstrapper implements Bootstrapper {
 			}
 		}
 		throw new ConfigurationException("Unsupported selector: " + config);
+	}
+	
+	@Override
+	public ValueTransformer newValueTransformer(final ValueTransformerConfig config) {
+		for (final LocalObjectFactory factory : objectFactories) {
+			if (factory.supportsValueTransformer(config)) {
+				return factory.newValueTransformer(config);
+			}
+		}
+		throw new ConfigurationException("Unsupported value transformer: " + config);
 	}
 
 	@Override

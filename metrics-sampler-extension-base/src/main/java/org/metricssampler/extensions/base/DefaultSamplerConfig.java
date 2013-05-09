@@ -10,6 +10,7 @@ import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
+import org.metricssampler.config.ValueTransformerConfig;
 
 public class DefaultSamplerConfig extends SamplerConfig {
 	private final InputConfig input;
@@ -22,8 +23,8 @@ public class DefaultSamplerConfig extends SamplerConfig {
 
 	public DefaultSamplerConfig(final String name, final String pool, final int interval, final boolean ignored, final boolean disabled, final InputConfig input,
 			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final Map<String, Object> variables,
-			final Map<String, Object> globalVariables, final boolean quiet, final int resetTimeout) {
-		super(name, pool, interval, ignored, disabled, globalVariables);
+			final Map<String, Object> globalVariables, final List<ValueTransformerConfig> valueTransformers, final boolean quiet, final int resetTimeout) {
+		super(name, pool, interval, ignored, disabled, globalVariables, valueTransformers);
 		checkArgumentNotNull(input, "input");
 		checkArgumentNotNull(outputs, "outputs");
 		checkArgumentNotNull(selectors, "selectors");

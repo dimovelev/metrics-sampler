@@ -67,6 +67,9 @@
  				<use-group name="wls" />
  				<use-group name="jrockit" />
  			</selectors>
+ 			<value-transformers>
+ 				<el-value-transformer name=".*\.jrockit\.gc.*\.(pauseTime|time)" expression="value / 1000000000" />
+ 			</value-transformers>
  		</sampler>
  		<sampler input="tomcat01" outputs="console" interval="10" ignored="true">
  			<selectors>

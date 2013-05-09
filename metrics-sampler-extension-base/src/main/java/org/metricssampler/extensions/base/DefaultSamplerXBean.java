@@ -3,6 +3,7 @@ package org.metricssampler.extensions.base;
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +13,12 @@ import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
+import org.metricssampler.config.ValueTransformerConfig;
 import org.metricssampler.config.loader.xbeans.SamplerXBean;
 import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
 import org.metricssampler.config.loader.xbeans.SelectorXBean;
 import org.metricssampler.config.loader.xbeans.SimpleSelectorXBean;
+import org.metricssampler.config.loader.xbeans.ValueTransformerXBean;
 import org.metricssampler.config.loader.xbeans.VariableXBean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -45,6 +48,9 @@ public class DefaultSamplerXBean extends SamplerXBean {
 
 	private List<SelectorXBean> selectors;
 
+	@XStreamAlias("value-transformers")
+	private List<ValueTransformerXBean> valueTransformers;
+	
 	public String getInput() {
 		return input;
 	}
@@ -134,7 +140,19 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		final boolean quiet = getQuiet() != null ? getQuiet() : false;
 		final String pool = getPool() != null ? getPool() : DEFAULT_POOL_NAME;
 		final int resetTimeoutInt = resetTimeout != null ? resetTimeout : -1;
-		return new DefaultSamplerConfig(getName(), pool, getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, quiet, resetTimeoutInt);
+		final List<ValueTransformerConfig> valueTransformerConfigs = configureValueTransformers(valueTransformers);
+		return new DefaultSamplerConfig(getName(), pool, getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, valueTransformerConfigs, quiet, resetTimeoutInt);
+	}
+
+	protected List<ValueTransformerConfig> configureValueTransformers(final List<ValueTransformerXBean> valueTransformers) {
+		if (valueTransformers == null) {
+			return new LinkedList<ValueTransformerConfig>();
+		}
+		final List<ValueTransformerConfig> result = new ArrayList<ValueTransformerConfig>(valueTransformers.size());
+		for (final ValueTransformerXBean item : valueTransformers) {
+			result.add(item.toConfig());
+		}
+		return result;
 	}
 
 	protected List<SelectorConfig> configureSelectors(final Map<String, List<SelectorConfig>> templates) {

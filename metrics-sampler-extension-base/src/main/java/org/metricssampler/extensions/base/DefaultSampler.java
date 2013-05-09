@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.metricssampler.reader.MetricReadException;
@@ -16,6 +17,7 @@ import org.metricssampler.reader.OpenMetricsReaderException;
 import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
+import org.metricssampler.values.ValueTransformer;
 import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
@@ -31,7 +33,8 @@ public class DefaultSampler implements Sampler {
 	private final MetricsReader reader;
 	private final List<MetricsWriter> writers = new LinkedList<MetricsWriter>();
 	private final List<MetricsSelector> selectors = new LinkedList<MetricsSelector>();
-
+	private final List<ValueTransformer> valueTransformers = new LinkedList<ValueTransformer>();
+	
 	private final Map<String, Object> variables;
 
 	/**
@@ -77,6 +80,12 @@ public class DefaultSampler implements Sampler {
 		selector.setVariables(variables);
 		return this;
 	}
+	
+	public DefaultSampler addValueTransformer(final ValueTransformer valueTransformer) {
+		checkArgumentNotNull(valueTransformer, "valueTransformer");
+		valueTransformers.add(valueTransformer);
+		return this;
+	}
 
 	protected void openWriters() {
 		for (final MetricsWriter writer : writers) {
@@ -95,7 +104,8 @@ public class DefaultSampler implements Sampler {
 		logger.debug("Sampling");
 		try {
 			final long readStart = System.currentTimeMillis();
-			final Map<String, MetricValue> metrics = readMetrics();
+			final Map<String, MetricValue> rawMetrics = readMetrics();
+			final Map<String, MetricValue> metrics = transformValues(rawMetrics);
 			final long readEnd = System.currentTimeMillis();
 			timingsLogger.debug("Sampled {} metrics in {} ms", metrics.size(), readEnd-readStart);
 			writeMetrics(metrics);
@@ -115,6 +125,30 @@ public class DefaultSampler implements Sampler {
 		} catch (final MetricWriteException e) {
 			logger.warn("Failed to write metrics", e);
 		}
+	}
+
+	protected Map<String, MetricValue> transformValues(final Map<String, MetricValue> metrics) {
+		if (valueTransformers.isEmpty()) {
+			return metrics;
+		} else {
+			logger.debug("Transforming values");
+			final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
+			for (final Entry<String, MetricValue> entry : metrics.entrySet()) {
+				final MetricValue newValue = transformValue(entry.getKey(), entry.getValue());
+				result.put(entry.getKey(), newValue);
+			}
+			return result;
+		}
+	}
+
+	protected MetricValue transformValue(final String name, final MetricValue value) {
+		for (final ValueTransformer transformer : valueTransformers) {
+			if (transformer.matches(name)) {
+				final String newValue = transformer.transform(value.getValue().toString());
+				return new MetricValue(value.getTimestamp(), newValue);
+			}
+		}
+		return value;
 	}
 
 	private void writeMetrics(final Map<String, MetricValue> metrics) {

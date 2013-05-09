@@ -10,6 +10,7 @@ import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
 import org.metricssampler.config.SharedResourceConfig;
 import org.metricssampler.config.ThreadPoolConfig;
+import org.metricssampler.config.ValueTransformerConfig;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
@@ -18,7 +19,8 @@ import org.metricssampler.service.AbstractExtension;
 import org.metricssampler.writer.MetricsWriter;
 
 public class BaseExtension extends AbstractExtension {
-
+	private ELFactory elFactory;
+	
 	@Override
 	public Collection<Class<?>> getXBeans() {
 		final List<Class<?>> result = new LinkedList<Class<?>>();
@@ -26,6 +28,7 @@ public class BaseExtension extends AbstractExtension {
 		result.add(RegExpSelectorXBean.class);
 		result.add(DefaultSamplerXBean.class);
 		result.add(SelfInputXBean.class);
+		result.add(ELValueTransformerXBean.class);
 		return result;
 	}
 	
@@ -75,6 +78,9 @@ public class BaseExtension extends AbstractExtension {
 		for (final SelectorConfig selector : actualConfig.getSelectors()) {
 			result.addSelector(getGlobalFactory().newSelector(selector));
 		}
+		for (final ValueTransformerConfig item : actualConfig.getValueTransformers()) {
+			result.addValueTransformer(getGlobalFactory().newValueTransformer(item));
+		}
 		return result;
 	}
 
@@ -88,6 +94,20 @@ public class BaseExtension extends AbstractExtension {
 	public boolean supportsSharedResource(final SharedResourceConfig config) {
 		return config instanceof ThreadPoolConfig;
 	}
-	
-	
+
+	@Override
+	public boolean supportsValueTransformer(final ValueTransformerConfig config) {
+		return config instanceof ELValueTransformerConfig;
+	}
+
+	@Override
+	protected ELValueTransformer doNewValueTransformer(final ValueTransformerConfig config) {
+		final ELValueTransformerConfig actualConfig = (ELValueTransformerConfig) config;
+		return new ELValueTransformer(actualConfig, elFactory);
+	}
+
+	@Override
+	public void initialize() {
+		elFactory = new ELFactory();
+	}
 }
