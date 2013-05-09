@@ -15,6 +15,10 @@ public class StartCommand extends BootstrappedCommand {
 	@ParametersDelegate
 	private ControlCommandDelegate control = new ControlCommandDelegate();
 	
+	public StartCommand() {
+		logbackConfig = "config/logback.xml";
+	}
+
 	@Override
 	protected Bootstrapper createBootstrapper() {
 		return DefaultBootstrapper.bootstrap(configuration.getConfig(), control.getHost(), control.getPort());

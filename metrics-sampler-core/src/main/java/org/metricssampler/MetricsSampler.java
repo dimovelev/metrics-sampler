@@ -16,7 +16,7 @@ import org.metricssampler.cmd.TestCommand;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-public class Runner {
+public class MetricsSampler {
 	public static void main(final String[] args) {
 		final ResourceBundle bundle = ResourceBundle.getBundle("help");
 		final JCommander commander = createCommander(bundle);
@@ -25,7 +25,7 @@ public class Runner {
 		try {
 			commander.parse(args);
 		} catch (final ParameterException e) {
-			help.error(e.getMessage());
+			help.error(e);
 		}
 
 		if (commander.getParsedCommand() != null) {
