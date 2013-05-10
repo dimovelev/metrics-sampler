@@ -52,7 +52,7 @@
 			<lineEnding>unix</lineEnding>
 			<outputDirectory>bin</outputDirectory>
 			<directoryMode>700</directoryMode>
-			<fileMode>700</fileMode>
+			<fileMode>500</fileMode>
 			<filtered>true</filtered>
 		</fileSet>
 	</fileSets>

@@ -3,3 +3,12 @@
 JAVA=java
 # Uncomment this option if you are running this application with Java >=1.6 and are connecting to a Java 1.5 JMX client.
 #JAVA_OPTS="$JAVA_OPTS -Dsun.lang.ClassLoader.allowArraySyntax=true" 
+
+# Configure the control host/port
+#OPTS_CONTROL="-h 0.0.0.0 -p 28111"
+
+# Configure further options used when starting the daemon
+#OPTS_START=
+
+# Change the configuration file related options here
+#OPTS_CONFIG="-c config/config.xml"

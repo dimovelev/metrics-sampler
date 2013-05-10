@@ -7,17 +7,18 @@ if [[ "$OS" == Windows* ]]; then
 else
         CLASSPATH_SEPARATOR=":"
 fi
-CLASSPATH="lib/*${CP_SEPARATOR}lib.local/*"
+CLASSPATH="lib/*${CLASSPATH_SEPARATOR}lib.local/*"
 MAIN_CLASS=org.metricssampler.MetricsSampler
 OPTS_CONTROL=
-OPTS_ALL=
-OPTS=CONFIG=
+OPTS_START=
+OPTS_CONFIG=
 JAVA_OPTS=
 
 if [ -x $BASEDIR/bin/local.sh ]; then
 	. $BASEDIR/bin/local.sh
 fi
 
+CMD="$JAVA -cp $CLASSPATH $JAVA_OPTS $MAIN_CLASS"
 pushd $BASEDIR > /dev/null
 
 if [ ! -e logs ]; then
@@ -26,11 +27,11 @@ fi
 
 case "$1" in
 	start)
-		nohup $JAVA -cp "$CLASSPATH" $JAVA_OPTS $MAIN_CLASS $1 $OPTS_ALL ${@:2} > logs/console.out 2>&1 &
+		nohup $CMD $1 $OPTS_CONTROL $OPTS_CONFIG $OPTS_START ${@:2} > logs/console.out 2>&1 &
 		echo "Started with pid $!"
 		;;
 	stop)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS $MAIN_CLASS $1 $OPTS_CONTROL ${@:2}
+		$CMD $1 $OPTS_CONTROL ${@:2}
 		echo "Stopped"
 		;;
 	restart)
@@ -41,16 +42,16 @@ case "$1" in
 		exit
 		;;
 	status)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS $MAIN_CLASS $1 $OPTS_CONTROL ${@:2}
+		$CMD $1 $OPTS_CONTROL ${@:2}
 		echo $MSG
 		RETURN_CODE=$(echo "$MSG" | grep 'Stopped' | wc -l)
 		exit $RETURN_CODE
  		;;
 	check|test|metadata)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS $MAIN_CLASS $1 $OPTS_CONFIG ${@:2}
+		$CMD $1 $OPTS_CONFIG ${@:2}
 		;;
 	*)
-		$JAVA -cp "$CLASSPATH" $JAVA_OPTS $MAIN_CLASS ${@:1}
+		$CMD ${@:1}
 		;;
 esac
 popd > /dev/null
