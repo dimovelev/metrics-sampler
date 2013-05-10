@@ -265,8 +265,8 @@ Downloadable binaries can be found at [http://dl.bintray.com/content/dimo/metric
 
 Quick start
 ===========
-1. Download the metrics-sampler-distribution-<version>-all.tar.gz
-2. Unpack it into a directory of your choice, e.g. metrics-sampler-<version>
+1. Download the metrics-sampler-distribution-[version]-all.tar.gz
+2. Unpack it into a directory of your choice, e.g. metrics-sampler-[version]
 3. Create a configuration in config/config.xml using config/config.xml.example and this readme as starting point and reference
 4. If you want to list all the metrics from your configured inputs you can call "bin/metrics-sampler.sh metadata". This will output all names and descriptions of the available metrics for each input. You can use those to define your regexp selectors. 
 5. If you have to tune some startup parameter create the file bin/local.sh and override the environment variables there (e.g. JAVA or JAVA_OPTS)
@@ -300,7 +300,7 @@ Internals
 Publishing new versions to maven central
 ========================================
 * Release the project using mvn release:prepare, mvn release:perform
-* Switch to the released tag using git checkout v<VERSION>
+* Switch to the released tag using git checkout v[version]
 * Build and deploy the artifacts to sonatype mvn clean deploy -Dgpg.passphrase="YOUR GPG PASS" -Dmaven.test.skip=true -P publish
 * Switch back to master using git checkout master
 * Close and release the repository at oss.sonatype.org
