@@ -38,7 +38,7 @@ public class HelpCommand extends AbstractCommand {
 				System.out.println(msg);
 			}
 		}
-		final String cmd = command != null ? command : commander.getParsedCommand();
+		final String cmd = command != null ? command : error ? commander.getParsedCommand() : null;
 		if (cmd != null) {
 			commander.usage(cmd);
 		} else {
