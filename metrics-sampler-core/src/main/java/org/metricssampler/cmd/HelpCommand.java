@@ -13,7 +13,7 @@ public class HelpCommand extends AbstractCommand {
 	private final ResourceBundle bundle;
 	@Parameter(names="-c", descriptionKey="help.param.command")
 	private String command;
-	
+
 	public HelpCommand(final JCommander commander, final ResourceBundle bundle) {
 		this.commander = commander;
 		this.bundle = bundle;
@@ -38,14 +38,15 @@ public class HelpCommand extends AbstractCommand {
 				System.out.println(msg);
 			}
 		}
-		if (command != null) {
-			commander.usage(command);
+		final String cmd = command != null ? command : commander.getParsedCommand();
+		if (cmd != null) {
+			commander.usage(cmd);
 		} else {
 			commander.usage();
 		}
 		System.exit(0);
 	}
-	
+
 	public void error(final ParameterException e) {
 		usage(e.getMessage(), true);
 		System.exit(1);
