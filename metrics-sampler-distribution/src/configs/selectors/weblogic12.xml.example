@@ -26,6 +26,7 @@
         </selector-group>
         <selector-group name="weblogic12.jms">
         	<regexp from-name="com.bea:JMSServerRuntime=.+,Name=.+!(.+)@(.+),ServerRuntime=${jms.server},Type=JMSDestinationRuntime\.(MessagesCurrentCount|MessagesPendingCount|MessagesReceivedCount|MessagesHighCount|MessagesDeletedCurrentCount|BytesCurrentCount|BytesPendingCount|BytesReceivedCount|ConsumersCurrentCount|ConsumersHighCount|ConsumersTotalCount)" to-name="${prefix}.jms.${name[1]}.${name[2]}.${name[3]}" />
+			<regexp from-name="com.bea:JMSServerRuntime=(.+),Name=[^@]+!(.+),ServerRuntime=${jms.server},Type=JMSDestinationRuntime\.(MessagesCurrentCount|MessagesPendingCount|MessagesReceivedCount|MessagesHighCount|MessagesDeletedCurrentCount|BytesCurrentCount|BytesPendingCount|BytesReceivedCount|ConsumersCurrentCount|ConsumersHighCount|ConsumersTotalCount)" to-name="${prefix}.jms.${name[1]}.${name[2]}.${name[3]}" />
        	</selector-group>
 	</selector-groups>
 </configuration>
