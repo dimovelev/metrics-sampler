@@ -1,5 +1,6 @@
 package org.metricssampler.service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		this.controlHost = controlHost;
 		this.controlPort = controlPort;
 	}
-	
+
 	private DefaultBootstrapper() {
 		ApplicationInfo.initialize();
 		this.controlHost = null;
@@ -65,7 +66,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		result.createSamplers();
 		return result;
 	}
-	
+
 	public static Bootstrapper bootstrap(final String filename, final String controlHost, final int controlPort) {
 		final DefaultBootstrapper result = new DefaultBootstrapper(controlHost, controlPort);
 		result.initialize();
@@ -180,7 +181,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		}
 		throw new ConfigurationException("Unsupported selector: " + config);
 	}
-	
+
 	@Override
 	public ValueTransformer newValueTransformer(final ValueTransformerConfig config) {
 		for (final LocalObjectFactory factory : objectFactories) {
@@ -241,4 +242,11 @@ public class DefaultBootstrapper implements Bootstrapper {
 			sharedResource.shutdown();
 		}
 	}
+
+	@Override
+	public Map<String, SharedResource> getSharedResources() {
+		return Collections.unmodifiableMap(sharedResources);
+	}
+
+
 }

@@ -16,7 +16,7 @@ import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="metadata", commandDescriptionKey="help.metadata.command")
 public class MetadataCommand extends ConfigurationCommand {
-	@Parameter(names="-i", descriptionKey="help.param.inputs")
+	@Parameter(names="-n", descriptionKey="help.param.inputs")
 	protected List<String> inputs = new LinkedList<String>();
 
 	@Override

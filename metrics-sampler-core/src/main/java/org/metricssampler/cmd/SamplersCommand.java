@@ -15,7 +15,7 @@ import com.beust.jcommander.Parameter;
  * operates on all samplers.
  */
 public abstract class SamplersCommand extends ConfigurationCommand {
-	@Parameter(names = "-s", descriptionKey="help.param.samplers")
+	@Parameter(names = "-n", descriptionKey="help.param.samplers")
 	protected List<String> samplers = new LinkedList<String>();
 
 	@Override
@@ -46,7 +46,7 @@ public abstract class SamplersCommand extends ConfigurationCommand {
 
 	/**
 	 * Invoked within the loop over the samplers
-	 * 
+	 *
 	 * @param sampler
 	 */
 	protected abstract void process(Sampler sampler);

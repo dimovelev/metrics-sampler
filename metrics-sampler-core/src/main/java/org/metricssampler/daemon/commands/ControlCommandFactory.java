@@ -9,4 +9,7 @@ public interface ControlCommandFactory {
 	ControlCommand enableSamplerForDuration(String name, long seconds);
 	ControlCommand resetSampler(String name);
 	ControlCommand invalidSyntax(String line, String msg);
+	ControlCommand startResource(String name);
+	ControlCommand stopResource(String name);
+	ControlCommand listSampler(String name);
 }

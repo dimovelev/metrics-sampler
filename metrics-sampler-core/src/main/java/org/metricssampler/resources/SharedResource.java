@@ -7,5 +7,6 @@ import java.util.Map;
  */
 public interface SharedResource {
 	void shutdown();
+	void startup();
 	Map<String, Object> getStats();
 }

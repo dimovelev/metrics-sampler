@@ -34,12 +34,21 @@ public class JdbcConnectionPool implements SharedResource {
 	);
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final JdbcConnectionPoolConfig config;
-	private final PooledDataSource datasource;
+	private PooledDataSource datasource;
 
 	public JdbcConnectionPool(final JdbcConnectionPoolConfig config) {
 		this.config = config;
-		datasource = createDataSource(config);
+		startup();
 		GlobalRegistry.getInstance().addSharedResource(this);
+	}
+
+	@Override
+	public void startup() {
+		if (datasource == null) {
+			datasource = createDataSource(config);
+		} else {
+			logger.warn("Cannot startup as already started. Use shutdown first");
+		}
 	}
 
 	protected ComboPooledDataSource createDataSource(final JdbcConnectionPoolConfig config) {
@@ -72,6 +81,12 @@ public class JdbcConnectionPool implements SharedResource {
 		return datasource.getConnection();
 	}
 
+	protected void assertStarted() {
+		if (datasource == null) {
+			throw new IllegalStateException("I must be started to do that");
+		}
+	}
+
 	@Override
 	public void shutdown() {
 		try {
@@ -81,6 +96,7 @@ public class JdbcConnectionPool implements SharedResource {
 		} catch (final SQLException e) {
 			logger.warn("Failed to close JDBC connection pool " + config.getName(), e);
 		}
+		datasource = null;
 	}
 
 	@Override

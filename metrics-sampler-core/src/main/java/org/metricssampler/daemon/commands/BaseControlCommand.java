@@ -22,4 +22,10 @@ public abstract class BaseControlCommand implements ControlCommand {
 		writer.write('\n');
 		writer.flush();
 	}
+
+	protected void respondIntermediate(final String line) throws IOException {
+		System.out.println("BOOO");
+		writer.write(line);
+		writer.write('\n');
+	}
 }

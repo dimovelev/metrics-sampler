@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.apache.commons.io.IOUtils;
 import org.metricssampler.service.Bootstrapper;
 import org.metricssampler.service.DefaultBootstrapper;
 
@@ -20,8 +21,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 public abstract class ControlCommand extends BootstrappedCommand {
 	@ParametersDelegate
-	private ControlCommandDelegate control = new ControlCommandDelegate();
-	
+	private final ControlCommandDelegate control = new ControlCommandDelegate();
+
 	@Override
 	protected Bootstrapper createBootstrapper() {
 		return DefaultBootstrapper.bootstrap(control.getHost(), control.getPort());
@@ -38,7 +39,7 @@ public abstract class ControlCommand extends BootstrappedCommand {
 			writer.write(cmd);
 			writer.write("\n");
 			writer.flush();
-			return reader.readLine();
+			return IOUtils.toString(reader);
 		} finally {
 			closeQuietly(writer);
 			closeQuietly(reader);

@@ -7,21 +7,15 @@ import java.util.Map;
 
 import org.metricssampler.resources.SamplerTask;
 
-public class ResetSamplerControlCommand extends SamplerTaskCommand {
+public class ResetSamplerControlCommand extends MapEntryCommand<SamplerTask> {
 	protected ResetSamplerControlCommand(final BufferedReader reader, final BufferedWriter writer, final Map<String, SamplerTask> tasks, final String name) {
 		super(reader, writer, tasks, name);
 	}
 
 	@Override
-	public void execute() throws IOException {
-		executeOnMatchingTasks(new SamplerTaskAction() {
-			@Override
-			public void execute(final SamplerTask task, final BufferedWriter writer) throws IOException {
-				logger.info("Resetting sampler \"{}\"", task.getName());
-				task.reset();
-				respond("Sampler \"" + task.getName() + "\" resetted");
-			}
-		});
+	protected void processMatchingItem(final SamplerTask task, final BufferedWriter writer) throws IOException {
+		logger.info("Resetting sampler \"{}\"", task.getName());
+		task.reset();
+		respond("Sampler \"" + task.getName() + "\" resetted");
 	}
-
 }

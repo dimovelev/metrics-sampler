@@ -18,13 +18,13 @@ public class Daemon {
 
 	private Thread controllerThread;
 	private final Map<String, SamplerTask> tasks = new HashMap<String, SamplerTask>();
-	
+
 	public Daemon(final Bootstrapper bootstrapper) {
 		this.bootstrapper = bootstrapper;
 	}
 
 	/**
-	 * The order of operations is significant here: 
+	 * The order of operations is significant here:
 	 * <ol>
 	 * <li>Setup the thread pool</li>
 	 * <li>Create the controller which makes sure there is no other process running on the
@@ -41,7 +41,7 @@ public class Daemon {
 
 	private void createController() {
 		try {
-			final Runnable controller = new DefaultTCPController(bootstrapper, tasks);
+			final Runnable controller = new DefaultTCPController(bootstrapper, tasks, bootstrapper.getSharedResources());
 			controllerThread = new Thread(controller);
 		} catch (final IllegalStateException e) {
 			logger.error(e.getMessage(), e);

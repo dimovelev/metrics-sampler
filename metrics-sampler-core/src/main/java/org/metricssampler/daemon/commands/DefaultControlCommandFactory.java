@@ -23,7 +23,7 @@ public class DefaultControlCommandFactory implements ControlCommandFactory {
 	public DisableSamplerControlCommand disableSampler(final String name) {
 		return new DisableSamplerControlCommand(controller.getClientReader(), controller.getClientWriter(), controller.getTasks(), name);
 	}
-	
+
 	@Override
 	public ResetSamplerControlCommand resetSampler(final String name) {
 		return new ResetSamplerControlCommand(controller.getClientReader(), controller.getClientWriter(), controller.getTasks(), name);
@@ -48,5 +48,21 @@ public class DefaultControlCommandFactory implements ControlCommandFactory {
 	public InvalidSyntaxCommand invalidSyntax(final String line, final String msg) {
 		return new InvalidSyntaxCommand(controller.getClientReader(), controller.getClientWriter(), line, msg);
 	}
+
+	@Override
+	public ControlCommand startResource(final String name) {
+		return new StartResourceCommand(controller.getClientReader(), controller.getClientWriter(), controller.getSharedResources(), name);
+	}
+
+	@Override
+	public ControlCommand stopResource(final String name) {
+		return new StopResourceCommand(controller.getClientReader(), controller.getClientWriter(), controller.getSharedResources(), name);
+	}
+
+	@Override
+	public ControlCommand listSampler(final String name) {
+		return new ListSamplerCommand(controller.getClientReader(), controller.getClientWriter(), controller.getTasks(), name);
+	}
+
 
 }

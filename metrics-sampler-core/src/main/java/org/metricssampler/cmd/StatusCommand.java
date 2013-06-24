@@ -16,11 +16,11 @@ public class StatusCommand extends ControlCommand {
 
 	protected String checkStatus(final String host, final int port) {
 		try {
-			final String response = execute(host, port, "status");
+			final String response = execute(host, port, "status").trim();
 			if ("ok".equals(response)) {
 				return "Running [port " + port + "]";
 			} else {
-				return "Running on control port " + port + " but responded with: " + response;
+				return "Running on control port " + port + " but responded with: \"" + response + "\"";
 			}
 		} catch (final ConnectException e) {
 			return "Stopped";

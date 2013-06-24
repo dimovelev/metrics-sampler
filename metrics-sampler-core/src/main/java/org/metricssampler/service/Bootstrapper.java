@@ -1,6 +1,9 @@
 package org.metricssampler.service;
 
+import java.util.Map;
+
 import org.metricssampler.config.Configuration;
+import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
 
 public interface Bootstrapper extends GlobalObjectFactory {
@@ -9,4 +12,5 @@ public interface Bootstrapper extends GlobalObjectFactory {
 	int getControlPort();
 	String getControlHost();
 	void shutdown();
+	Map<String, SharedResource> getSharedResources();
 }
