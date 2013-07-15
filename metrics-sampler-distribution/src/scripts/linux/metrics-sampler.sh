@@ -18,6 +18,10 @@ if [ -x $BASEDIR/bin/local.sh ]; then
 	. $BASEDIR/bin/local.sh
 fi
 
+if [ -d $BASEDIR/scripts ]; then
+	chmod u+x $BASEDIR/scripts/*.sh
+fi
+
 CMD="$JAVA -cp $CLASSPATH $JAVA_OPTS $MAIN_CLASS"
 pushd $BASEDIR > /dev/null
 
