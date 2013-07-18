@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.github.dimovelev</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.6.0</version>
+		<version>0.6.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>metrics-sampler-extension-oracle-nosql</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.6.0</version>
+			<version>0.6.1-SNAPSHOT</version>
 		</dependency>
 		<!-- Download Oracle NoSQL from http://download.oracle.com/otn/nosql-database/kv-ce-1.2.123.zip and install the artefacts in your local maven repository using:
 			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvstore -Dpackaging=jar -Dversion=1.2.123 -Dfile=kvstore-1.2.123.jar -DgeneratePom=true
