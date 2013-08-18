@@ -105,7 +105,6 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 		final long timestamp = info.getEnd();
 		final Latency latency = info.getLatency();
 		result.put(new SimpleMetricName(prefix + ".totalOperations", ""), new MetricValue(timestamp, latency.getTotalOps()));
-		result.put(new SimpleMetricName(prefix + ".operationsOverflow", ""), new MetricValue(timestamp, latency.getOpsOverflow()));
 		result.put(new SimpleMetricName(prefix + ".min", ""), new MetricValue(timestamp, latency.getMin()));
 		result.put(new SimpleMetricName(prefix + ".max", ""), new MetricValue(timestamp, latency.getMax()));
 		result.put(new SimpleMetricName(prefix + ".avg", ""), new MetricValue(timestamp, Math.round(latency.getAvg())));
