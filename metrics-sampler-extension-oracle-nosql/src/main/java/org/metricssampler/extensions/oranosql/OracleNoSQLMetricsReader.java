@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import oracle.kv.KVStore;
 import oracle.kv.impl.admin.CommandServiceAPI;
 import oracle.kv.impl.measurement.LatencyInfo;
 import oracle.kv.impl.monitor.views.PerfEvent;
@@ -104,7 +105,9 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 	protected void addLatencyMetrics(final LatencyInfo info, final String prefix, final Map<MetricName, MetricValue> result) {
 		final long timestamp = info.getEnd();
 		final Latency latency = info.getLatency();
+		result.put(new SimpleMetricName(prefix + ".totalRequests", ""), new MetricValue(timestamp, latency.getTotalRequests()));
 		result.put(new SimpleMetricName(prefix + ".totalOperations", ""), new MetricValue(timestamp, latency.getTotalOps()));
+		result.put(new SimpleMetricName(prefix + ".overflowRequests", ""), new MetricValue(timestamp, latency.getRequestsOverflow()));
 		result.put(new SimpleMetricName(prefix + ".min", ""), new MetricValue(timestamp, latency.getMin()));
 		result.put(new SimpleMetricName(prefix + ".max", ""), new MetricValue(timestamp, latency.getMax()));
 		result.put(new SimpleMetricName(prefix + ".avg", ""), new MetricValue(timestamp, Math.round(latency.getAvg())));
@@ -120,6 +123,7 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 		for (final NodeMetrics item : nodeMetrics) {
 			final String prefix = "nodes." + item.getDataCenterName() + "." + item.getNodeName() + ".";
 			result.put(new SimpleMetricName(prefix + "avgLatency", "The trailing average latency (in ms) over all requests made to this node"), new MetricValue(timestamp, item.getAvLatencyMs()));
+			result.put(new SimpleMetricName(prefix + "failedRequestCount", ""), new MetricValue(timestamp, item.getFailedRequestCount()));
 			result.put(new SimpleMetricName(prefix + "totalRequestCount", "the total number of requests processed by the node"), new MetricValue(timestamp, item.getRequestCount()));
 			result.put(new SimpleMetricName(prefix + "maxActiveRequestCount", "the number of requests that were concurrently active for this node at this KVS client"), new MetricValue(timestamp, item.getMaxActiveRequestCount()));
 			result.put(new SimpleMetricName(prefix + "active", "1 if the node is currently active, that is, it's reachable and can service requests"), new MetricValue(timestamp, item.isActive() ? 1 : 0));
