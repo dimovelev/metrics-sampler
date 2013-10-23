@@ -13,8 +13,8 @@
 			<version>0.6.1-SNAPSHOT</version>
 		</dependency>
 		<!-- Download Oracle NoSQL from http://download.oracle.com/otn/nosql-database/kv-ce-1.2.123.zip and install the artefacts in your local maven repository using:
-			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvstore -Dpackaging=jar -Dversion=1.2.123 -Dfile=kvstore-1.2.123.jar -DgeneratePom=true
-			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvclient -Dpackaging=jar -Dversion=1.2.123 -Dfile=kvclient-1.2.123.jar -DgeneratePom=true -->
+			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvstore -Dpackaging=jar -Dversion=2.1.8 -Dfile=kvstore.jar -DgeneratePom=true
+			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvclient -Dpackaging=jar -Dversion=2.1.8 -Dfile=kvclient.jar -DgeneratePom=true -->
 		<dependency>
 			<groupId>com.oracle.nosql</groupId>
 			<artifactId>kvstore</artifactId>
