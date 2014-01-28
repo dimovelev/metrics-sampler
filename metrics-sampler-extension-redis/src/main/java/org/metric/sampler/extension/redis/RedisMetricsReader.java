@@ -1,8 +1,12 @@
 package org.metric.sampler.extension.redis;
 
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -102,23 +106,31 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 	protected void fetchMetricsFromCommands(final long timestamp, final Map<MetricName, MetricValue> result) {
 		for (final RedisCommand command : config.getCommands()) {
 			jedis.select(command.getDatabase());
-			if (command instanceof RedisLLenCommand) {
-				final RedisLLenCommand llen = (RedisLLenCommand) command;
-				final Long len = jedis.llen(llen.getKey());
-				if (len != null) {
-					result.put(new SimpleMetricName(llen.getKey() + ".len", "llen(" + llen.getKey() + ")"), new MetricValue(timestamp, len));
-				}
-			} else if (command instanceof RedisHLenCommand) {
-				final RedisHLenCommand hlen = (RedisHLenCommand) command;
-				final Long len = jedis.hlen(hlen.getKey());
-				if (len != null) {
-					result.put(new SimpleMetricName(hlen.getKey() + ".len", "hlen(" + hlen.getKey() + ")"), new MetricValue(timestamp, len));
-				}
-			} else if (command instanceof RedisSLenCommand) {
-				final RedisSLenCommand slen = (RedisSLenCommand) command;
-				final Long len = jedis.scard(slen.getKey());
-				if (len != null) {
-					result.put(new SimpleMetricName(slen.getKey() + ".len", "scard(" + slen.getKey() + ")"), new MetricValue(timestamp, len));
+			if (command instanceof RedisSizeCommand) {
+				final RedisSizeCommand size = (RedisSizeCommand) command;
+				// maybe we can cache the keys and not query them all the time. At least we could cache the types as they probably do not change for the same key name.
+				final Map<String, String> keys = determineTypes(findKeys(size.getKeyPatterns()));
+				for (Entry<String, String> entry : keys.entrySet()) {
+					final String key = entry.getKey();
+					final String keyType = entry.getValue();
+					if ("list".equals(keyType)) {
+						final Long len = jedis.llen(key);
+						if (len != null) {
+							result.put(new SimpleMetricName(key + ".len", "llen(" + key + ")"), new MetricValue(timestamp, len));
+						}
+					} else if ("set".equals(keyType)) {
+						final Long len = jedis.scard(key);
+						if (len != null) {
+							result.put(new SimpleMetricName(key + ".len", "scard(" + key + ")"), new MetricValue(timestamp, len));
+						}
+					} else if ("hash".equals(keyType)) {
+						final Long len = jedis.hlen(key);
+						if (len != null) {
+							result.put(new SimpleMetricName(key + ".len", "hlen(" + key + ")"), new MetricValue(timestamp, len));
+						}
+					} else {
+						logger.debug("Unsupported type \"" + keyType + "\" for key \"" + key + "\"");
+					}
 				}
 			} else {
 				throw new ConfigurationException("Unsupported redis command: " + command);
@@ -131,4 +143,19 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 		return readAllMetrics().keySet();
 	}
 
+	protected Set<String> findKeys(Set<String> patterns) {
+		final Set<String> result = new HashSet<String>();
+		for (final String pattern : patterns) {
+			result.addAll(jedis.keys(pattern));
+		}
+		return Collections.unmodifiableSet(result);
+	}
+	
+	protected Map<String, String> determineTypes(Set<String> keys) {
+		final Map<String, String> result = new HashMap<String, String>();
+		for (final String key : keys) {
+			result.put(key, jedis.type(key));
+		}
+		return Collections.unmodifiableMap(result);
+	}
 }

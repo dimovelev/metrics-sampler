@@ -5,9 +5,8 @@
 				<string name="string" value="value" />
 			</variables>
 			<commands>
-				<redis-llen database="1" key="list" />
-				<redis-hlen database="2" key="hash" />
-				<redis-slen database="3" key="set" />
+				<redis-size database="1" keys="list" />
+				<redis-size database="2" keys="hash,set" />
 			</commands>
 		</redis> 
 		<redis name="redis" parent="template" />
