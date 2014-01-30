@@ -1,0 +1,33 @@
+<configuration>
+	<selector-groups>
+        <selector-group name="hotspot6.all">
+            <use-group name="hotspot6.classloading"/>
+            <use-group name="hotspot6.threads"/>
+            <use-group name="hotspot6.compilation"/>
+            <use-group name="hotspot6.os"/>
+            <use-group name="hotspot6.gc"/>
+            <use-group name="hotspot6.memory"/>
+        </selector-group>
+		<selector-group name="hotspot6.classloading">
+	        <regexp from-name="java\.lang:type=ClassLoading\.(TotalLoadedClassCount|LoadedClassCount|UnloadedClassCount)" to-name="${prefix}.classloading.${name[1]}"/>
+        </selector-group>
+		<selector-group name="hotspot6.threads">
+	        <regexp from-name="java\.lang:type=Threading\.(ThreadCount|TotalStartedThreadCount|PeakThreadCount|DaemonThreadCount)" to-name="${prefix}.threads.${name[1]}"/>
+        </selector-group>
+        <selector-group name="hotspot6.compilation">
+	        <regexp from-name="java\.lang:type=Compilation\.(TotalCompilationTime)" to-name="${prefix}.compilation.${name[1]}"/>
+        </selector-group>
+        <selector-group name="hotspot6.os">
+	        <regexp from-name="java\.lang:type=OperatingSystem\.(AvailableProcessors|CommittedVirtualMemorySize|FreePhysicalMemorySize|FreeSwapSpaceSize|MaxFileDescriptorCount|OpenFileDescriptorCount|TotalPhysicalMemorySize|TotalSwapSpaceSize)" to-name="${prefix}.os.${name[1]}"/>
+        </selector-group>
+        <selector-group name="hotspot6.gc">
+	        <regexp from-name="java\.lang:name=(.+),type=GarbageCollector\.(CollectionCount|CollectionTime)" to-name="${prefix}.gc.${name[1]}.${name[2]}"/>
+        </selector-group>
+        <selector-group name="hotspot6.memory">
+	        <regexp from-name="java\.lang:name=(.+),type=MemoryPool\.Usage#(.*)" to-name="${prefix}.memory.${name[1]}.current.${name[2]}"/>
+	        <regexp from-name="java\.lang:name=(.+),type=MemoryPool\.PeakUsage#(.*)" to-name="${prefix}.memory.${name[1]}.peak.${name[2]}"/>
+	        <regexp from-name="java\.lang:type=Memory\.HeapMemoryUsage#(.*)" to-name="${prefix}.memory.heap.current.${name[1]}"/>
+	        <regexp from-name="java\.lang:type=Memory\.NonHeapMemoryUsage#(.*)" to-name="${prefix}.memory.nonheap.current.${name[1]}"/>
+        </selector-group>
+	</selector-groups>
+</configuration>
