@@ -14,9 +14,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.metricssampler.extensions.webmethods.parser.DiagnosticDataParser;
 import org.metricssampler.extensions.webmethods.parser.Unzipper;
-import org.metricssampler.reader.HttpMetricsReader;
+import org.metricssampler.reader.BaseHttpMetricsReader;
 
-public class WebMethodsMetricsReader extends HttpMetricsReader<WebMethodsInputConfig> {
+public class WebMethodsMetricsReader extends BaseHttpMetricsReader<WebMethodsInputConfig> {
 	private final DiagnosticDataParser parser;
 
 	public WebMethodsMetricsReader(final WebMethodsInputConfig config) {

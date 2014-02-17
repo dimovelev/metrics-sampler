@@ -1,0 +1,9 @@
+<configuration>
+	<inputs>
+		<http name="http" url="http://localhost">
+			<regexp-response-parser>
+				<regexp-line-format expression="\s*(.+)\s*=\s*(.+)\s*" name-index="1" value-index="2" />
+			</regexp-response-parser>
+		</http>
+	</inputs>
+</configuration>

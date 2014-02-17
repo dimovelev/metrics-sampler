@@ -4,7 +4,6 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,11 +16,11 @@ import org.metricssampler.extensions.apachestatus.parsers.GenericLineParser;
 import org.metricssampler.extensions.apachestatus.parsers.ModQosParser;
 import org.metricssampler.extensions.apachestatus.parsers.ScoreboardParser;
 import org.metricssampler.extensions.apachestatus.parsers.StatusLineParser;
-import org.metricssampler.reader.HttpMetricsReader;
+import org.metricssampler.reader.BaseHttpMetricsReader;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricValue;
 
-public class ApacheStatusMetricsReader extends HttpMetricsReader<ApacheStatusInputConfig> {
+public class ApacheStatusMetricsReader extends BaseHttpMetricsReader<ApacheStatusInputConfig> {
 	private final List<StatusLineParser> lineParsers = Arrays.asList(new ModQosParser(), new ScoreboardParser(), new GenericLineParser());
 
 	public ApacheStatusMetricsReader(final ApacheStatusInputConfig config) {
@@ -32,8 +31,7 @@ public class ApacheStatusMetricsReader extends HttpMetricsReader<ApacheStatusInp
 	protected void processResponse(final HttpResponse response) throws IOException {
 		final HttpEntity entity = response.getEntity();
 		if (entity != null) {
-			final Charset charset = parseCharset(entity);
-		    final InputStreamReader reader = new InputStreamReader(entity.getContent(), charset);
+		    final InputStreamReader reader = streamEntity(entity);
 		    try {
 				final LineIterator lines = new LineIterator(reader);
 				try {

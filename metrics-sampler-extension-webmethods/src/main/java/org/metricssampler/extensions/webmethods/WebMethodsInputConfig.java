@@ -7,9 +7,9 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.Map;
 
-import org.metricssampler.config.HttpInputConfig;
+import org.metricssampler.config.BaseHttpInputConfig;
 
-public class WebMethodsInputConfig extends HttpInputConfig {
+public class WebMethodsInputConfig extends BaseHttpInputConfig {
 	private final long maxEntrySize;
 	private final DateFormat dateFormat;
 

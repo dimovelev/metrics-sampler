@@ -5,13 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.loader.xbeans.HttpInputXBean;
+import org.metricssampler.config.loader.xbeans.BaseHttpInputXBean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("webmethods")
-public class WebMethodsInputXBean extends HttpInputXBean {
+public class WebMethodsInputXBean extends BaseHttpInputXBean {
 	public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
 
 	@XStreamAsAttribute
@@ -41,7 +41,7 @@ public class WebMethodsInputXBean extends HttpInputXBean {
 	@Override
 	protected WebMethodsInputConfig createConfig() {
 		final Map<String, String> httpHeaders = getHeadersAsMap();
-		return new WebMethodsInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), httpHeaders,  isPreemptiveAuth(), maxEntrySize != null ? maxEntrySize : Long.MAX_VALUE, parseDateFormat());
+		return new WebMethodsInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), httpHeaders,  isPreemptiveAuthEnabled(), maxEntrySize != null ? maxEntrySize : Long.MAX_VALUE, parseDateFormat());
 	}
 
 	protected DateFormat parseDateFormat() {

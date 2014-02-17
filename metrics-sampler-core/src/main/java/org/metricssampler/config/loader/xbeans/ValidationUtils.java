@@ -5,6 +5,8 @@ import static org.metricssampler.util.StringUtils.camelCaseToSplit;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.metricssampler.config.ConfigurationException;
 
@@ -21,7 +23,7 @@ public final class ValidationUtils {
 		}
 		return camelCaseToSplit(xbean.getClass().getSimpleName(), "-");
 	}
-	
+
 	private static String determineBeanName(final Object xbean) {
 		final String tag = determineTagNameForBean(xbean);
 		if (xbean instanceof NamedXBean) {
@@ -30,10 +32,16 @@ public final class ValidationUtils {
 			return tag;
 		}
 	}
-	
+
 	public static void notEmpty(final Object xbean, final String name, final String value) {
 		if (value == null || value.equals("")) {
 			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " is mandatory");
+		}
+	}
+
+	public static void notNull(final Object xbean, final String name, final Object value) {
+		if (value == null) {
+			throw new ConfigurationException("Element \"" + name + "\" of " + determineBeanName(xbean) + " is mandatory");
 		}
 	}
 
@@ -69,7 +77,7 @@ public final class ValidationUtils {
 			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " with value " + value + " is not a valid number greater than 0");
 		}
 	}
-	
+
 	public static void notNegative(final Object xbean, final String name, final Integer value) {
 		if (value == null) {
 			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " is mandatory");
@@ -78,11 +86,21 @@ public final class ValidationUtils {
 			throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " with value " + value + " is not a valid number greater than or equal to 0");
 		}
 	}
-	
+
 	public static void notNegativeOptional(final Object xbean, final String name, final Integer value) {
 		if (value != null) {
 			if (value < 0) {
 				throw new ConfigurationException("Attribute \"" + name + "\" of " + determineBeanName(xbean) + " with value " + value + " is not a valid number greater than or equal to 0");
+			}
+		}
+	}
+
+	public static void validPattern(final Object xbean, final String name, final String value) {
+		if (value != null) {
+			try {
+				Pattern.compile(value);
+			} catch (final PatternSyntaxException e) {
+				throw new ConfigurationException("Value \"" + value + "\" of attribute \"" + name + "\" of " + determineBeanName(xbean) + " must be a valid regular expression but compiling it failed with error: " + e.getMessage(), e);
 			}
 		}
 	}

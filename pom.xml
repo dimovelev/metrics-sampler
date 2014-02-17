@@ -50,6 +50,7 @@
 		<module>metrics-sampler-extension-jmx</module>
 		<module>metrics-sampler-extension-graphite</module>
 		<module>metrics-sampler-extension-apache-status</module>
+		<module>metrics-sampler-extension-http</module>
 		<module>metrics-sampler-extension-jdbc</module>
 		<module>metrics-sampler-extension-redis</module>
 		<module>metrics-sampler-extension-oracle-nosql</module>

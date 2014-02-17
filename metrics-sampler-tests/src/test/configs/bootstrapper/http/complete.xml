@@ -1,0 +1,17 @@
+<configuration>
+	<inputs>
+		<http name="http.base" url="http://localhost" username="username" password="password" preemptive-auth="false" template="true">
+			<headers>
+				<entry key="header" value="val" />
+			</headers>
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+			<regexp-response-parser>
+				<regexp-line-format expression="\s*(\S+)\s*=\s*(\S+)\s*" name-index="1" value-index="2" />
+				<regexp-line-format expression="\s*(\S+)\s*:\s*(\S+)\s*" name-index="1" value-index="2" />
+			</regexp-response-parser>
+		</http>
+		<http name="http" parent="http.base" />
+	</inputs>
+</configuration>

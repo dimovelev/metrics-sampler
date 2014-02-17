@@ -3,9 +3,9 @@ package org.metricssampler.extensions.apachestatus;
 import java.net.URL;
 import java.util.Map;
 
-import org.metricssampler.config.HttpInputConfig;
+import org.metricssampler.config.BaseHttpInputConfig;
 
-public class ApacheStatusInputConfig extends HttpInputConfig {
+public class ApacheStatusInputConfig extends BaseHttpInputConfig {
 
 	protected ApacheStatusInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username, final String password,
 			final Map<String, String> headers, final boolean preemptiveAuthEnabled) {

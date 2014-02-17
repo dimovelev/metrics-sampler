@@ -98,6 +98,15 @@ Check out the following configuration as a quick-start:
 					<entry key="METRIC" value="a.b.c" />
 				</environment>
 			</exec>
+			<!-- Fetch the given URL over HTTP (you can also provide credentials, custom headers, etc). The response is parsed line by line using regular expressions. The first expression that matches the line wins.
+			     In this example we expect the lines to have either name=value or name:value formats. If non of the regexes match, the line is ignored. There will probably be more response parsers coming in the future -->
+			<http name="http1" url="http://localhost/query_metrics.php?format=csv" username="user" password="pass">
+				<regexp-response-parser>
+					<!-- In this case we could have used one single regular expression for both line formats. For the sake of the example we used two to show that we can have as many as we want -->
+					<regexp-line-format expression="\s*(\S+)\s*=\s*(\S+)\s*" name-index="1" value-index="2" />
+					<regexp-line-format expression="\s*(\S+)\s*:\s*(\S+)\s*" name-index="1" value-index="2" />
+				</regexp-response-parser>
+			</http>
 		</inputs>
 		<outputs>
 			<!-- Write to the standard output -->
@@ -225,6 +234,12 @@ Check out the following configuration as a quick-start:
 				<selectors>
 					<regexp from-name="(.*)" to-name="${name[1]}" />
 				</selectors>
+			</sampler>
+
+			<sampler input="http1" interval="10">
+	 			<selectors>
+	 				<regexp from-name="(.*)" to-name="${name[1]}" />
+	 			</selectors>
 			</sampler>
 		</samplers>
 	</configuration>

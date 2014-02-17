@@ -6,14 +6,14 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
-public abstract class HttpInputConfig extends InputConfig {
+public abstract class BaseHttpInputConfig extends InputConfig {
 	private final URL url;
 	private final String username;
 	private final String password;
 	private final Map<String, String> headers;
 	private final boolean preemptiveAuthEnabled;
 
-	protected HttpInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username,
+	protected BaseHttpInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username,
 			final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled) {
 		super(name, variables);
 		checkArgumentNotNull(url, "url");

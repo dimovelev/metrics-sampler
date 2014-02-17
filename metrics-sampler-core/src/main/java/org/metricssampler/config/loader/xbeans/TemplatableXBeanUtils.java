@@ -55,7 +55,7 @@ public class TemplatableXBeanUtils {
 			final Map<String, Object> templateProperties = PropertyUtils.describe(parent);
 			templateProperties.remove("name");
 			templateProperties.remove("template");
-			
+
 			@SuppressWarnings("unchecked")
 			final Map<String, Object> targetProperties = PropertyUtils.describe(target);
 			for (final Entry<String, Object> entry : targetProperties.entrySet()) {

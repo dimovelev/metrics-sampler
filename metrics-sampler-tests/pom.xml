@@ -59,5 +59,10 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+		 <groupId>com.github.dimovelev</groupId>
+		 <artifactId>metrics-sampler-extension-http</artifactId>
+		 <version>0.6.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

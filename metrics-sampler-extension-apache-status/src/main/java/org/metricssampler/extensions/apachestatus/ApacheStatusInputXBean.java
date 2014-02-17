@@ -1,15 +1,15 @@
 package org.metricssampler.extensions.apachestatus;
 
-import org.metricssampler.config.loader.xbeans.HttpInputXBean;
+import org.metricssampler.config.loader.xbeans.BaseHttpInputXBean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("apache-status")
-public class ApacheStatusInputXBean extends HttpInputXBean {
+public class ApacheStatusInputXBean extends BaseHttpInputXBean {
 
 	@Override
 	protected ApacheStatusInputConfig createConfig() {
-		return new ApacheStatusInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), getHeadersAsMap(), isPreemptiveAuth());
+		return new ApacheStatusInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), getHeadersAsMap(), isPreemptiveAuthEnabled());
 	}
 
 }

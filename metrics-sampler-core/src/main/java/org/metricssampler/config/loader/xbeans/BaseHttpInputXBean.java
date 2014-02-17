@@ -10,11 +10,10 @@ import java.util.Map;
 
 import org.metricssampler.config.ConfigurationException;
 
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public abstract class HttpInputXBean extends InputXBean {
+public abstract class BaseHttpInputXBean extends InputXBean {
 	@XStreamAsAttribute
 	private String url;
 
@@ -30,7 +29,7 @@ public abstract class HttpInputXBean extends InputXBean {
 
 	private List<EntryXBean> headers;
 
-	public HttpInputXBean() {
+	public BaseHttpInputXBean() {
 		super();
 	}
 
@@ -69,7 +68,7 @@ public abstract class HttpInputXBean extends InputXBean {
 	@Override
 	protected void validate() {
 		super.validate();
-		validUrl("url", "http reader", url);
+		validUrl(this, "url", url);
 	}
 
 	protected Map<String, String> getHeadersAsMap() {
@@ -83,8 +82,16 @@ public abstract class HttpInputXBean extends InputXBean {
 		return result;
 	}
 
-	protected boolean isPreemptiveAuth() {
-		return preemptiveAuth != null ? preemptiveAuth : true;
+	public void setPreemptiveAuth(final Boolean preemptiveAuth) {
+		this.preemptiveAuth = preemptiveAuth;
+	}
+
+	public Boolean getPreemptiveAuth() {
+		return preemptiveAuth;
+	}
+
+	public boolean isPreemptiveAuthEnabled() {
+		return getPreemptiveAuth() != null ? getPreemptiveAuth() : true;
 	}
 
 	protected URL parseUrl() {

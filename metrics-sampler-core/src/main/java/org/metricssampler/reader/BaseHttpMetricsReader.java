@@ -1,5 +1,7 @@
 package org.metricssampler.reader;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -22,17 +24,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.HttpInputConfig;
+import org.metricssampler.config.BaseHttpInputConfig;
 import org.metricssampler.service.ApplicationInfo;
 import org.metricssampler.util.VariableUtils;
 
-public abstract class HttpMetricsReader<T extends HttpInputConfig> extends AbstractMetricsReader<T> implements BulkMetricsReader {
+public abstract class BaseHttpMetricsReader<T extends BaseHttpInputConfig> extends AbstractMetricsReader<T> implements BulkMetricsReader {
 	private final DefaultHttpClient httpClient;
 	private final HttpGet httpRequest;
 	private final HttpContext httpContext;
 	protected Map<MetricName, MetricValue> values;
 
-	public HttpMetricsReader(final T config) {
+	public BaseHttpMetricsReader(final T config) {
 		super(config);
 		httpClient = setupClient();
 		httpRequest = setupRequest();
@@ -118,6 +120,12 @@ public abstract class HttpMetricsReader<T extends HttpInputConfig> extends Abstr
 	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
 		return Collections.unmodifiableMap(values);
+	}
+
+	protected InputStreamReader streamEntity(final HttpEntity entity) throws IOException {
+		final Charset charset = parseCharset(entity);
+		final InputStreamReader reader = new InputStreamReader(entity.getContent(), charset);
+		return reader;
 	}
 
 }
