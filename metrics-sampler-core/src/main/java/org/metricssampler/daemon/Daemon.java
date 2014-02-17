@@ -17,7 +17,7 @@ public class Daemon {
 	private final Bootstrapper bootstrapper;
 
 	private Thread controllerThread;
-	private final Map<String, SamplerTask> tasks = new HashMap<String, SamplerTask>();
+	private final Map<String, SamplerTask> tasks = new HashMap<>();
 
 	public Daemon(final Bootstrapper bootstrapper) {
 		this.bootstrapper = bootstrapper;

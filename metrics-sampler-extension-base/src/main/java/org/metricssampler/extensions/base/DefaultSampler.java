@@ -59,7 +59,7 @@ public class DefaultSampler implements Sampler {
 	}
 
 	private Map<String, Object> prepareVariables() {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		result.putAll(config.getGlobalVariables());
 		result.putAll(reader.getVariables());
 		result.putAll(config.getVariables());
@@ -132,7 +132,7 @@ public class DefaultSampler implements Sampler {
 			return metrics;
 		} else {
 			logger.debug("Transforming values");
-			final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
+			final Map<String, MetricValue> result = new HashMap<>();
 			for (final Entry<String, MetricValue> entry : metrics.entrySet()) {
 				final MetricValue newValue = transformValue(entry.getKey(), entry.getValue());
 				result.put(entry.getKey(), newValue);
@@ -171,7 +171,7 @@ public class DefaultSampler implements Sampler {
 		reader.open();
 
 		logger.debug("Reading metrics from {}", reader);
-		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
+		final Map<String, MetricValue> result = new HashMap<>();
 		for (final MetricsSelector selector : selectors) {
 			logger.debug("Reading metrics from {} via {}", reader, selector);
 			final Map<String, MetricValue> metrics = selector.readMetrics(reader);

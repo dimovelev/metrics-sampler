@@ -4,10 +4,9 @@ import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 
-import org.apache.commons.io.IOUtils;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.loader.FileGlobProcessor.MatchingFileVisitor;
@@ -51,15 +50,13 @@ public class ConfigurationLoader {
 			return result.toConfig();
 		} catch (final XStreamException e) {
 			throw new ConfigurationException("Failed to load configuration from \"" + file.getAbsolutePath() + "\"", e);
-		} catch (final FileNotFoundException e) {
+		} catch (final IOException e) {
 			throw new ConfigurationException("Failed to load configuration from \"" + file.getAbsolutePath() + "\"", e);
 		}
 	}
 
-	protected ConfigurationXBean loadFile(final File file, final XStream xstream) throws FileNotFoundException {
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
+	protected ConfigurationXBean loadFile(final File file, final XStream xstream) throws IOException {
+		try(final FileInputStream fis = new FileInputStream(file)) {
 			final TrimmingReaderWrapper reader = new TrimmingReaderWrapper(driver.createReader(fis));
 			final ConfigurationXBean result = (ConfigurationXBean) xstream.unmarshal(reader);
 			if (result.getIncludes() != null) {
@@ -70,8 +67,6 @@ public class ConfigurationLoader {
 				}
 			}
 			return result;
-		} finally {
-			IOUtils.closeQuietly(fis);
 		}
 	}
 
@@ -111,8 +106,8 @@ public class ConfigurationLoader {
 		public String getAttribute(final String name) {
 			return StringUtils.trim(super.getAttribute(name));
 		}
-		
-		
+
+
 		@Override
 		public String getAttribute(final int index) {
 			return StringUtils.trim(super.getAttribute(index));

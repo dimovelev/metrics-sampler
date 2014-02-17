@@ -12,7 +12,7 @@ import de.odysseus.el.util.SimpleContext;
 
 public class ELFactory {
 	private final ExpressionFactory factory;
-	private final Map<String, Method> functions = new HashMap<String, Method>();
+	private final Map<String, Method> functions = new HashMap<>();
 	
 	public ELFactory() {
 		factory = ExpressionFactory.newInstance();

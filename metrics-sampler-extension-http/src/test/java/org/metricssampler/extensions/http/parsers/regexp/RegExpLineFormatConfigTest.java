@@ -23,7 +23,7 @@ public class RegExpLineFormatConfigTest {
 	@Before
 	public void setUp() {
 		testee = new RegExpLineFormat(Pattern.compile("\\s*(\\S+)\\s*=\\s*(\\S+)\\s*"), 1, 2);
-		values = new HashMap<MetricName, MetricValue>();
+		values = new HashMap<>();
 		timestamp = System.currentTimeMillis();
 	}
 

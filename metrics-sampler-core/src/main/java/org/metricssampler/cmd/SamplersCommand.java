@@ -16,11 +16,11 @@ import com.beust.jcommander.Parameter;
  */
 public abstract class SamplersCommand extends ConfigurationCommand {
 	@Parameter(names = "-n", descriptionKey="help.param.samplers")
-	protected List<String> samplers = new LinkedList<String>();
+	protected List<String> samplers = new LinkedList<>();
 
 	@Override
 	protected void runBootstrapped() {
-		final Set<String> names = new HashSet<String>();
+		final Set<String> names = new HashSet<>();
 		names.addAll(samplers);
 		preProcess();
 		for (final Sampler sampler : bootstrapper.getSamplers()) {

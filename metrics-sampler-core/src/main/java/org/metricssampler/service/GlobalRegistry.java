@@ -14,8 +14,8 @@ public class GlobalRegistry {
 		return instance;
 	}
 
-	private final Set<SamplerTask> tasks = new CopyOnWriteArraySet<SamplerTask>();
-	private final Set<SharedResource> sharedResources = new HashSet<SharedResource>();
+	private final Set<SamplerTask> tasks = new CopyOnWriteArraySet<>();
+	private final Set<SharedResource> sharedResources = new HashSet<>();
 
 	public void addSamplerTask(final SamplerTask task) {
 		tasks.add(task);

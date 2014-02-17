@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMetricsReader<T extends InputConfig> implements MetricsReader {
 	protected static final String CONFIG_VAR_PREFIX = "input";
-	protected static final Set<String> IGNORED_CONFIG_PROPERTIES = new HashSet<String>(Arrays.asList("class", "variables"));
+	protected static final Set<String> IGNORED_CONFIG_PROPERTIES = new HashSet<>(Arrays.asList("class", "variables"));
 	protected final T config;
 	protected final Logger logger;
 	protected final Logger timingsLogger;
@@ -30,7 +30,7 @@ public abstract class AbstractMetricsReader<T extends InputConfig> implements Me
 	}
 
 	private Map<String, Object> prepareVariables() {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		result.putAll(config.getVariables());
 		try {
 			@SuppressWarnings("unchecked")

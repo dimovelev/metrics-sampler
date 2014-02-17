@@ -1,7 +1,5 @@
 package org.metricssampler.extensions.apachestatus;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -17,8 +15,6 @@ import org.metricssampler.extensions.apachestatus.parsers.ModQosParser;
 import org.metricssampler.extensions.apachestatus.parsers.ScoreboardParser;
 import org.metricssampler.extensions.apachestatus.parsers.StatusLineParser;
 import org.metricssampler.reader.BaseHttpMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
 
 public class ApacheStatusMetricsReader extends BaseHttpMetricsReader<ApacheStatusInputConfig> {
 	private final List<StatusLineParser> lineParsers = Arrays.asList(new ModQosParser(), new ScoreboardParser(), new GenericLineParser());
@@ -31,21 +27,18 @@ public class ApacheStatusMetricsReader extends BaseHttpMetricsReader<ApacheStatu
 	protected void processResponse(final HttpResponse response) throws IOException {
 		final HttpEntity entity = response.getEntity();
 		if (entity != null) {
-		    final InputStreamReader reader = streamEntity(entity);
-		    try {
-				final LineIterator lines = new LineIterator(reader);
+		    try(final InputStreamReader reader = streamEntity(entity)) {
+		    	final LineIterator lines = new LineIterator(reader);
 				try {
-					values = new HashMap<MetricName, MetricValue>();
+					values = new HashMap<>();
 					final long timestamp = System.currentTimeMillis();
 					while (lines.hasNext()) {
 						final String line = lines.next();
 						parseLine(line, timestamp);
 					}
 				} finally {
-					lines.close();
+					LineIterator.closeQuietly(lines);
 				}
-		    } finally {
-		    	closeQuietly(reader);
 		    }
 		} else {
 			values = Collections.emptyMap();

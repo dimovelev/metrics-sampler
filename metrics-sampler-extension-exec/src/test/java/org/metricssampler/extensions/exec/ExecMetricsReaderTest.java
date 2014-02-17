@@ -16,7 +16,7 @@ import org.metricssampler.reader.MetricValue;
 
 public class ExecMetricsReaderTest {
 	private ExecMetricsReader testee;
-	private final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+	private final Map<MetricName, MetricValue> result = new HashMap<>();
 	
 	@Before
 	public void setup() {

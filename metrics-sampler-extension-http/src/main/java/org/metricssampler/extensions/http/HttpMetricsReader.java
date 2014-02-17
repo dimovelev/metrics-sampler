@@ -1,7 +1,5 @@
 package org.metricssampler.extensions.http;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
@@ -21,11 +19,8 @@ public class HttpMetricsReader extends BaseHttpMetricsReader<HttpInputConfig> {
 	protected void processResponse(final HttpResponse response) throws IOException {
 		final HttpEntity entity = response.getEntity();
 		if (entity != null) {
-			final InputStreamReader reader = streamEntity(entity);
-		    try {
+		    try(final InputStreamReader reader = streamEntity(entity)) {
 				values = parser.parse(response, entity, reader);
-		    } finally {
-		    	closeQuietly(reader);
 		    }
 		} else {
 			values = Collections.emptyMap();

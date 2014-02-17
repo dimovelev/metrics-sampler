@@ -24,7 +24,7 @@ public class RegExpHttpResponseParserConfigTest {
 		final RegExpLineFormat format1 = new RegExpLineFormat(Pattern.compile("\\s*(\\S+)\\s*=\\s*(\\S+)\\s*"), 1, 2);
 		final RegExpLineFormat format2 = new RegExpLineFormat(Pattern.compile("\\s*(\\S+)\\s*:\\s*(\\S+)\\s*"), 1, 2);
 		testee = new RegExpHttpResponseParser(Arrays.asList(format1, format2));
-		values = new HashMap<MetricName, MetricValue>();
+		values = new HashMap<>();
 		timestamp = System.currentTimeMillis();
 	}
 

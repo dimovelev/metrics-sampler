@@ -68,7 +68,7 @@ public class ExecMetricsReader extends AbstractMetricsReader<ExecInputConfig> im
 	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() {
 		assert process != null;
-		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+		final Map<MetricName, MetricValue> result = new HashMap<>();
 		addMetricsFromOutput(result);
 		return result;
 	}

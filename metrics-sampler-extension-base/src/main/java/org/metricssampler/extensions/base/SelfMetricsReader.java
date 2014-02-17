@@ -36,7 +36,7 @@ public class SelfMetricsReader extends AbstractMetricsReader<SelfInputConfig> im
 
 	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() {
-		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+		final Map<MetricName, MetricValue> result = new HashMap<>();
 		final GlobalRegistry registry = GlobalRegistry.getInstance();
 		final long timestamp = System.currentTimeMillis();
 		for(final SamplerTask task : registry.getTasks()) {

@@ -21,7 +21,7 @@ public class JdbcOptionsXBean {
 	}
 	
 	public Map<String,String> toMap() {
-		final Map<String,String> result = new HashMap<String, String>();
+		final Map<String,String> result = new HashMap<>();
 		if (entries != null) {
 			for (final EntryXBean entry : entries) {
 				result.put(entry.getKey(), entry.getValue());

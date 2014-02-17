@@ -29,7 +29,7 @@ public abstract class AbstractFileParser {
 	}
 
 	public Map<MetricName, MetricValue> parse(final InputStream stream) throws IOException, ParseException {
-		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+		final Map<MetricName, MetricValue> result = new HashMap<>();
 		doParse(stream, result);
 		return result;
 	}

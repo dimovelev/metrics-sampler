@@ -23,7 +23,7 @@ public class DictionaryVariableXBean extends VariableXBean {
 	@Override
 	public Object getValue() {
 		super.validate();
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 		for (final EntryXBean entry : entries) {
 			entry.validate();
 			result.put(entry.getKey(), entry.getValue());

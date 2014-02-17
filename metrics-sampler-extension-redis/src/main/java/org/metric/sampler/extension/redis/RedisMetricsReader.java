@@ -80,7 +80,7 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 		reconnectIfNecessary();
 		try {
 			final long timestamp = System.currentTimeMillis();
-			final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+			final Map<MetricName, MetricValue> result = new HashMap<>();
 			fetchMetricsFromInfo(timestamp, result);
 			fetchMetricsFromCommands(timestamp, result);
 			return result;
@@ -144,7 +144,7 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 	}
 
 	protected Set<String> findKeys(Set<String> patterns) {
-		final Set<String> result = new HashSet<String>();
+		final Set<String> result = new HashSet<>();
 		for (final String pattern : patterns) {
 			result.addAll(jedis.keys(pattern));
 		}
@@ -152,7 +152,7 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 	}
 	
 	protected Map<String, String> determineTypes(Set<String> keys) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 		for (final String key : keys) {
 			result.put(key, jedis.type(key));
 		}

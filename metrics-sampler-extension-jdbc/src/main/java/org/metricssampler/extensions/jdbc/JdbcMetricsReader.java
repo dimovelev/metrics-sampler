@@ -70,7 +70,7 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
 		assertConnected();
-		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+		final Map<MetricName, MetricValue> result = new HashMap<>();
 		for (final String query : config.getQueries()) {
 			readMetricsFromQuery(query, result);
 		}

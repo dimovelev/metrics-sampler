@@ -1,7 +1,5 @@
 package org.metricssampler.cmd;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,21 +27,15 @@ public abstract class ControlCommand extends BootstrappedCommand {
 	}
 
 	protected String execute(final String host, final int port, final String cmd) throws UnknownHostException, IOException {
-		Socket socket = null;
-		BufferedWriter writer = null;
-		BufferedReader reader = null;
-		try {
-			socket = new Socket(host, port);
-			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			writer.write(cmd);
-			writer.write("\n");
-			writer.flush();
-			return IOUtils.toString(reader);
-		} finally {
-			closeQuietly(writer);
-			closeQuietly(reader);
-			closeQuietly(socket);
+		try(final Socket socket = new Socket(host, port)) {
+			try(final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+				try(final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+					writer.write(cmd);
+					writer.write("\n");
+					writer.flush();
+					return IOUtils.toString(reader);
+				}
+			}
 		}
 	}
 

@@ -14,11 +14,11 @@ public class VariableReplacerTest {
 	
 	@Before
 	public void setup() {
-		replacements = new HashMap<String, Object>();
+		replacements = new HashMap<>();
 		replacements.put("first", "FIRST");
 		replacements.put("second", "SECOND");
 		replacements.put("third", "THIRD");
-		final Map<String, String> dict1 = new HashMap<String, String>();
+		final Map<String, String> dict1 = new HashMap<>();
 		dict1.put("FIRST", "THE_FIRST");
 		dict1.put("SECOND", "THE_SECOND");
 		replacements.put("dict1", dict1);
@@ -28,7 +28,7 @@ public class VariableReplacerTest {
 	
 	@Test
 	public void resolveCycle() {
-		final Map<String, Object> cycleVariables = new HashMap<String, Object>();
+		final Map<String, Object> cycleVariables = new HashMap<>();
 		cycleVariables.put("first", "${second}");
 		cycleVariables.put("second", "${third}");
 		cycleVariables.put("third", "${first}");

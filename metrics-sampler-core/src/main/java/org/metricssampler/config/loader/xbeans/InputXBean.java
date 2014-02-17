@@ -30,7 +30,7 @@ public abstract class InputXBean extends TemplatableXBean {
 	}
 	
 	protected Map<String, Object> getVariablesConfig() {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		if (variables != null) {
 			for (final VariableXBean item : variables) {
 				result.put(item.getName(), item.getValue());

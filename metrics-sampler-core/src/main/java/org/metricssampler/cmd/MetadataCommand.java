@@ -21,7 +21,7 @@ public class MetadataCommand extends ConfigurationCommand {
 
 	@Override
 	protected void runBootstrapped() {
-		final Set<String> names = new HashSet<String>();
+		final Set<String> names = new HashSet<>();
 		names.addAll(inputs);
 		final GlobalObjectFactory factory = bootstrapper;
 		for(final InputConfig input : bootstrapper.getConfiguration().getInputs()) {

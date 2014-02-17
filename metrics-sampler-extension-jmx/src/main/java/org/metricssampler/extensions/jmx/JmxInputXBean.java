@@ -125,7 +125,7 @@ public class JmxInputXBean extends InputXBean {
 		} else {
 			ignorePatterns = Collections.emptyList();
 		}
-		final Map<String, String> configConnectionProperties = new HashMap<String, String>();
+		final Map<String, String> configConnectionProperties = new HashMap<>();
 		if (connectionProperties != null) {
 			for (final EntryXBean entry : connectionProperties) {
 				configConnectionProperties.put(entry.getKey(), entry.getValue());

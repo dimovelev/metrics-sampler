@@ -100,7 +100,7 @@ public class ConfigurationXBean {
 	private Map<String, InputConfig> configureInputs(final List<InputXBean> list) {
 		final LinkedHashMap<String, InputXBean> xbeans = TemplatableXBeanUtils.sortByDependency(list);
 
-		final Map<String, InputConfig> result = new HashMap<String, InputConfig>();
+		final Map<String, InputConfig> result = new HashMap<>();
 		for (final InputXBean fromItem : xbeans.values()) {
 			TemplatableXBeanUtils.applyTemplate(fromItem, xbeans);
 			if (fromItem.isInstantiatable()) {
@@ -115,7 +115,7 @@ public class ConfigurationXBean {
 	}
 
 	private Map<String, OutputConfig> configureOutputs(final List<OutputXBean> list) {
-		final Map<String, OutputConfig> result = new HashMap<String, OutputConfig>();
+		final Map<String, OutputConfig> result = new HashMap<>();
 		if (list != null) {
 			for (final OutputXBean fromItem : list) {
 				final OutputConfig item = fromItem.toConfig();
@@ -129,7 +129,7 @@ public class ConfigurationXBean {
 	}
 
 	private Map<String, List<SelectorConfig>> configureSelectorGroups(final List<SelectorGroupXBean> items) {
-		final Map<String, SelectorGroupXBean> groups = new HashMap<String, SelectorGroupXBean>(items != null ? items.size() : 0);
+		final Map<String, SelectorGroupXBean> groups = new HashMap<>(items != null ? items.size() : 0);
 
 		if (items != null) {
 			for (final SelectorGroupXBean item : items) {
@@ -140,7 +140,7 @@ public class ConfigurationXBean {
 			}
 		}
 
-		final Map<String, List<SelectorConfig>> result = new HashMap<String, List<SelectorConfig>>();
+		final Map<String, List<SelectorConfig>> result = new HashMap<>();
 		for (final SelectorGroupXBean item : groups.values()) {
 			result.put(item.getName(), item.toConfig(groups));
 		}
@@ -166,7 +166,7 @@ public class ConfigurationXBean {
 		if (sharedResources == null) {
 			return Collections.emptyMap();
 		}
-		final Map<String, SharedResourceConfig> result = new HashMap<String, SharedResourceConfig>(sharedResources.size());
+		final Map<String, SharedResourceConfig> result = new HashMap<>(sharedResources.size());
 		for (final SharedResourceXBean item : sharedResources) {
 			if (result.containsKey(item.getName())) {
 				throw new ConfigurationException("Two shared resources with the same name \"" + item.getName() + "\"");

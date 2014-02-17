@@ -72,7 +72,7 @@ public abstract class BaseHttpInputXBean extends InputXBean {
 	}
 
 	protected Map<String, String> getHeadersAsMap() {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 		if (headers != null) {
 			for (final EntryXBean entry : headers) {
 				entry.validate();

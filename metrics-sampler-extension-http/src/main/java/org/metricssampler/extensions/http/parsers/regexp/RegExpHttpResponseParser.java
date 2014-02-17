@@ -1,7 +1,5 @@
 package org.metricssampler.extensions.http.parsers.regexp;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,20 +30,16 @@ public class RegExpHttpResponseParser implements HttpResponseParser {
 
 	@Override
 	public Map<MetricName, MetricValue> parse(final HttpResponse response, final HttpEntity entity, final InputStreamReader reader) {
-		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
-	    try {
-			final LineIterator lines = new LineIterator(reader);
-			try {
-				final long timestamp = System.currentTimeMillis();
-				while (lines.hasNext()) {
-					parseLine(result, timestamp, lines.next());
-				}
-			} finally {
-				lines.close();
+		final Map<MetricName, MetricValue> result = new HashMap<>();
+		final LineIterator lines = new LineIterator(reader);
+		try {
+			final long timestamp = System.currentTimeMillis();
+			while (lines.hasNext()) {
+				parseLine(result, timestamp, lines.next());
 			}
-	    } finally {
-	    	closeQuietly(reader);
-	    }
+		} finally {
+			lines.close();
+		}
 		return result;
 	}
 

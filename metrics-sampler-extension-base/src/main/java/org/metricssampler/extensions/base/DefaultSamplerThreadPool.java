@@ -81,7 +81,7 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 	@Override
 	public Map<String, Object> getStats() {
 		final String prefix = "thread-pools." + getName() + ".";
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		result.put(prefix + "activeCount", executorService.getActiveCount());
 		result.put(prefix + "poolSize", executorService.getPoolSize());
 		result.put(prefix + "completedTaskCount", executorService.getCompletedTaskCount());

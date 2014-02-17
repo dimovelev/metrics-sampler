@@ -21,7 +21,7 @@ public class RedisSizeCommandXBean extends RedisCommandXBean {
 
 	@Override
 	public RedisCommand toConfig() {
-		Set<String> actualKeys = new HashSet<String>();
+		Set<String> actualKeys = new HashSet<>();
 		for (String key : keys.split(",")) {
 			actualKeys.add(key.trim());
 		}

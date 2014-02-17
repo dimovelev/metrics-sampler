@@ -36,7 +36,7 @@ public class TemplatableXBeanUtils {
 	}
 
 	public static <T extends NamedXBean> Map<String, T> createMapByName(final List<T> list) {
-		final Map<String, T> result = new HashMap<String, T>(list != null ? list.size() : 0);
+		final Map<String, T> result = new HashMap<>(list != null ? list.size() : 0);
 		if (list != null) {
 			for (final T item : list) {
 				result.put(item.getName(), item);

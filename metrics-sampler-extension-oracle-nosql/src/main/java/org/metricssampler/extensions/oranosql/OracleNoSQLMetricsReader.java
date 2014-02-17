@@ -27,7 +27,7 @@ import org.metricssampler.resources.SamplerStats;
 import com.sleepycat.utilint.Latency;
 
 public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLInputConfig> implements BulkMetricsReader {
-	private final Map<HostConfig, CommandServiceAPI> services = new HashMap<HostConfig, CommandServiceAPI>();
+	private final Map<HostConfig, CommandServiceAPI> services = new HashMap<>();
 
 	public OracleNoSQLMetricsReader(final OracleNoSQLInputConfig config) {
 		super(config);
@@ -70,7 +70,7 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 
 	@Override
 	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
-		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+		final Map<MetricName, MetricValue> result = new HashMap<>();
 		for (final HostConfig host : config.getHosts()) {
 			final CommandServiceAPI service = services.get(host);
 			if (service != null) {

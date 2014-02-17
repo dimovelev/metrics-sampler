@@ -107,7 +107,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 
 	private void createSharedResources() {
 		logger.debug("Creating shared resources");
-		sharedResources = new HashMap<String, SharedResource>();
+		sharedResources = new HashMap<>();
 		for (final SharedResourceConfig resourceConfig : configuration.getSharedResources().values()) {
 			if (!resourceConfig.isIgnored()) {
 				final SharedResource sharedResource = newSharedResource(resourceConfig);

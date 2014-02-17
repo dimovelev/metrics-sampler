@@ -33,7 +33,7 @@ public class VariableReplacer {
 	 * @return a new map with as much variables resolved as possible
 	 */
 	public static Map<String, Object> resolve(final Map<String, Object> variables) {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		result.putAll(variables);
 		boolean replaced = true;
 		int iterations = 0;

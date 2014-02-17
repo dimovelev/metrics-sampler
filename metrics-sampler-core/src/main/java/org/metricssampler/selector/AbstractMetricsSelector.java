@@ -41,7 +41,7 @@ public abstract class AbstractMetricsSelector implements MetricsSelector {
 	
 	protected Map<String, MetricValue> readAlreadySelected(final MetaDataMetricsReader reader) {
 		final List<SelectedMetric> matchingMetrics = getSelectedMetrics(reader);
-		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
+		final Map<String, MetricValue> result = new HashMap<>();
 		for (final SelectedMetric bean : matchingMetrics) {
 			try {
 				final MetricValue value = reader.readMetric(bean.getOriginalName());
@@ -86,7 +86,7 @@ public abstract class AbstractMetricsSelector implements MetricsSelector {
 	protected abstract SelectedMetric selectMetric(MetricName name);
 
 	protected Map<String, MetricValue> readAllAndSelect(final BulkMetricsReader reader) {
-		final Map<String, MetricValue> result = new HashMap<String, MetricValue>();
+		final Map<String, MetricValue> result = new HashMap<>();
 		final Map<MetricName, MetricValue> metrics = reader.readAllMetrics();
 		for (final Map.Entry<MetricName, MetricValue> entry : metrics.entrySet()) {
 			final SelectedMetric metric = selectMetric(entry.getKey());

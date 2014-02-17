@@ -29,7 +29,7 @@ public class RegExpMetricsSelectorTest {
 	public void setup() {
 		RegExpSelectorConfig config = new RegExpSelectorConfig(".+\\.(.+)\\..+", null, "${prefix}.whatever.${name[1]}");
 		testee = new RegExpMetricsSelector(config);
-		variables = new HashMap<String, Object>();
+		variables = new HashMap<>();
 		variables.put("prefix", "PREFIX");
 		testee.setVariables(variables);
 		bulkReader = mock(BulkMetricsReader.class);
@@ -38,7 +38,7 @@ public class RegExpMetricsSelectorTest {
 
 	@Test
 	public void readMetricsBulk() {
-		Map<MetricName, MetricValue> metrics = new HashMap<MetricName, MetricValue>();
+		Map<MetricName, MetricValue> metrics = new HashMap<>();
 		MetricValue aaaValue = new MetricValue(System.currentTimeMillis(), "11");
 		metrics.put(new SimpleMetricName("ignored-prefix.aaa.ignored-suffix", "whatever"), aaaValue);
 		MetricValue bbbValue = new MetricValue(System.currentTimeMillis(), "28");

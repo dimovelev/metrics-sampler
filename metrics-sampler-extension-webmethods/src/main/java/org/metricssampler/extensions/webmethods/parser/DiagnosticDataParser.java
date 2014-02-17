@@ -33,7 +33,7 @@ public final class DiagnosticDataParser {
 	}
 
 	public Map<MetricName, MetricValue> parse(final Unzipper unzipper) throws ZipException, IOException, ParseException {
-		final Map<MetricName, MetricValue> result = new HashMap<MetricName, MetricValue>();
+		final Map<MetricName, MetricValue> result = new HashMap<>();
 		for (final String name : unzipper.getEntries()) {
 			for (final AbstractFileParser parser : parsers) {
 				if (parser.canParseEntry(name)) {

@@ -12,14 +12,14 @@ import org.metricssampler.selector.AbstractMetricsSelector;
 import org.metricssampler.selector.SelectedMetric;
 
 /**
- * Select metrics using regular expressions and rename them using an expression that can contain variables. 
+ * Select metrics using regular expressions and rename them using an expression that can contain variables.
  */
 public class RegExpMetricsSelector extends AbstractMetricsSelector {
 	private final RegExpSelectorConfig config;
 
 	private Pattern namePattern;
 	private Pattern descriptionPattern;
-	
+
 	public RegExpMetricsSelector(final RegExpSelectorConfig config) {
 		checkArgumentNotNull(config, "config");
 		this.config = config;
@@ -61,7 +61,7 @@ public class RegExpMetricsSelector extends AbstractMetricsSelector {
 		addVariables(context);
 		final String newName = replaceVariables(config.getKeyExpression(), context);
 		return new SelectedMetric(from, newName);
-		
+
 	}
 
 	private Map<String, Object> addGroups(final Matcher matcher, final String prefix, final Map<String, Object> context) {

@@ -80,7 +80,7 @@ public class ExecInputXBean extends InputXBean {
 	}
 
 	protected List<String> getArgumentsConfig() {
-		final List<String> result = new LinkedList<String>();
+		final List<String> result = new LinkedList<>();
 		if (arguments != null) {
 			for (final ArgumentXBean argument : arguments) {
 				result.add(argument.getValue());
@@ -90,7 +90,7 @@ public class ExecInputXBean extends InputXBean {
 	}
 
 	private Map<String, String> getEnvironmentConfig() {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 		if (environment != null) {
 			for (final EntryXBean entry : environment) {
 				result.put(entry.getKey(), entry.getValue());

@@ -29,7 +29,7 @@ public abstract class VariableXBean {
 	public abstract Object getValue();
 	
 	public static Map<String, Object> toMap(final List<VariableXBean> variables) {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		if (variables != null) {
 			for (final VariableXBean variable : variables) {
 				variable.validate();

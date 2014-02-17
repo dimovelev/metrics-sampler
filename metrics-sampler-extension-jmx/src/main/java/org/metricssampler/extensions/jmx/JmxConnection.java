@@ -33,7 +33,7 @@ public class JmxConnection {
 	}
 
 	private Map<String, Object> constructEnvironment() {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		result.putAll(config.getConnectionProperties());
 		if (config.getUsername() != null) {
 			result.put(Context.SECURITY_PRINCIPAL, config.getUsername());

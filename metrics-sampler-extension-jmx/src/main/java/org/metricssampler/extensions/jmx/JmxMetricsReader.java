@@ -52,7 +52,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 	 * probably also has minor performance impact) to return different properties of the same data which could make the results inconsistent
 	 * (one property read from one instance and another property from another instance).
 	 */
-	private final Map<JmxMetricId, Object> values = new HashMap<JmxMetricId, Object>();
+	private final Map<JmxMetricId, Object> values = new HashMap<>();
 
 	public JmxMetricsReader(final JmxInputConfig config) {
 		super(config);
@@ -134,7 +134,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 				} else {
 					// lets introspect the open type value
 					final Object value = serverConnection.getAttribute(objectName, attribute.getName());
-					final Set<PropertyPath> properties = new HashSet<PropertyPath>();
+					final Set<PropertyPath> properties = new HashSet<>();
 					introspectAttributeWithValue(PropertyPath.empty(), value, openType, properties);
 					for (final PropertyPath path : properties) {
 						result.add(new JmxMetricName(objectName, attribute.getName(), path, null));
@@ -172,7 +172,7 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 			final Set<PropertyPath> result) {
 		if (value instanceof TabularData) {
 			final TabularData tabularValue = (TabularData) value;
-			final Set<String> valueColumns = new HashSet<String>();
+			final Set<String> valueColumns = new HashSet<>();
 			valueColumns.addAll(type.getRowType().keySet());
 			valueColumns.removeAll(type.getIndexNames());
 			for (final Object untypedRow : tabularValue.values()) {

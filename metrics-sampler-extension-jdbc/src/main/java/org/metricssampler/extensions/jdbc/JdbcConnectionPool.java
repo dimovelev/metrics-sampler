@@ -102,7 +102,7 @@ public class JdbcConnectionPool implements SharedResource {
 	@Override
 	public Map<String, Object> getStats() {
 		final String prefix = "jdbc-pools." + config.getName() + ".";
-		final Map<String, Object> result = new HashMap<String, Object>();
+		final Map<String, Object> result = new HashMap<>();
 		for (final String property : STATS_DATASOURCE_PROPERTIES) {
 			try {
 				final String value = BeanUtils.getProperty(datasource, property);

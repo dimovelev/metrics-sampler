@@ -16,7 +16,7 @@ import org.metricssampler.service.AbstractExtension;
 public class HttpExtension extends AbstractExtension {
 	@Override
 	public Collection<Class<?>> getXBeans() {
-		final List<Class<?>> result = new LinkedList<Class<?>>();
+		final List<Class<?>> result = new LinkedList<>();
 		result.add(HttpInputXBean.class);
 		result.add(RegExpHttpResponseParserXBean.class);
 		result.add(RegExpLineFormatXBean.class);

@@ -21,7 +21,7 @@ public abstract class StatusLineParserTestBase {
 	@Before
 	public void setup() {
 		testee = createTestee();
-		metrics = new HashMap<MetricName, MetricValue>();
+		metrics = new HashMap<>();
 		timestamp = System.currentTimeMillis();
 	}
 

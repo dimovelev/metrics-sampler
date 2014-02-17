@@ -38,7 +38,7 @@ public class RegExpHttpResponseParserXBean extends HttpResponseParserXBean {
 	@Override
 	public RegExpHttpResponseParser createParser() {
 		validate();
-		final List<RegExpLineFormat> formats = new ArrayList<RegExpLineFormat>(expressions.size());
+		final List<RegExpLineFormat> formats = new ArrayList<>(expressions.size());
 		for (final RegExpLineFormatXBean expression : expressions) {
 			formats.add(expression.createFormat());
 		}
