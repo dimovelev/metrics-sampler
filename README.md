@@ -144,7 +144,7 @@ Check out the following configuration as a quick-start:
 		</selector-group>
 	</selector-groups>
 	
-	<!-- These are the actual active runtime components that sample the date from the given input, use the given selectors to 
+	<!-- These are the actual active runtime components that sample the data from the given input, use the given selectors to 
 	     determine which metrics are relevant (and rename them) and to send them to the given outputs. An input/output without a 
 	     sampler does not do anything or consume any resources. The samplers are scheduled at a constant rate (with the given 
 	     interval) to a thread pool of the size defined above. -->
