@@ -7,7 +7,7 @@ metrics-sampler is a java program which regularly queries metrics from a configu
 Example Configuration
 ---------------------
 Check out the following configuration as a quick-start:
-
+```xml
 	<configuration>
 		<!-- Here we include all XML files in the selectors/ directory (relative to the location of the configuration file). Includes can be used in any file (so an
 		     included file may include further files itself. Included files are typically just fragments of the overall configuration - they are parsed and then merged
@@ -243,6 +243,7 @@ Check out the following configuration as a quick-start:
 			</sampler>
 		</samplers>
 	</configuration>
+```
 
 Shared Resources
 ----------------
@@ -259,6 +260,7 @@ Supported Inputs
 * self - expose metrics on the samplers and the input readers
 * webmethods - fetch diagnostics data over HTTP from a running webmethods instances, parse the runtime files in it and expose the data as metrics
 * exec - execute process and parse its standard output / error looking for metrics in the form [<timestamp>:]<name>=<value>
+* http - fetch remote URLs and parse the response using regular expressions
 
 Supported Selectors
 -------------------
@@ -323,6 +325,6 @@ Publishing new versions to maven central
  
 Compatibility
 =============
-* Tested with Hotspot/JRockit JVM 1.6
+* Tested with Hotspot JVM 1.7
 * Tested with Tomcat 7 and Weblogic Server 12c (provided that wlfullclient.jar (or the jmx client and t3 protocol JARs) is on the classpath)
-* You might need to add -Dsun.lang.ClassLoader.allowArraySyntax=true as JVM parameter in the metrics-sampler.sh script if you are connecting using JVM 1.6 client to a JVM 1.5 server
+* You might need to add -Dsun.lang.ClassLoader.allowArraySyntax=true as JVM parameter in the metrics-sampler.sh script if you are connecting using JVM 1.7 client to a JVM 1.5 server
