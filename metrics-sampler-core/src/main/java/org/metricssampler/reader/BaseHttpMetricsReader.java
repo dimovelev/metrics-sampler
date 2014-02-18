@@ -21,10 +21,13 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.BaseHttpInputConfig;
+import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.SocketOptionsConfig;
 import org.metricssampler.service.ApplicationInfo;
 import org.metricssampler.util.VariableUtils;
 
@@ -47,6 +50,13 @@ public abstract class BaseHttpMetricsReader<T extends BaseHttpInputConfig> exten
 			result.getCredentialsProvider().setCredentials(
 					AuthScope.ANY,
 	                new UsernamePasswordCredentials(config.getUsername(), config.getPassword()));
+		}
+		if (config.getSocketOptions() != null) {
+			final SocketOptionsConfig socketOptions = config.getSocketOptions();
+			final HttpParams params = result.getParams();
+			params.setBooleanParameter(CoreConnectionPNames.SO_KEEPALIVE, socketOptions.isKeepAlive());
+			params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, socketOptions.getConnectTimeout());
+			params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, socketOptions.getSoTimeout());
 		}
 		return result;
 	}

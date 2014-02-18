@@ -36,6 +36,6 @@ public class HttpInputXBean extends BaseHttpInputXBean {
 	@Override
 	protected HttpInputConfig createConfig() {
 		validate();
-		return new HttpInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), getHeadersAsMap(), isPreemptiveAuthEnabled(), parser.get(0).createParser());
+		return new HttpInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), getHeadersAsMap(), isPreemptiveAuthEnabled(), createSocketOptionsConfig(), parser.get(0).createParser());
 	}
 }

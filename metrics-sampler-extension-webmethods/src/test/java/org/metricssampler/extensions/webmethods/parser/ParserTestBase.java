@@ -38,7 +38,7 @@ public abstract class ParserTestBase {
 	@Before
 	public void setup() throws ZipException, IOException {
 		final File file = new File("src/test/resources/diagnostic_data.zip");
-		config = new WebMethodsInputConfig("whatever", new HashMap<String, Object>(), new URL("file://dummy"), "user", "pass", new HashMap<String, String>(), true, Long.MAX_VALUE, new SimpleDateFormat(WebMethodsInputXBean.DEFAULT_DATE_FORMAT));
+		config = new WebMethodsInputConfig("whatever", new HashMap<String, Object>(), new URL("file://dummy"), "user", "pass", new HashMap<String, String>(), true, null, Long.MAX_VALUE, new SimpleDateFormat(WebMethodsInputXBean.DEFAULT_DATE_FORMAT));
 		unzipper = new Unzipper(file, getConfig().getMaxEntrySize());
 	}
 

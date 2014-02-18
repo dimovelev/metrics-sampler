@@ -33,6 +33,10 @@ public class BootstrapperHttpInputTest extends BootstrapperTestBase {
 		assertNotNull(format1.getPattern());
 		assertEquals(1, format1.getNameGroupIndex());
 		assertEquals(2, format1.getValueGroupIndex());
+		assertNotNull(item.getSocketOptions());
+		assertEquals(5, item.getSocketOptions().getConnectTimeout());
+		assertEquals(10, item.getSocketOptions().getSoTimeout());
+		assertTrue(item.getSocketOptions().isKeepAlive());
 	}
 
 	@Test

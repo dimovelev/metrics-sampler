@@ -2,6 +2,7 @@ package org.metricssampler.tests.bootstrapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -22,6 +23,10 @@ public class BootstrapperApacheStatusInputTest extends BootstrapperTestBase {
 		assertFalse(item.isPreemptiveAuthEnabled());
 		assertSingleStringVariable(item.getVariables(), "string", "value");
 		assertSingleEntry(item.getHeaders(), "header", "val");
+		assertNotNull(item.getSocketOptions());
+		assertEquals(5, item.getSocketOptions().getConnectTimeout());
+		assertEquals(10, item.getSocketOptions().getSoTimeout());
+		assertTrue(item.getSocketOptions().isKeepAlive());
 	}
 	
 	@Test

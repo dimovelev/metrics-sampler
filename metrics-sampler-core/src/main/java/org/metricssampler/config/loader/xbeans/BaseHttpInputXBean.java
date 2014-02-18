@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.SocketOptionsConfig;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -26,7 +27,10 @@ public abstract class BaseHttpInputXBean extends InputXBean {
 	@XStreamAlias("preemptive-auth")
 	@XStreamAsAttribute
 	private Boolean preemptiveAuth;
-
+	
+	@XStreamAlias("socket-options")
+	private SocketOptionsXBean socketOptions;
+	
 	private List<EntryXBean> headers;
 
 	public BaseHttpInputXBean() {
@@ -65,6 +69,14 @@ public abstract class BaseHttpInputXBean extends InputXBean {
 		this.password = password;
 	}
 
+	public SocketOptionsXBean getSocketOptions() {
+		return socketOptions;
+	}
+
+	public void setSocketOptions(SocketOptionsXBean socketOptions) {
+		this.socketOptions = socketOptions;
+	}
+
 	@Override
 	protected void validate() {
 		super.validate();
@@ -94,6 +106,10 @@ public abstract class BaseHttpInputXBean extends InputXBean {
 		return getPreemptiveAuth() != null ? getPreemptiveAuth() : true;
 	}
 
+	protected SocketOptionsConfig createSocketOptionsConfig() {
+		return getSocketOptions() != null ? getSocketOptions().toConfig() : null;
+	}
+	
 	protected URL parseUrl() {
 		try {
 			return new URL(getUrl());

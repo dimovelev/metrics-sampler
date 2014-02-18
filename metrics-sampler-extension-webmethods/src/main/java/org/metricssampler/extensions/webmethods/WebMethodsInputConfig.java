@@ -8,15 +8,16 @@ import java.text.DateFormat;
 import java.util.Map;
 
 import org.metricssampler.config.BaseHttpInputConfig;
+import org.metricssampler.config.SocketOptionsConfig;
 
 public class WebMethodsInputConfig extends BaseHttpInputConfig {
 	private final long maxEntrySize;
 	private final DateFormat dateFormat;
 
 	public WebMethodsInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username,
-			final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled, final long maxEntrySize,
-			final DateFormat dateFormat) {
-		super(name, variables, url, username, password, headers, preemptiveAuthEnabled);
+			final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled, final SocketOptionsConfig socketOptions,
+			final long maxEntrySize, final DateFormat dateFormat) {
+		super(name, variables, url, username, password, headers, preemptiveAuthEnabled, socketOptions);
 		checkArgumentNotNull(dateFormat, "dateFormat");
 		checkArgument(maxEntrySize > 0, "maxEntrySize must greater than 0");
 		this.maxEntrySize = maxEntrySize;

@@ -12,9 +12,10 @@ public abstract class BaseHttpInputConfig extends InputConfig {
 	private final String password;
 	private final Map<String, String> headers;
 	private final boolean preemptiveAuthEnabled;
+	private final SocketOptionsConfig socketOptions;
 
 	protected BaseHttpInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username,
-			final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled) {
+			final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled, final SocketOptionsConfig socketOptions) {
 		super(name, variables);
 		checkArgumentNotNull(url, "url");
 		checkArgumentNotNull(headers, "headers");
@@ -23,6 +24,7 @@ public abstract class BaseHttpInputConfig extends InputConfig {
 		this.password = password;
 		this.headers = Collections.unmodifiableMap(headers);
 		this.preemptiveAuthEnabled = preemptiveAuthEnabled;
+		this.socketOptions = socketOptions;
 	}
 
 	/**
@@ -62,4 +64,10 @@ public abstract class BaseHttpInputConfig extends InputConfig {
 		return preemptiveAuthEnabled;
 	}
 
+	/**
+	 * @return The socket options to use when creating sockets. {@code null} to use the defaults.
+	 */
+	public SocketOptionsConfig getSocketOptions() {
+		return socketOptions;
+	}
 }

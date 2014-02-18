@@ -9,7 +9,7 @@ public class ApacheStatusInputXBean extends BaseHttpInputXBean {
 
 	@Override
 	protected ApacheStatusInputConfig createConfig() {
-		return new ApacheStatusInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), getHeadersAsMap(), isPreemptiveAuthEnabled());
+		return new ApacheStatusInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), getHeadersAsMap(), isPreemptiveAuthEnabled(), createSocketOptionsConfig());
 	}
 
 }

@@ -41,7 +41,7 @@ public class WebMethodsInputXBean extends BaseHttpInputXBean {
 	@Override
 	protected WebMethodsInputConfig createConfig() {
 		final Map<String, String> httpHeaders = getHeadersAsMap();
-		return new WebMethodsInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), httpHeaders,  isPreemptiveAuthEnabled(), maxEntrySize != null ? maxEntrySize : Long.MAX_VALUE, parseDateFormat());
+		return new WebMethodsInputConfig(getName(), getVariablesConfig(), parseUrl(), getUsername(), getPassword(), httpHeaders,  isPreemptiveAuthEnabled(), createSocketOptionsConfig(), maxEntrySize != null ? maxEntrySize : Long.MAX_VALUE, parseDateFormat());
 	}
 
 	protected DateFormat parseDateFormat() {
