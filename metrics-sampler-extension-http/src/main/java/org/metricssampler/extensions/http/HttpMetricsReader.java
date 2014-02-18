@@ -9,10 +9,11 @@ import org.apache.http.HttpResponse;
 import org.metricssampler.reader.BaseHttpMetricsReader;
 
 public class HttpMetricsReader extends BaseHttpMetricsReader<HttpInputConfig> {
-	private final HttpResponseParser parser = null;
+	private final HttpResponseParser parser;
 
 	public HttpMetricsReader(final HttpInputConfig config) {
 		super(config);
+		parser = config.getParser();
 	}
 
 	@Override
