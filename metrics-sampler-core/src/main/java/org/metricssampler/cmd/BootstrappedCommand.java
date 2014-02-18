@@ -23,6 +23,7 @@ public abstract class BootstrappedCommand extends AbstractCommand {
 			bootstrapper = createBootstrapper();
 		} catch (final Exception e) {
 			System.err.println("Exception raised during bootstrapping. Check out the logs for more information. Message: " + e.getMessage());
+			e.printStackTrace();
 			System.exit(3);
 		}
 		runBootstrapped();
