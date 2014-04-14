@@ -1,10 +1,15 @@
 package org.metricssampler.tests.bootstrapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
+import org.metricssampler.config.OutputConfig;
 import org.metricssampler.extensions.base.DefaultSamplerConfig;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class BootstrapperSamplerTest extends BootstrapperTestBase {
 	@Test
@@ -27,8 +32,13 @@ public class BootstrapperSamplerTest extends BootstrapperTestBase {
 		assertEquals(1000, sampler.getInterval());
 		assertEquals("jmx", sampler.getInput().getName());
 		assertEquals("jmx", sampler.getName());
-		assertEquals("console1", sampler.getOutputs().get(0).getName());
-		assertEquals("console2", sampler.getOutputs().get(1).getName());
+        Set<String> outputNames = new HashSet<>();
+        for (OutputConfig item  : sampler.getOutputs()) {
+            outputNames.add(item.getName());
+        }
+
+        assertTrue("Outputs should contain console1", outputNames.contains("console1"));
+        assertTrue("Outputs should contain console2", outputNames.contains("console2"));
 		assertEquals(1, sampler.getSelectors().size());
 		assertEquals(1000, sampler.getInterval());
 		assertEquals("samplers", sampler.getPool());

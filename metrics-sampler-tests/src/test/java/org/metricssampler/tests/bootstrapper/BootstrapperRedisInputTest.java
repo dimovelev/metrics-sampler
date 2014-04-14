@@ -39,8 +39,10 @@ public class BootstrapperRedisInputTest extends BootstrapperTestBase {
 
 	@Test
 	public void bootstrapTemplate() {
-		final Configuration config = configure("redis/template.xml");
-		
+        final String dir = System.getProperty("user.dir");
+        System.out.println("current dir = " + dir);
+        final Configuration config = configure("redis/template.xml");
+
 		final RedisInputConfig item = assertInput(config, "redis", RedisInputConfig.class);
 		assertComplete(item);
 	}

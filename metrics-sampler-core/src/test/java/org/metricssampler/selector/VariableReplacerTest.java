@@ -3,6 +3,7 @@ package org.metricssampler.selector;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.junit.Before;
@@ -29,14 +30,12 @@ public class VariableReplacerTest {
 	@Test
 	public void resolveCycle() {
 		final Map<String, Object> cycleVariables = new HashMap<>();
-		cycleVariables.put("first", "${second}");
-		cycleVariables.put("second", "${third}");
-		cycleVariables.put("third", "${first}");
+		cycleVariables.put("first", "${first}");
+
 		final Map<String, Object> result = VariableReplacer.resolve(cycleVariables);
-		assertEquals(3, result.size());
+
+		assertEquals(1, result.size());
 		assertEquals("${first}", result.get("first"));
-		assertEquals("${first}", result.get("second"));
-		assertEquals("${first}", result.get("third"));
 	}
 	
 	@Test

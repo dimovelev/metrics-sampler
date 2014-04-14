@@ -3,6 +3,7 @@ package org.metricssampler.selector;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -35,31 +36,39 @@ public class VariableReplacer {
 	public static Map<String, Object> resolve(final Map<String, Object> variables) {
 		final Map<String, Object> result = new HashMap<>();
 		result.putAll(variables);
-		boolean replaced = true;
+		boolean containesVariableReferences = true;
 		int iterations = 0;
-		while (replaced && iterations < MAX_RESOLVE_ITERATIONS) {
-			replaced = false;
+		while (containesVariableReferences && iterations < MAX_RESOLVE_ITERATIONS) {
+			containesVariableReferences = false;
 			for (final Entry<String, Object> entry : result.entrySet()) {
 				if (entry.getValue() instanceof String) {
 					final String oldValue = (String) entry.getValue();
 					if (oldValue == null) {
 						throw new ConfigurationException("Variable \"" + entry.getKey() + "\" has null value");
 					}
-					final String newValue = VariableReplacer.replace(oldValue, result);
-					if (!oldValue.equals(newValue)) {
-						replaced = true;
-						entry.setValue(newValue);
-					}
+                    if (VariableReplacer.containsVariableReferences(oldValue)) {
+                        containesVariableReferences = true;
+                        final String newValue = VariableReplacer.replace(oldValue, result);
+                        if (!oldValue.equals(newValue)) {
+                            entry.setValue(newValue);
+                        }
+                    }
 				}
 			}
 			iterations++;
 		}
+
 		if (iterations == MAX_RESOLVE_ITERATIONS) {
 			logger.warn("Reached the maximal number of iterations while resolving variables. You probably have a variable reference cycle.");
 		}
 		return result;
 	}
-	public String replaceVariables(final String expression, final Map<String, Object> replacements) {
+
+    private static boolean containsVariableReferences(String expression) {
+        return expression.indexOf(START) >= 0;
+    }
+
+    public String replaceVariables(final String expression, final Map<String, Object> replacements) {
 		final StringBuilder result = new StringBuilder();
 		int prevIdx = 0;
 		int idx = expression.indexOf(START);
