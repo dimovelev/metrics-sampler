@@ -18,8 +18,11 @@ public class RowPathSegment extends PathSegment {
 	}
 	
 	/**
-	 * Index columns make the row unique => we will use their values in the form [value-col-1, value-col-2, ...] as part of the property
+	 * Index columns make the row unique - we will use their values in the form [value-col-1, value-col-2, ...] as part of the property
 	 * path
+     * @param type the type description
+     * @param row a row of the table
+     * @return the path segment for the row
 	 */
 	public static RowPathSegment fromRow(final TabularType type, final CompositeData row) {
 		final ArrayList<Object> columns = new ArrayList<Object>(type.getIndexNames().size());

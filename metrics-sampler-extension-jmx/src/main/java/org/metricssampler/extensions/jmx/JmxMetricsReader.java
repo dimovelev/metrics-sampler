@@ -167,6 +167,10 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 	/**
 	 * Some of the columns are used as an index to uniquely identify a row. We use their values as property path in the form [value-1,
 	 * value-2]. The cells of the table can be again complex types so we need to go recursively into them
+     * @param propertyPath path so far
+     * @param value the value containing tabular data
+     * @param type the type description
+     * @param result a place to store the discovered new properties
 	 */
 	protected void processTableProperty(final PropertyPath propertyPath, final Object value, final TabularType type,
 			final Set<PropertyPath> result) {
@@ -194,6 +198,10 @@ public class JmxMetricsReader extends AbstractMetricsReader<JmxInputConfig> impl
 
 	/**
 	 * Process a composite property. Its value can in turn be of composite type so we need to do this recursively
+     * @param propertyPath path so far
+     * @param value the value containing composite data
+     * @param type the type description
+     * @param result a place to store the discovered new properties
 	 */
 	protected void processCompositeProperty(final PropertyPath propertyPath, final Object value, final CompositeType type,
 			final Set<PropertyPath> result) {

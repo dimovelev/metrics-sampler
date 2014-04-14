@@ -35,7 +35,7 @@ public class WebMethodsInputConfig extends BaseHttpInputConfig {
 
 	/**
 	 * @return The simple date time format for parsing the timestamps in the files. The default value is
-	 *         {@link org.metricssampler.extensions.webmethods.WebMethodsInputXBean#org.metricssampler.extensions.webmethods.WebMethodsInputXBean.DEFAULT_DATE_FORMAT}
+     * {@link WebMethodsInputXBean#DEFAULT_DATE_FORMAT}
 	 */
 	public DateFormat getDateFormat() {
 		return dateFormat;
