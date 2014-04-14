@@ -3,56 +3,56 @@
 	<parent>
 		<groupId>com.github.dimovelev</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.7.0-SNAPSHOT</version>
+		<version>0.7.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>metrics-sampler-tests</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-extension-base</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>
   			metrics-sampler-extension-apache-status
   		</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-extension-graphite</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-extension-jdbc</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-extension-jmx</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-extension-oracle-nosql</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-extension-redis</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-extension-exec</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>0.7.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -62,7 +62,7 @@
 		<dependency>
 		 <groupId>com.github.dimovelev</groupId>
 		 <artifactId>metrics-sampler-extension-http</artifactId>
-		 <version>0.7.0-SNAPSHOT</version>
+		 <version>0.7.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
