@@ -3,4 +3,6 @@ bin/
 .project
 .settings/
 .classpath
+.idea/
+*.iml
 
