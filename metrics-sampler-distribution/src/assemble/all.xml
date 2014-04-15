@@ -15,12 +15,16 @@
 			<!-- Now, select which projects to include in this module-set. -->
 			<includes>
 					<include>org.metrics-sampler:metrics-sampler-core</include>
+                    <include>org.metrics-sampler:metrics-sampler-extension-apache-status</include>
 					<include>org.metrics-sampler:metrics-sampler-extension-base</include>
-					<include>org.metrics-sampler:metrics-sampler-extension-graphite</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-exec</include>
+                    <include>org.metrics-sampler:metrics-sampler-extension-graphite</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-http</include>
 					<include>org.metrics-sampler:metrics-sampler-extension-jmx</include>
-					<include>org.metrics-sampler:metrics-sampler-extension-apache-status</include>
 					<include>org.metrics-sampler:metrics-sampler-extension-jdbc</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-oracle-nosql</include>
 					<include>org.metrics-sampler:metrics-sampler-extension-redis</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-webmethods</include>
 			</includes>
 			<binaries>
 				<outputDirectory>lib</outputDirectory>
