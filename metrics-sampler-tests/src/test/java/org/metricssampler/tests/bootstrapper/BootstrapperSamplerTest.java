@@ -23,6 +23,8 @@ public class BootstrapperSamplerTest extends BootstrapperTestBase {
 		assertEquals(2, sampler.getSelectors().size());
 		assertEquals(1000, sampler.getInterval());
 		assertEquals("pool", sampler.getPool());
+        assertEquals(60, sampler.getInitialResetTimeout());
+        assertEquals(600, sampler.getRegularResetTimeout());
 	}
 
 	@Test
@@ -42,5 +44,7 @@ public class BootstrapperSamplerTest extends BootstrapperTestBase {
 		assertEquals(1, sampler.getSelectors().size());
 		assertEquals(1000, sampler.getInterval());
 		assertEquals("samplers", sampler.getPool());
+        assertEquals(-1, sampler.getInitialResetTimeout());
+        assertEquals(-1, sampler.getRegularResetTimeout());
 	}
 }

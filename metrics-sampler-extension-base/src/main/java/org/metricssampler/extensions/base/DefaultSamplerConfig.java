@@ -19,11 +19,12 @@ public class DefaultSamplerConfig extends SamplerConfig {
 	private final Map<String, Object> variables;
 	private final Map<String, Object> globalVariables;
 	private final boolean quiet;
-	private final int resetTimeout;
+    private final int initialResetTimeout;
+    private final int regularResetTimeout;
 
 	public DefaultSamplerConfig(final String name, final String pool, final int interval, final boolean ignored, final boolean disabled, final InputConfig input,
 			final List<OutputConfig> outputs, final List<SelectorConfig> selectors, final Map<String, Object> variables,
-			final Map<String, Object> globalVariables, final List<ValueTransformerConfig> valueTransformers, final boolean quiet, final int resetTimeout) {
+			final Map<String, Object> globalVariables, final List<ValueTransformerConfig> valueTransformers, final boolean quiet, final int initialResetTimeout, final int regularResetTimeout) {
 		super(name, pool, interval, ignored, disabled, globalVariables, valueTransformers);
 		checkArgumentNotNull(input, "input");
 		checkArgumentNotNull(outputs, "outputs");
@@ -36,7 +37,8 @@ public class DefaultSamplerConfig extends SamplerConfig {
 		this.variables = Collections.unmodifiableMap(variables);
 		this.globalVariables = Collections.unmodifiableMap(globalVariables);
 		this.quiet = quiet;
-		this.resetTimeout = resetTimeout;
+        this.initialResetTimeout = initialResetTimeout;
+        this.regularResetTimeout = regularResetTimeout;
 	}
 
 	public InputConfig getInput() {
@@ -60,15 +62,23 @@ public class DefaultSamplerConfig extends SamplerConfig {
 		return globalVariables;
 	}
 
-	/**
-	 * @return the timeout in seconds that the sampler will wait after successfully connecting the input to reset if so that the matched JMX beans are reloaded. This will be
-	 * repeated until the number of the matched beans remains unchanged for two consecutive reconnects.
-	 */
-	public int getResetTimeout() {
-		return resetTimeout;
-	}
+    /**
+     * @return the timeout in seconds that the sampler will wait after successfully connecting the input to reset so that the matched JMX beans are reloaded. This will be
+     * repeated until the number of the matched beans remains unchanged for two consecutive reconnects.
+     */
+    public int getInitialResetTimeout() {
+        return initialResetTimeout;
+    }
 
-	@Override
+    /**
+     * @return the timeout in seconds that the sampler will wait after successfully connecting the input to reset so that the matched JMX beans are reloaded. This will be
+     * done on a regular basis.
+     */
+    public int getRegularResetTimeout() {
+        return regularResetTimeout;
+    }
+
+    @Override
 	public String toString() {
 		return getClass().getSimpleName() + "[" + input + "->" + outputs + "]";
 	}

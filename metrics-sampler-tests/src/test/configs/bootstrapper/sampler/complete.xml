@@ -11,7 +11,7 @@
 		<console name="console" />
 	</outputs>
 	<samplers>
-		<sampler name="jmx-sampler" input="jmx" outputs="console" interval="1000" pool="pool">
+		<sampler name="jmx-sampler" input="jmx" outputs="console" interval="1000" pool="pool" initial-reset-timeout="60" regular-reset-timeout="600">
 			<selectors>
 				<regexp from-name="a" to-name="a" />
 				<use-group name="group" />

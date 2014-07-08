@@ -40,9 +40,13 @@ public class DefaultSamplerXBean extends SamplerXBean {
 	@XStreamAsAttribute
 	private Boolean quiet = false;
 
-	@XStreamAlias("reset-timeout")
-	@XStreamAsAttribute
-	private Integer resetTimeout;
+    @XStreamAlias("initial-reset-timeout")
+    @XStreamAsAttribute
+    private Integer initialResetTimeout;
+
+    @XStreamAlias("regular-reset-timeout")
+    @XStreamAsAttribute
+    private Integer regularResetTimeout;
 
 	private List<VariableXBean> variables;
 
@@ -108,23 +112,35 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		this.quiet = quiet;
 	}
 
-	public Integer getResetTimeout() {
-		return resetTimeout;
+	public Integer getInitialResetTimeout() {
+		return initialResetTimeout;
 	}
 
-	public void setResetTimeout(final Integer resetTimeout) {
-		this.resetTimeout = resetTimeout;
+	public void setInitialResetTimeout(final Integer initialResetTimeout) {
+		this.initialResetTimeout = initialResetTimeout;
 	}
 
-	@Override
+    public Integer getRegularResetTimeout() {
+        return regularResetTimeout;
+    }
+
+    public void setRegularResetTimeout(Integer regularResetTimeout) {
+        this.regularResetTimeout = regularResetTimeout;
+    }
+
+
+    @Override
 	protected void validate() {
 		super.validate();
 		if (isInstantiatable()) {
 			notEmpty(this, "input", getInput());
 			notEmpty(this, "selectors", getSelectors());
-			if (resetTimeout != null) {
-				greaterThanZero(this, "reload-timeout", resetTimeout);
+			if (initialResetTimeout != null) {
+				greaterThanZero(this, "initial-reset-timeout", initialResetTimeout);
 			}
+            if (regularResetTimeout != null) {
+                greaterThanZero(this, "regular-reset-timeout", regularResetTimeout);
+            }
 		}
 	}
 	@Override
@@ -139,9 +155,10 @@ public class DefaultSamplerXBean extends SamplerXBean {
 		final boolean disabled = getDisabled() != null ? getDisabled() : false;
 		final boolean quiet = getQuiet() != null ? getQuiet() : false;
 		final String pool = getPool() != null ? getPool() : DEFAULT_POOL_NAME;
-		final int resetTimeoutInt = resetTimeout != null ? resetTimeout : -1;
+        final int initialResetTimeoutInt = initialResetTimeout != null ? initialResetTimeout : -1;
+        final int regularResetTimeoutInt = regularResetTimeout != null ? regularResetTimeout : -1;
 		final List<ValueTransformerConfig> valueTransformerConfigs = configureValueTransformers(valueTransformers);
-		return new DefaultSamplerConfig(getName(), pool, getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, valueTransformerConfigs, quiet, resetTimeoutInt);
+		return new DefaultSamplerConfig(getName(), pool, getInterval(), ignored, disabled, inputConfig, outputConfigs, selectorConfigs, samplerVariables, globalVariables, valueTransformerConfigs, quiet, initialResetTimeoutInt, regularResetTimeoutInt);
 	}
 
 	protected List<ValueTransformerConfig> configureValueTransformers(final List<ValueTransformerXBean> valueTransformers) {
@@ -163,7 +180,7 @@ public class DefaultSamplerXBean extends SamplerXBean {
 			} else if (item instanceof SimpleSelectorXBean) {
 				result.add(((SimpleSelectorXBean) item).toConfig());
 			} else {
-				throw new ConfigurationException("Unsupporter selector: " + item);
+				throw new ConfigurationException("Unsupported selector: " + item);
 			}
 		}
 		if (result.isEmpty()) {

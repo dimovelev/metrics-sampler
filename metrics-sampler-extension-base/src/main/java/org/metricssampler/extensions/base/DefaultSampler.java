@@ -195,23 +195,32 @@ public class DefaultSampler implements Sampler {
 		if (noMetricsSelected) {
 			logger.warn("No metrics selected. Scheduling immediate reset so that metrics are selected again next time.");
 			resetAfterTimestamp = Long.MIN_VALUE;
-		} else if (config.getResetTimeout() > 0 && prevNumberOfSelectedMetrics != newNumberOfSelectedMetrics) {
+		} else if (config.getInitialResetTimeout() > 0 && prevNumberOfSelectedMetrics != newNumberOfSelectedMetrics) {
 			// there is a difference between the metrics we matched this time and the ones we matched last time
 			// => reconnect after a timeout
 			if (resetAfterTimestamp == Long.MAX_VALUE) {
-				final int timeout = computeRandomResetTimeoutMs();
-				logger.info("Scheduling reset after {} ms to reload the selected metrics as their count differs from the last time. The delta (new-old) is {}", timeout, newNumberOfSelectedMetrics-prevNumberOfSelectedMetrics);
+				final int timeout = computeRandomResetTimeoutMs(config.getInitialResetTimeout());
+				logger.info("Scheduling initial reset after {} ms to reload the selected metrics as their count differs from the last time. The delta (new-old) is {}", timeout, newNumberOfSelectedMetrics-prevNumberOfSelectedMetrics);
 				prevNumberOfSelectedMetrics = newNumberOfSelectedMetrics;
-				resetAfterTimestamp = System.currentTimeMillis() + timeout;
+                scheduleResetAfterTimeoutMs(timeout);
 			} else {
 				logger.debug("Reset already scheduled");
 			}
-		}
+		} else if (config.getRegularResetTimeout() > 0 && resetAfterTimestamp == Long.MAX_VALUE) {
+            // a regular reset has been configured and no reset is scheduled at the moment so schedule one now
+            final int timeout = computeRandomResetTimeoutMs(config.getRegularResetTimeout());
+            logger.info("Scheduling regular reset after {} ms to reload the selected metrics.", timeout);
+            scheduleResetAfterTimeoutMs(timeout);
+        }
 	}
 
-	protected int computeRandomResetTimeoutMs() {
-		final int min = (int) (config.getResetTimeout()*1000*0.8f);
-		final int max = (int) (config.getResetTimeout()*1000*1.2f);
+    protected void scheduleResetAfterTimeoutMs(final long timeout) {
+        resetAfterTimestamp = System.currentTimeMillis() + timeout;
+    }
+
+	protected int computeRandomResetTimeoutMs(final int timeout) {
+		final int min = (int) (timeout*1000*0.8f);
+		final int max = (int) (timeout*1000*1.2f);
 		return min + random.nextInt(max-min);
 	}
 
