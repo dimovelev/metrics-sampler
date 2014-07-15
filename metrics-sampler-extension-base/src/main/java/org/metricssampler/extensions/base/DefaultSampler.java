@@ -2,13 +2,8 @@ package org.metricssampler.extensions.base;
 
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
@@ -262,4 +257,25 @@ public class DefaultSampler implements Sampler {
 			selector.reset();
 		}
 	}
+
+    @Override
+    public Set<String> metrics() {
+        logger.debug("Listing the matched metrics");
+        try {
+            final Map<String, MetricValue> rawMetrics = readMetrics();
+            final Map<String, MetricValue> metrics = transformValues(rawMetrics);
+            final Set<String> result = new TreeSet<String>();
+            result.addAll(metrics.keySet());
+            return result;
+        } catch (final OpenMetricsReaderException e) {
+            final String msg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            logger.warn("Failed to open reader: {}", msg);
+        } catch (final MetricReadException e) {
+            logger.warn("Failed to read metrics", e);
+        } catch (final MetricWriteException e) {
+            logger.warn("Failed to write metrics", e);
+        }
+        return Collections.emptySet();
+    }
+
 }

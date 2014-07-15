@@ -5,14 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-import org.metricssampler.cmd.CheckCommand;
-import org.metricssampler.cmd.HelpCommand;
-import org.metricssampler.cmd.MetadataCommand;
-import org.metricssampler.cmd.SamplerCommand;
-import org.metricssampler.cmd.StartCommand;
-import org.metricssampler.cmd.StatusCommand;
-import org.metricssampler.cmd.StopCommand;
-import org.metricssampler.cmd.TestCommand;
+import org.metricssampler.cmd.*;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -59,6 +52,7 @@ public class MetricsSampler {
 		commander.addCommand(new MetadataCommand());
 		commander.addCommand(new CheckCommand());
 		commander.addCommand(new TestCommand());
+		commander.addCommand(new MetricsCommand());
 
 		fixResourceBundleBug(commander, bundle);
 		return result;
