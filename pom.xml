@@ -57,7 +57,8 @@
 		<module>metrics-sampler-tests</module>
 		<module>metrics-sampler-extension-webmethods</module>
 		<module>metrics-sampler-extension-exec</module>
-	</modules>
+        <module>metrics-sampler-extension-elasticsearch</module>
+    </modules>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -226,6 +227,11 @@
 				<artifactId>juel</artifactId>
 				<version>2.1.3</version>
 			</dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.6.0</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>

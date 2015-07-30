@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.io.LineIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.metricssampler.extensions.apachestatus.parsers.GenericLineParser;
 import org.metricssampler.extensions.apachestatus.parsers.ModQosParser;
 import org.metricssampler.extensions.apachestatus.parsers.ScoreboardParser;
@@ -23,8 +24,8 @@ public class ApacheStatusMetricsReader extends BaseHttpMetricsReader<ApacheStatu
 		super(config);
 	}
 
-	@Override
-	protected void processResponse(final HttpResponse response) throws IOException {
+    @Override
+    protected void processResponse(HttpUriRequest request, HttpResponse response) throws Exception {
 		final HttpEntity entity = response.getEntity();
 		if (entity != null) {
 		    try(final InputStreamReader reader = streamEntity(entity)) {
@@ -44,9 +45,9 @@ public class ApacheStatusMetricsReader extends BaseHttpMetricsReader<ApacheStatu
 			values = Collections.emptyMap();
 			logger.warn("Response was null. Response line: {}", response.getStatusLine());
 		}
-	}
+    }
 
-	protected void parseLine(final String line, final long timestamp) {
+    protected void parseLine(final String line, final long timestamp) {
 		boolean parsed = false;
 		for (final StatusLineParser lineParser : lineParsers) {
 			parsed = parsed || lineParser.parse(line, values, timestamp);

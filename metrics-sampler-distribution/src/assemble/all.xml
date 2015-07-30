@@ -25,6 +25,7 @@
 					<include>org.metrics-sampler:metrics-sampler-extension-oracle-nosql</include>
 					<include>org.metrics-sampler:metrics-sampler-extension-redis</include>
 					<include>org.metrics-sampler:metrics-sampler-extension-webmethods</include>
+					<include>org.metrics-sampler:metrics-sampler-extension-elasticsearch</include>
 			</includes>
 			<binaries>
 				<outputDirectory>lib</outputDirectory>

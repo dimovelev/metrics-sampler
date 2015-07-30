@@ -99,6 +99,11 @@
 			<version>0.7.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>com.github.dimovelev</groupId>
+			<artifactId>metrics-sampler-extension-elasticsearch</artifactId>
+			<version>0.7.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
