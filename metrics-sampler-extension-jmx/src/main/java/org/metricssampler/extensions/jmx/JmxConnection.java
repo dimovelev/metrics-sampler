@@ -36,8 +36,8 @@ public class JmxConnection {
 		final Map<String, Object> result = new HashMap<>();
 		result.putAll(config.getConnectionProperties());
 		if (config.getUsername() != null) {
-			result.put(Context.SECURITY_PRINCIPAL, config.getUsername());
-			result.put(Context.SECURITY_CREDENTIALS, config.getPassword());
+			String[]  credentials = new String[] {config.getUsername(), config.getPassword()};
+			result.put(JMXConnector.CREDENTIALS, credentials);
 		}
 		result.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, config.getProviderPackages());
 		if (config.hasSocketOptions()) {
