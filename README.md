@@ -319,10 +319,10 @@ Publishing new versions to maven central
 ========================================
 * Release the project using mvn release:prepare, mvn release:perform
 * Switch to the released tag using git checkout v[version]
-* Build and deploy the artifacts to sonatype mvn clean deploy -Dgpg.passphrase="YOUR GPG PASS" -Dmaven.test.skip=true -P publish
+* Build and deploy the artifacts to sonatype mvn clean deploy -Dgpg.keyname="<name>" -Dgpg.passphrase="<passphrase>" -Dmaven.test.skip=true -P publish
 * Switch back to master using git checkout master
 * Close and release the repository at oss.sonatype.org
-* Push the changes to github. Also push the tags.
+* Push the changes to github. Also push the tags (git push --tags).
  
 Compatibility
 =============
