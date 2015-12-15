@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.github.dimovelev</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.8.0</version>
+		<version>0.8.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>metrics-sampler-extension-base</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.8.0</version>
+			<version>0.8.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
