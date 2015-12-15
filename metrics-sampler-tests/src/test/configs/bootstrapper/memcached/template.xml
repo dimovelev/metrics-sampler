@@ -1,0 +1,11 @@
+<configuration>
+	<inputs>
+		<memcached name="template" host="host" port="11211" template="true">
+			<socket-options connect-timeout="5" so-timeout="10" keep-alive="true" send-buffer-size="16384" receive-buffer-size="32768" />
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+		</memcached>
+		<memcached name="memcached1" parent="template" />
+	</inputs>
+</configuration>

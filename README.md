@@ -252,7 +252,7 @@ Shared Resources
 
 Supported Inputs
 -----------------
-* Java Management Extensions (JMX) - queries object names and attributes from a remote JMX server. The reader caches all meta-data until a reconnect. The name of the metrics consist of the canonicalized object name + '#' + attribute name.
+* [Java Management Extensions (JMX)](metrics-sampler-extension-jmx/README.md) - queries object names and attributes from a remote JMX server. The reader caches all meta-data until a reconnect. The name of the metrics consist of the canonicalized object name + '#' + attribute name.
 * jdbc - sequentially execute a list of SQL queries and interpret the returned rows as metrics. Queries must return either two or three columns - the first one is the metric's name and the second one is its value. The optional third one is a timestamp (in milliseconds since epoch start).
 * apache-status - parses the output of the apache and mod_qos status page (with option ?auto) and exposes the values in a more usable format. The reader uses non-persistent HTTP connection and queries both metadata and data when opened.
 * oracle-nosql - fetches the perfmap from a list of hosts/ports running in an Oralce NoSQL (KVStore) cluster and exposes the values in a more usable format as metrics. The reader caches the RMI connections and only reloads them in case of failures.
@@ -261,6 +261,7 @@ Supported Inputs
 * webmethods - fetch diagnostics data over HTTP from a running webmethods instances, parse the runtime files in it and expose the data as metrics
 * exec - execute process and parse its standard output / error looking for metrics in the form [<timestamp>:]<name>=<value>
 * http - fetch remote URLs and parse the response using regular expressions
+* [memcached](metrics-sampler-extension-memcached/README.md) - fetch memcached stats
 
 Supported Selectors
 -------------------

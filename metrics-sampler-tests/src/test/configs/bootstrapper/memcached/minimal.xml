@@ -1,0 +1,5 @@
+<configuration>
+	<inputs>
+		<memcached name="memcached1" host="host" port="1980" />
+	</inputs>
+</configuration>
