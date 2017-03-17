@@ -1,11 +1,6 @@
 package org.metricssampler.extensions.oranosql;
 
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.sleepycat.utilint.Latency;
 import oracle.kv.impl.admin.CommandServiceAPI;
 import oracle.kv.impl.measurement.LatencyInfo;
 import oracle.kv.impl.monitor.views.PerfEvent;
@@ -13,17 +8,15 @@ import oracle.kv.impl.topo.ResourceId;
 import oracle.kv.impl.util.registry.RegistryUtils;
 import oracle.kv.stats.NodeMetrics;
 import oracle.kv.stats.OperationMetrics;
-
 import org.metricssampler.extensions.oranosql.OracleNoSQLInputConfig.HostConfig;
-import org.metricssampler.reader.AbstractMetricsReader;
-import org.metricssampler.reader.BulkMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricReadException;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.reader.*;
 import org.metricssampler.resources.SamplerStats;
 
-import com.sleepycat.utilint.Latency;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLInputConfig> implements BulkMetricsReader {
 	private final Map<HostConfig, CommandServiceAPI> services = new HashMap<>();
@@ -39,7 +32,7 @@ public class OracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLI
 				logger.info("Connecting to {}", host);
 				try {
 					SamplerStats.get().incConnectCount();
-					final CommandServiceAPI service = RegistryUtils.getAdmin(host.getHost(), host.getPort());
+					final CommandServiceAPI service = RegistryUtils.getAdmin(host.getHost(), host.getPort(), null);
 					if (service != null) {
 						services.put(host, service);
 					}
