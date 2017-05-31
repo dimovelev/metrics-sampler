@@ -1,0 +1,123 @@
+{
+  "_nodes": {
+    "total": 1,
+    "successful": 1,
+    "failed": 0
+  },
+  "cluster_name": "elasticsearch",
+  "timestamp": 1496253122955,
+  "status": "green",
+  "indices": {
+    "count": 0,
+    "shards": {},
+    "docs": {
+      "count": 0,
+      "deleted": 0
+    },
+    "store": {
+      "size_in_bytes": 0,
+      "throttle_time_in_millis": 0
+    },
+    "fielddata": {
+      "memory_size_in_bytes": 0,
+      "evictions": 0
+    },
+    "query_cache": {
+      "memory_size_in_bytes": 0,
+      "total_count": 0,
+      "hit_count": 0,
+      "miss_count": 0,
+      "cache_size": 0,
+      "cache_count": 0,
+      "evictions": 0
+    },
+    "completion": {
+      "size_in_bytes": 0
+    },
+    "segments": {
+      "count": 0,
+      "memory_in_bytes": 0,
+      "terms_memory_in_bytes": 0,
+      "stored_fields_memory_in_bytes": 0,
+      "term_vectors_memory_in_bytes": 0,
+      "norms_memory_in_bytes": 0,
+      "points_memory_in_bytes": 0,
+      "doc_values_memory_in_bytes": 0,
+      "index_writer_memory_in_bytes": 0,
+      "version_map_memory_in_bytes": 0,
+      "fixed_bit_set_memory_in_bytes": 0,
+      "max_unsafe_auto_id_timestamp": -9223372036854775808,
+      "file_sizes": {}
+    }
+  },
+  "nodes": {
+    "count": {
+      "total": 1,
+      "data": 1,
+      "coordinating_only": 0,
+      "master": 1,
+      "ingest": 1
+    },
+    "versions": [
+      "5.4.0"
+    ],
+    "os": {
+      "available_processors": 8,
+      "allocated_processors": 8,
+      "names": [
+        {
+          "name": "Mac OS X",
+          "count": 1
+        }
+      ],
+      "mem": {
+        "total_in_bytes": 17179869184,
+        "free_in_bytes": 5381193728,
+        "used_in_bytes": 11798675456,
+        "free_percent": 31,
+        "used_percent": 69
+      }
+    },
+    "process": {
+      "cpu": {
+        "percent": 5
+      },
+      "open_file_descriptors": {
+        "min": 247,
+        "max": 247,
+        "avg": 247
+      }
+    },
+    "jvm": {
+      "max_uptime_in_millis": 16538,
+      "versions": [
+        {
+          "version": "1.8.0_65",
+          "vm_name": "Java HotSpot(TM) 64-Bit Server VM",
+          "vm_version": "25.65-b01",
+          "vm_vendor": "Oracle Corporation",
+          "count": 1
+        }
+      ],
+      "mem": {
+        "heap_used_in_bytes": 221109168,
+        "heap_max_in_bytes": 2077753344
+      },
+      "threads": 48
+    },
+    "fs": {
+      "total_in_bytes": 499046809600,
+      "free_in_bytes": 41323851776,
+      "available_in_bytes": 41061707776
+    },
+    "plugins": [],
+    "network_types": {
+      "transport_types": {
+        "netty4": 1
+      },
+      "http_types": {
+        "netty4": 1
+      }
+    }
+  }
+}
