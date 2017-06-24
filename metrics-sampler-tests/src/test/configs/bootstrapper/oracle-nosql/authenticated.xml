@@ -1,0 +1,9 @@
+<configuration>
+	<inputs>
+		<oracle-nosql name="nosql" hosts="host1:2811 host2:2812" store="test" username="user" password="pass" trustFile="pom.xml">
+			<variables>
+				<string name="string" value="value" />
+			</variables>
+		</oracle-nosql> 
+	</inputs>
+</configuration>

@@ -1,12 +1,12 @@
 package org.metricssampler.extensions.oranosql;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.service.AbstractExtension;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class OracleNoSQLExtension extends AbstractExtension {
 	@Override
@@ -23,7 +23,12 @@ public class OracleNoSQLExtension extends AbstractExtension {
 
 	@Override
 	protected MetricsReader doNewReader(final InputConfig config) {
-		return new OracleNoSQLMetricsReader((OracleNoSQLInputConfig) config);
+		final OracleNoSQLInputConfig typedConfig = (OracleNoSQLInputConfig) config;
+		if (typedConfig.isAuthenticationRequired()) {
+			return new AuthenticatedOracleNoSQLMetricsReader(typedConfig);
+		} else {
+			return new AnonymousOracleNoSQLMetricsReader(typedConfig);
+		}
 	}
 
 }

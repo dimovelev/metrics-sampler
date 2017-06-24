@@ -1,6 +1,7 @@
 package org.metricssampler.util;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public final class Preconditions {
 	private Preconditions() {
@@ -45,6 +46,12 @@ public final class Preconditions {
 	public static void checkStateNotNull(final Object property, final String name) throws IllegalArgumentException {
 		if (property == null) {
 			throw new IllegalStateException("Property \"" + name + "\" may not be null");
+		}
+	}
+
+	public static void checkArgumentPresent(final Optional<?> argument, final String name) throws IllegalArgumentException {
+		if (!argument.isPresent()) {
+			throw new IllegalArgumentException("Argument \"" + name + "\" may not be null");
 		}
 	}
 }

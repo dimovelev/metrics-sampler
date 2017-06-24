@@ -3,11 +3,15 @@ package org.metricssampler.extensions.oranosql;
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPort;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.LoginConfig;
 import org.metricssampler.config.loader.xbeans.InputXBean;
 import org.metricssampler.extensions.oranosql.OracleNoSQLInputConfig.HostConfig;
 
@@ -18,6 +22,18 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class OracleNoSQLInputXBean extends InputXBean {
 	@XStreamAsAttribute
 	private String hosts;
+
+	@XStreamAsAttribute
+	private String store;
+
+	@XStreamAsAttribute
+	private String username;
+
+	@XStreamAsAttribute
+	private String password;
+
+	@XStreamAsAttribute
+	private String trustFile;
 
 	public String getHosts() {
 		return hosts;
@@ -56,6 +72,13 @@ public class OracleNoSQLInputXBean extends InputXBean {
 			final String[] hostCols = hostSpec.split(":");
 			hostConfigs.add(new HostConfig(hostCols[0], Integer.parseInt(hostCols[1])));
 		}
-		return new OracleNoSQLInputConfig(getName(), getVariablesConfig(), hostConfigs);
+
+		final Optional<String> storeName = store != null ? Optional.of(store) : Optional.empty();
+
+		final Optional<Path> trustPath = trustFile != null ? Optional.of(Paths.get(trustFile)) : Optional.empty();
+
+		final Optional<LoginConfig> login = username != null && password != null ? Optional.of(new LoginConfig(username, password)) : Optional.empty();
+
+		return new OracleNoSQLInputConfig(getName(), getVariablesConfig(), hostConfigs, storeName, trustPath, login);
 	}
 }
