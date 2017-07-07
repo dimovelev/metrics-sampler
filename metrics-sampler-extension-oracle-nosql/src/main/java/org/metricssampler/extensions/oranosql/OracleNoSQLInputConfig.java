@@ -44,15 +44,15 @@ public class OracleNoSQLInputConfig extends InputConfig {
 	}
 
 	public LoginConfig getLogin() {
-		return login.get();
+		return login.orElse(null);
 	}
 
 	public Path getTrustFile() {
-		return trustFile.get();
+		return trustFile.orElse(null);
 	}
 
 	public String getStoreName() {
-		return storeName.get();
+		return storeName.orElse(null);
 	}
 
 	public static class HostConfig {
