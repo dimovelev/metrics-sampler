@@ -1,10 +1,5 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
-import java.util.*;
-import java.util.Map.Entry;
-
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.reader.MetricValue;
 import org.metricssampler.reader.MetricsReader;
@@ -17,6 +12,11 @@ import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public class DefaultSampler implements Sampler {
 	private final Logger logger;
@@ -146,7 +146,9 @@ public class DefaultSampler implements Sampler {
 		return value;
 	}
 
-	private void writeMetrics(final Map<String, MetricValue> metrics) {
+	protected void writeMetrics(final Map<String, MetricValue> metrics) {
+		debugMetricsIfNecessary(metrics);
+
 		openWriters();
 
 		for (final MetricsWriter writer : writers) {
@@ -159,6 +161,14 @@ public class DefaultSampler implements Sampler {
 		}
 
 		closeWriters();
+	}
+
+	protected void debugMetricsIfNecessary(Map<String, MetricValue> metrics) {
+		if (logger.isDebugEnabled()) {
+			for (final Entry<String, MetricValue> item : metrics.entrySet()) {
+				logger.debug("Metric {} = {} @ {}", item.getKey(), item.getValue().getValue(), item.getValue().getTimestamp());
+			}
+		}
 	}
 
 	private Map<String, MetricValue> readMetrics() {

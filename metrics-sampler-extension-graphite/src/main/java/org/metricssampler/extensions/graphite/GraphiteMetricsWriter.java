@@ -68,8 +68,12 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 		final StringBuilder builder = new StringBuilder();
 		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
 			final MetricValue value = entry.getValue();
-			final String msg = serializeValue(entry.getKey(), value);
-			builder.append(msg);
+			if (value.getValue() != null) {
+				final String msg = serializeValue(entry.getKey(), value);
+				builder.append(msg);
+			} else {
+				logger.debug("Skipping null value for metric [{}]", entry.getKey());
+			}
 		}
 		try {
 			logger.debug("Sending to graphite:\n"+builder.toString());
