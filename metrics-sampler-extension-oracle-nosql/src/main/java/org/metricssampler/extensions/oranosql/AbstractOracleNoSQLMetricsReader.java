@@ -12,6 +12,8 @@ import oracle.kv.impl.topo.Topology;
 import org.metricssampler.reader.*;
 import org.metricssampler.resources.SamplerStats;
 
+import java.net.URI;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,14 +31,30 @@ public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsRe
     public void open() {
         if (service == null) {
             SamplerStats.get().incConnectCount();
-            loadCommandService();
+            service = loadCommandService();
         }
         if (service == null) {
             throw new OpenMetricsReaderException("Failed to open command service api to the admin");
         }
     }
 
-    protected abstract CommandServiceAPI loadCommandService();
+    protected CommandServiceAPI loadCommandService() {
+        for (final OracleNoSQLInputConfig.HostConfig host : config.getHosts()) {
+            logger.info("Trying to get the command service API from {}", host);
+            try {
+                final CommandServiceAPI commandService = loadCommandService(host);
+                if (commandService != null) {
+                    return commandService;
+                }
+            } catch (final RemoteException e) {
+                logger.warn("Failed to fetch command service from " + host, e);
+            } catch (final NotBoundException e) {
+                logger.warn("Failed to fetch command service from " + host, e);
+            }
+        }
+
+        return null;
+    }
 
     @Override
     public void close() throws MetricReadException {
@@ -136,4 +154,18 @@ public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsRe
         result.put(new SimpleMetricName(prefix + ".percentile99", ""), new MetricValue(timestamp, latency.get99thPercent()));
         result.put(new SimpleMetricName(prefix + ".tps", ""), new MetricValue(timestamp, info.getThroughputPerSec()));
     }
+
+    protected CommandServiceAPI loadCommandService(OracleNoSQLInputConfig.HostConfig host) throws RemoteException, NotBoundException {
+        final CommandServiceAPI service = lookupCommandService(host);
+        final URI masterUri = service.getMasterRmiAddress();
+        if (masterUri.getHost().equalsIgnoreCase(host.getHost()) && masterUri.getPort() == host.getPort()) {
+            logger.info("Found command service API on {} at {}", host,  masterUri);
+            return service;
+        } else {
+            logger.info("Connected to {} but it is not the master at {} so disconnecting from it. Trying the master directly.", host, masterUri);
+            return loadCommandService(new OracleNoSQLInputConfig.HostConfig(masterUri.getHost(), masterUri.getPort()));
+        }
+    }
+
+    protected abstract CommandServiceAPI lookupCommandService(OracleNoSQLInputConfig.HostConfig host) throws RemoteException, NotBoundException;
 }
