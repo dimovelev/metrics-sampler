@@ -7,6 +7,7 @@ import oracle.kv.impl.measurement.LatencyInfo;
 import oracle.kv.impl.monitor.views.PerfEvent;
 import oracle.kv.impl.monitor.views.ServiceChange;
 import oracle.kv.impl.topo.RepNodeId;
+import oracle.kv.impl.topo.ResourceId.ResourceType;
 import oracle.kv.impl.topo.StorageNodeId;
 import oracle.kv.impl.topo.Topology;
 import org.metricssampler.reader.*;
@@ -115,29 +116,37 @@ public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsRe
             final Set<RepNodeId> hostedRepNodes = topology.getHostedRepNodeIds(snId);
             for (RepNodeId rnId : topology.getRepNodeIds()) {
                 final boolean hosted = hostedRepNodes.contains(rnId);
-                result.put(new SimpleMetricName(snId.getFullName() + ".hosting." + rnId.getFullName(), ""), new MetricValue(timestamp, hosted ? 1 : 0));
+                final String name = snId.getType().name().toLowerCase() + ".nodes." + snId.getFullName() + ".hosting." + rnId.getFullName();
+                result.put(new SimpleMetricName(name, "Whether replication node " + rnId.getFullName() + " is hosted on " + snId.getFullName()), new MetricValue(timestamp, hosted ? 1 : 0));
             }
         }
     }
 
     private void addStatusMetrics(Map<MetricName, MetricValue> result) throws RemoteException {
         logger.debug("Loading the status map");
+        final ResourceTypeServiceStatusMetrics statusMetrics = new ResourceTypeServiceStatusMetrics();
+
         for (ServiceChange item : service.getStatusMap().values()) {
+            final ResourceType type = item.getTarget().getType();
+            statusMetrics.add(type, item.getStatus());
+            final String name = type.name().toLowerCase() + ".nodes." + item.getTarget().getFullName();
             final long timestamp = System.currentTimeMillis();
-            final String name = item.getTarget().getFullName();
             result.put(new SimpleMetricName(name + ".status.ordinal", "0-STARTING,1-WAITING_FOR_DEPLOY,2-RUNNING,3-STOPPING,4-STOPPED,5-ERROR_RESTARTING,6-ERROR_NO_RESTART,7-UNREACHABLE,8-EXPECTED_RESTARTING"), new MetricValue(timestamp, item.getStatus().ordinal()));
             result.put(new SimpleMetricName(name + ".status.age", "The number of milliseconds since this change"), new MetricValue(timestamp, timestamp - item.getChangeTime()));
         }
+
+        statusMetrics.addMetrics(result);
     }
 
     protected void addPerfMapMetrics(final Map<MetricName, MetricValue> metrics) throws RemoteException {
         logger.debug("Loading the perf map");
         for (final PerfEvent event : service.getPerfMap().values()) {
             logger.debug("Processing event {}", event);
-            addLatencyMetrics(event.getSingleInt(), event.getResourceId().getFullName() + ".ops.single.interval", metrics);
-            addLatencyMetrics(event.getSingleCum(), event.getResourceId().getFullName() + ".ops.single.cumulative", metrics);
-            addLatencyMetrics(event.getMultiInt(), event.getResourceId().getFullName() + ".ops.multi.interval", metrics);
-            addLatencyMetrics(event.getMultiCum(), event.getResourceId().getFullName() + ".ops.multi.cumulative", metrics);
+            final String prefix = event.getResourceId().getType().name().toLowerCase() + ".nodes." + event.getResourceId().getFullName();
+            addLatencyMetrics(event.getSingleInt(), prefix + ".ops.single.interval", metrics);
+            addLatencyMetrics(event.getSingleCum(), prefix + ".ops.single.cumulative", metrics);
+            addLatencyMetrics(event.getMultiInt(), prefix + ".ops.multi.interval", metrics);
+            addLatencyMetrics(event.getMultiCum(), prefix + ".ops.multi.cumulative", metrics);
         }
     }
 
