@@ -10,7 +10,7 @@ import org.metricssampler.config.ConfigurationException;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public abstract class VariableXBean {
+public abstract class VariableXBean extends XBean {
 	@XStreamAsAttribute
 	private String name;
 	

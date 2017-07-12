@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.metricssampler.config.HttpConnectionPoolConfig;
 
 @XStreamAlias("http-connection-pool")
-public class HttpConnectionPoolXBean {
+public class HttpConnectionPoolXBean extends XBean {
     @XStreamAlias("max-per-route")
     @XStreamAsAttribute
     private Integer maxPerRoute = 20;

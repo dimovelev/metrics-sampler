@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("entry")
-public class EntryXBean {
+public class EntryXBean extends XBean {
 	@XStreamAsAttribute
 	private String key;
 

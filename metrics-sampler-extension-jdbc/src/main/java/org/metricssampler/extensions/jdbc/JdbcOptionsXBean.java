@@ -7,8 +7,9 @@ import java.util.Map;
 import org.metricssampler.config.loader.xbeans.EntryXBean;
 
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.metricssampler.config.loader.xbeans.XBean;
 
-public class JdbcOptionsXBean {
+public class JdbcOptionsXBean extends XBean {
 	@XStreamImplicit
 	private List<EntryXBean> entries;
 

@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("socket-options")
-public class SocketOptionsXBean {
+public class SocketOptionsXBean extends XBean {
 	@XStreamAlias("connect-timeout")
 	@XStreamAsAttribute
 	private Integer connectTimeout = 0;

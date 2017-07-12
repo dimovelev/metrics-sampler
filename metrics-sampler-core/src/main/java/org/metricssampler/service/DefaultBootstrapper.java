@@ -2,6 +2,7 @@ package org.metricssampler.service;
 
 import org.metricssampler.config.*;
 import org.metricssampler.config.loader.ConfigurationLoader;
+import org.metricssampler.config.loader.XBeanPostProcessor;
 import org.metricssampler.config.loader.xbeans.*;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
@@ -17,14 +18,15 @@ import java.util.*;
 public class DefaultBootstrapper implements Bootstrapper {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private final List<Class<?>> xbeanClasses = new LinkedList<Class<?>>();
-	private final List<LocalObjectFactory> objectFactories = new LinkedList<LocalObjectFactory>();
+	private final List<Class<?>> xbeanClasses = new ArrayList<>();
+	private final List<LocalObjectFactory> objectFactories = new ArrayList<>();
 
 	private Configuration configuration;
 	private List<Sampler> samplers;
 	private Map<String, SharedResource> sharedResources;
 	private final String controlHost;
 	private final int controlPort;
+	private List<XBeanPostProcessor> xbeanPostProcessors = new ArrayList<>();
 
 	private DefaultBootstrapper(final String controlHost, final int controlPort) {
 		ApplicationInfo.initialize();
@@ -67,6 +69,8 @@ public class DefaultBootstrapper implements Bootstrapper {
 		for (final Extension extension : services) {
 			registerExtension(extension);
 		}
+
+		Collections.sort(xbeanPostProcessors);
 	}
 
 	protected void addDefaultXBeanClasses() {
@@ -83,7 +87,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 	}
 
 	private void loadConfiguration(final String filename) {
-		configuration = ConfigurationLoader.fromFile(filename, xbeanClasses);
+		configuration = ConfigurationLoader.fromFile(filename, xbeanClasses, xbeanPostProcessors);
 	}
 
 	private void createSharedResources() {
@@ -128,6 +132,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		logger.info("Loading extension {}", extension.getName());
 		extension.initialize();
 		xbeanClasses.addAll(extension.getXBeans());
+		xbeanPostProcessors.addAll(extension.getXBeanPostProcessors());
 		final LocalObjectFactory localObjectFactory = extension.getObjectFactory();
 		localObjectFactory.setGlobalFactory(this);
 		objectFactories.add(localObjectFactory);

@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
  * An XBean which has a mandatory name attribute.
  */
-public abstract class NamedXBean {
+public abstract class NamedXBean extends XBean {
 	@XStreamAsAttribute
 	private String name;
 

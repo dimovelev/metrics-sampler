@@ -18,7 +18,7 @@ import org.metricssampler.config.SharedResourceConfig;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("configuration")
-public class ConfigurationXBean {
+public class ConfigurationXBean extends XBean {
 	private List<IncludeXBean> includes;
 	private List<InputXBean> inputs;
 	private List<OutputXBean> outputs;
