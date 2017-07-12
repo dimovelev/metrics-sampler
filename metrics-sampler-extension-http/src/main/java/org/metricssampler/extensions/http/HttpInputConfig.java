@@ -11,7 +11,7 @@ public class HttpInputConfig extends BaseHttpInputConfig {
 
 	protected HttpInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username, final String password,
 			final Map<String, String> headers, final boolean preemptiveAuthEnabled, final SocketOptionsConfig socketOptions, final HttpResponseParser parser) {
-		super(name, variables, url, username, password, headers, preemptiveAuthEnabled, socketOptions);
+		super(name, variables, url, username, password, headers, preemptiveAuthEnabled, socketOptions, null);
 		this.parser = parser;
 	}
 

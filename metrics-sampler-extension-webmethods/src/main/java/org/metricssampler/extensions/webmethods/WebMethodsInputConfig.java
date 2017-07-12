@@ -17,7 +17,7 @@ public class WebMethodsInputConfig extends BaseHttpInputConfig {
 	public WebMethodsInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username,
 			final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled, final SocketOptionsConfig socketOptions,
 			final long maxEntrySize, final DateFormat dateFormat) {
-		super(name, variables, url, username, password, headers, preemptiveAuthEnabled, socketOptions);
+		super(name, variables, url, username, password, headers, preemptiveAuthEnabled, socketOptions, null);
 		checkArgumentNotNull(dateFormat, "dateFormat");
 		checkArgument(maxEntrySize > 0, "maxEntrySize must greater than 0");
 		this.maxEntrySize = maxEntrySize;

@@ -11,7 +11,7 @@ public class ElasticSearchInputConfig extends BaseHttpInputConfig {
     private final boolean nodeStatsEnabled;
 
     public ElasticSearchInputConfig(String name, Map<String, Object> variables, URL url, String username, String password, Map<String, String> headers, boolean preemptiveAuthEnabled, SocketOptionsConfig socketOptions, boolean clusterStatsEnabled, boolean nodeStatsEnabled) {
-        super(name, variables, url, username, password, headers, preemptiveAuthEnabled, socketOptions);
+        super(name, variables, url, username, password, headers, preemptiveAuthEnabled, socketOptions, null);
         this.clusterStatsEnabled = clusterStatsEnabled;
         this.nodeStatsEnabled = nodeStatsEnabled;
         final boolean anyStatsEnabled = clusterStatsEnabled || nodeStatsEnabled;

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.HttpConnectionPoolConfig;
 import org.metricssampler.config.SocketOptionsConfig;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -30,7 +31,10 @@ public abstract class BaseHttpInputXBean extends InputXBean {
 	
 	@XStreamAlias("socket-options")
 	private SocketOptionsXBean socketOptions;
-	
+
+	@XStreamAlias("connection-pool")
+	private HttpConnectionPoolXBean connectionPool;
+
 	private List<EntryXBean> headers;
 
 	public BaseHttpInputXBean() {
@@ -77,6 +81,14 @@ public abstract class BaseHttpInputXBean extends InputXBean {
 		this.socketOptions = socketOptions;
 	}
 
+	public HttpConnectionPoolXBean getConnectionPool() {
+		return connectionPool;
+	}
+
+	public void setConnectionPool(HttpConnectionPoolXBean connectionPool) {
+		this.connectionPool = connectionPool;
+	}
+
 	@Override
 	protected void validate() {
 		super.validate();
@@ -109,7 +121,10 @@ public abstract class BaseHttpInputXBean extends InputXBean {
 	protected SocketOptionsConfig createSocketOptionsConfig() {
 		return getSocketOptions() != null ? getSocketOptions().toConfig() : null;
 	}
-	
+
+	protected HttpConnectionPoolConfig createConnectionPoolConfig() {
+		return getConnectionPool() != null ? getConnectionPool().toConfig() : null;
+	}
 	protected URL parseUrl() {
 		try {
 			return new URL(getUrl());

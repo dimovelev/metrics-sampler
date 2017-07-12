@@ -59,6 +59,7 @@
 		<module>metrics-sampler-extension-exec</module>
         <module>metrics-sampler-extension-elasticsearch</module>
 		<module>metrics-sampler-extension-memcached</module>
+		<module>metrics-sampler-extension-kafka-manager</module>
 	</modules>
 	<build>
 		<pluginManagement>
@@ -200,7 +201,7 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.2.5</version>
+				<version>4.5.2</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>commons-logging</artifactId>

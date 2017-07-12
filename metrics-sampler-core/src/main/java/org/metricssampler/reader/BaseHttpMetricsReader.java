@@ -5,21 +5,23 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpParams;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.metricssampler.config.BaseHttpInputConfig;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.SocketOptionsConfig;
-import org.metricssampler.reader.*;
 import org.metricssampler.service.ApplicationInfo;
 import org.metricssampler.util.VariableUtils;
 
@@ -28,33 +30,64 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public abstract class BaseHttpMetricsReader<T extends BaseHttpInputConfig> extends AbstractMetricsReader<T> implements BulkMetricsReader {
-    protected final DefaultHttpClient httpClient;
+    protected final HttpClient httpClient;
     protected final HttpContext httpContext;
     protected Map<MetricName, MetricValue> values;
-
+    protected final String userAgent;
     public BaseHttpMetricsReader(final T config) {
         super(config);
         httpClient = setupClient();
         httpContext = setupContext();
+        userAgent = "metrics-sampler v" + ApplicationInfo.getInstance().getVersion();
     }
 
-    protected DefaultHttpClient setupClient() {
-        final DefaultHttpClient result = new DefaultHttpClient();
+    protected RequestConfig.Builder setupDefaultRequestConfig() {
+        final RequestConfig.Builder result = RequestConfig.custom();
+        if (config.getSocketOptions() != null) {
+            return result.setConnectTimeout(config.getSocketOptions().getConnectTimeout());
+        } else {
+            return result;
+        }
+    }
+
+    protected HttpClientBuilder setupClientBuilder() {
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        builder.setDefaultHeaders(Arrays.asList(new BasicHeader(HttpHeaders.USER_AGENT, userAgent)));
+        builder.setDefaultRequestConfig(setupDefaultRequestConfig().build());
+
         if (config.getUsername() != null) {
-            result.getCredentialsProvider().setCredentials(
+            final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(
                     AuthScope.ANY,
-                    new UsernamePasswordCredentials(config.getUsername(), config.getPassword()));
+                    new UsernamePasswordCredentials(config.getUsername(), config.getPassword())
+            );
+            builder.setDefaultCredentialsProvider(credentialsProvider);
         }
         if (config.getSocketOptions() != null) {
             final SocketOptionsConfig socketOptions = config.getSocketOptions();
-            final HttpParams params = result.getParams();
-            params.setBooleanParameter(CoreConnectionPNames.SO_KEEPALIVE, socketOptions.isKeepAlive());
-            params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, socketOptions.getConnectTimeout());
-            params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, socketOptions.getSoTimeout());
+            SocketConfig socketConfig = SocketConfig.custom()
+                    .setSoTimeout(socketOptions.getSoTimeout())
+                    .setSoKeepAlive(socketOptions.isKeepAlive())
+                    .setSndBufSize(socketOptions.getSndBuffSize())
+                    .setRcvBufSize(socketOptions.getRcvBuffSize())
+                    .build();
+            builder.setDefaultSocketConfig(socketConfig);
         }
-        return result;
+
+        if (config.getConnectionPool() != null) {
+            PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(config.getConnectionPool().getTimeToLiveSeconds(), TimeUnit.SECONDS);
+            connectionManager.setDefaultMaxPerRoute(config.getConnectionPool().getMaxPerRoute());
+            connectionManager.setMaxTotal(config.getConnectionPool().getMaxTotal());
+            builder.setConnectionManager(connectionManager);
+        }
+        return builder;
+    }
+
+    protected HttpClient setupClient() {
+        return setupClientBuilder().build();
     }
 
     /**
@@ -77,7 +110,6 @@ public abstract class BaseHttpMetricsReader<T extends BaseHttpInputConfig> exten
     protected HttpGet setupGetRequest(final String path) {
         try {
             final HttpGet result = new HttpGet(config.getUrl().toURI() + path);
-            result.setHeader("User-Agent", "metrics-sampler apache-status v" + ApplicationInfo.getInstance().getVersion());
             for (final Map.Entry<String, String> header : config.getHeaders().entrySet()) {
                 result.setHeader(header.getKey(), header.getValue());
             }

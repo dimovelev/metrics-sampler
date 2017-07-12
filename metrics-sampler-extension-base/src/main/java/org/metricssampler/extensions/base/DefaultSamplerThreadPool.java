@@ -4,8 +4,8 @@ import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.metricssampler.config.ThreadPoolConfig;
 import org.metricssampler.resources.SamplerTask;
@@ -35,6 +35,15 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 	private ScheduledThreadPoolExecutor createExecutorService(final ThreadPoolConfig config) {
 		logger.info("Starting scheduled thread pool \"{}\" with core size of {} threads", config.getName(), config.getCoreSize());
 		final ScheduledThreadPoolExecutor result = new ScheduledThreadPoolExecutor(config.getCoreSize());
+		result.setThreadFactory(new ThreadFactory() {
+			private final AtomicInteger threadNumber = new AtomicInteger(1);
+			@Override
+			public Thread newThread(Runnable r) {
+				final Thread result = new Thread(r, config.getName() + "-" + threadNumber.getAndIncrement());
+				result.setDaemon(true);
+				return result;
+			}
+		});
 		if (config.getMaxSize() != -1) {
 			result.setMaximumPoolSize(config.getMaxSize());
 		}
@@ -76,6 +85,11 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 	@Override
 	public String getName() {
 		return config.getName();
+	}
+
+	@Override
+	public <T> Future<T> submit(Callable<T> task) {
+		return executorService.submit(task);
 	}
 
 	@Override

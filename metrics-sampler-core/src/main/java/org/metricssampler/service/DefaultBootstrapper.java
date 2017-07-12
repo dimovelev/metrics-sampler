@@ -1,30 +1,8 @@
 package org.metricssampler.service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-
-import org.metricssampler.config.Configuration;
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.SamplerConfig;
-import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.SharedResourceConfig;
-import org.metricssampler.config.ValueTransformerConfig;
+import org.metricssampler.config.*;
 import org.metricssampler.config.loader.ConfigurationLoader;
-import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
-import org.metricssampler.config.loader.xbeans.DictionaryVariableXBean;
-import org.metricssampler.config.loader.xbeans.EntryXBean;
-import org.metricssampler.config.loader.xbeans.SamplerThreadPoolXBean;
-import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
-import org.metricssampler.config.loader.xbeans.SelectorGroupXBean;
-import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
-import org.metricssampler.config.loader.xbeans.StringVariableXBean;
-import org.metricssampler.config.loader.xbeans.VariableXBean;
+import org.metricssampler.config.loader.xbeans.*;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
@@ -33,6 +11,8 @@ import org.metricssampler.values.ValueTransformer;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 public class DefaultBootstrapper implements Bootstrapper {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -99,6 +79,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		xbeanClasses.add(EntryXBean.class);
 		xbeanClasses.add(SharedResourceXBean.class);
 		xbeanClasses.add(SamplerThreadPoolXBean.class);
+		xbeanClasses.add(HttpConnectionPoolXBean.class);
 	}
 
 	private void loadConfiguration(final String filename) {
