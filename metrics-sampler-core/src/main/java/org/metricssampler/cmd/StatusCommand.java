@@ -1,9 +1,9 @@
 package org.metricssampler.cmd;
 
+import com.beust.jcommander.Parameters;
+
 import java.io.IOException;
 import java.net.ConnectException;
-
-import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="status", commandDescriptionKey="help.status.command")
 public class StatusCommand extends ControlCommand {

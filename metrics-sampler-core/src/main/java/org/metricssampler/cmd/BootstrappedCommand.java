@@ -1,13 +1,12 @@
 package org.metricssampler.cmd;
 
-import java.io.File;
-
-import org.metricssampler.service.Bootstrapper;
-import org.slf4j.LoggerFactory;
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
+import org.metricssampler.service.Bootstrapper;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * Base classes for command that require a bootstrapped environment to operate

@@ -1,14 +1,13 @@
 package org.metricssampler;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import org.metricssampler.cmd.*;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
-
-import org.metricssampler.cmd.*;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
 
 public class MetricsSampler {
 	public static void main(final String[] args) {

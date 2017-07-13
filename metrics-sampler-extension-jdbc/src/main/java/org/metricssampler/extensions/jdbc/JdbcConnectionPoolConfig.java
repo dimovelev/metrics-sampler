@@ -1,12 +1,12 @@
 package org.metricssampler.extensions.jdbc;
 
-import static org.metricssampler.util.Preconditions.checkArgument;
-import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
+import org.metricssampler.config.SharedResourceConfig;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.metricssampler.config.SharedResourceConfig;
+import static org.metricssampler.util.Preconditions.checkArgument;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 public class JdbcConnectionPoolConfig extends SharedResourceConfig {
 	private final int minSize;

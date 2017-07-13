@@ -1,22 +1,14 @@
 package org.metricssampler.extensions.exec;
 
+import org.apache.commons.io.IOUtils;
+import org.metricssampler.reader.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.metricssampler.reader.AbstractMetricsReader;
-import org.metricssampler.reader.BulkMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricReadException;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.OpenMetricsReaderException;
-import org.metricssampler.reader.SimpleMetricName;
 
 /**
  * Execute a process on each sample and read one metric per line in the form {@code [<timestamp>:]<name>=<value>} from its standard output and error.
@@ -31,7 +23,7 @@ public class ExecMetricsReader extends AbstractMetricsReader<ExecInputConfig> im
 	}
 
 	protected ProcessBuilder createProcessBuilder(final ExecInputConfig config) {
-		final List<String> command = new ArrayList<String>(config.getArguments().size() + 1);
+		final List<String> command = new ArrayList<>(config.getArguments().size() + 1);
 		command.add(config.getCommand());
 		command.addAll(config.getArguments());
 		final ProcessBuilder result = new ProcessBuilder(command);
@@ -61,19 +53,14 @@ public class ExecMetricsReader extends AbstractMetricsReader<ExecInputConfig> im
 	}
 
 	@Override
-	public Iterable<MetricName> readNames() {
-		return readAllMetrics().keySet();
-	}
-
-	@Override
-	public Map<MetricName, MetricValue> readAllMetrics() {
+	public Metrics readAllMetrics() {
 		assert process != null;
-		final Map<MetricName, MetricValue> result = new HashMap<>();
+		final Metrics result = new Metrics();
 		addMetricsFromOutput(result);
 		return result;
 	}
 
-	protected void addMetricsFromOutput(final Map<MetricName, MetricValue> result) {
+	protected void addMetricsFromOutput(final Metrics result) {
 		InputStream inputStream = null;
 		try {
 			inputStream = process.getInputStream();
@@ -94,7 +81,7 @@ public class ExecMetricsReader extends AbstractMetricsReader<ExecInputConfig> im
 		}
 	}
 
-	protected void parseMetricFromLine(final Map<MetricName, MetricValue> result, final String line) {
+	protected void parseMetricFromLine(final Metrics result, final String line) {
 		final int timestampEndIdx = line.indexOf(':');
 		if (timestampEndIdx > 0) {
 			// starts with a timestamp
@@ -111,10 +98,10 @@ public class ExecMetricsReader extends AbstractMetricsReader<ExecInputConfig> im
 		}
 	}
 
-	protected void parseMetric(final long timestamp, final Map<MetricName, MetricValue> result, final String line) {
+	protected void parseMetric(final long timestamp, final Metrics result, final String line) {
 		final String[] cols = line.split("=", 2);
 		if (cols.length == 2) {
-			result.put(new SimpleMetricName(cols[0], null), new MetricValue(timestamp, cols[1]));
+			result.add(cols[0], timestamp, cols[1]);
 		} else {
 			logger.warn("Failed to parse line \"{}\". It should be of the form [<timestamp>:]<metric-name>=<metric-value>", line);
 		}

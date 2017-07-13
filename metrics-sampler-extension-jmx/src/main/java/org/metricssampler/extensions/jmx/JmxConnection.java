@@ -1,20 +1,18 @@
 package org.metricssampler.extensions.jmx;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import org.metricssampler.resources.SamplerStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.naming.Context;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.metricssampler.resources.SamplerStats;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.apache.commons.io.IOUtils.closeQuietly;
 
 public class JmxConnection {
 	private final Logger logger = LoggerFactory.getLogger(getClass());

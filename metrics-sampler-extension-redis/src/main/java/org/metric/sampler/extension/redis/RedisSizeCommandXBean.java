@@ -1,10 +1,10 @@
 package org.metric.sampler.extension.redis;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @XStreamAlias("redis-size")
 public class RedisSizeCommandXBean extends RedisCommandXBean {

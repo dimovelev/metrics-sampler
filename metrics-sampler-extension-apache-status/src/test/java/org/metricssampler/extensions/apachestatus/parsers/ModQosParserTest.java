@@ -1,11 +1,13 @@
 package org.metricssampler.extensions.apachestatus.parsers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
+import org.metricssampler.reader.Metric;
 import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
+
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ModQosParserTest extends StatusLineParserTestBase {
 	@Override
@@ -23,8 +25,9 @@ public class ModQosParserTest extends StatusLineParserTestBase {
 		parseSuccess("b;www.example.com;0;QS_AllConn: 1");
 
 		assertEquals(1, metrics.size());
-		final MetricValue value = metrics.get(new SimpleMetricName("virtual=b,host=www.example.com,port=0,metric=QS_AllConn", null));
-		assertNotNull(value);
+		final Optional<Metric> metric = metrics.get("virtual=b,host=www.example.com,port=0,metric=QS_AllConn");
+		assertTrue(metric.isPresent());
+		MetricValue value = metric.get().getValue();
 		assertEquals("1", value.getValue());
 		assertEquals(timestamp, value.getTimestamp());
 	}

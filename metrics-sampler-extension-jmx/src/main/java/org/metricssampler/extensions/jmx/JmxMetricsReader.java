@@ -1,42 +1,15 @@
 package org.metricssampler.extensions.jmx;
 
+import org.metricssampler.reader.*;
+import org.metricssampler.util.VariableUtils;
+
+import javax.management.*;
+import javax.management.openmbean.*;
+import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
-
-import javax.management.AttributeNotFoundException;
-import javax.management.Descriptor;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.management.RuntimeMBeanException;
-import javax.management.openmbean.ArrayType;
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.OpenType;
-import javax.management.openmbean.SimpleType;
-import javax.management.openmbean.TabularData;
-import javax.management.openmbean.TabularType;
-import javax.management.remote.JMXServiceURL;
-
-import org.metricssampler.reader.AbstractMetricsReader;
-import org.metricssampler.reader.MetaDataMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricReadException;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.MetricsMetaData;
-import org.metricssampler.reader.OpenMetricsReaderException;
-import org.metricssampler.util.VariableUtils;
 
 /**
  * Read metrics from a JMX server. This class is not thread safe and may not be reused in multiple samplers.

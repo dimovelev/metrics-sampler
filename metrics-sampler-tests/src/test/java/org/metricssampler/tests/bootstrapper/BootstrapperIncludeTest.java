@@ -1,13 +1,13 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.config.ThreadPoolConfig;
 import org.metricssampler.extensions.base.ConsoleOutputConfig;
 import org.metricssampler.extensions.base.DefaultSamplerConfig;
 import org.metricssampler.extensions.jmx.JmxInputConfig;
+
+import static org.junit.Assert.assertTrue;
 
 public class BootstrapperIncludeTest extends BootstrapperTestBase {
 	@Test

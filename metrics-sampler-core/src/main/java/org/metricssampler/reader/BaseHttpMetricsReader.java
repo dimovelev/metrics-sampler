@@ -29,14 +29,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseHttpMetricsReader<T extends BaseHttpInputConfig> extends AbstractMetricsReader<T> implements BulkMetricsReader {
     protected final HttpClient httpClient;
     protected final HttpContext httpContext;
-    protected Map<MetricName, MetricValue> values;
+    protected Metrics values;
     protected final String userAgent;
+
     public BaseHttpMetricsReader(final T config) {
         super(config);
         httpClient = setupClient();
@@ -148,7 +152,7 @@ public abstract class BaseHttpMetricsReader<T extends BaseHttpInputConfig> exten
     }
 
     protected void fetchOverHttp(HttpClient httpClient, HttpContext httpContext) throws Exception {
-        values = new HashMap<>();
+        values = new Metrics();
         final List<HttpUriRequest> httpRequests = setupRequests();
 
         for (final HttpUriRequest httpRequest : httpRequests) {
@@ -181,13 +185,8 @@ public abstract class BaseHttpMetricsReader<T extends BaseHttpInputConfig> exten
     }
 
     @Override
-    public Iterable<MetricName> readNames() throws MetricReadException {
-        return values.keySet();
-    }
-
-    @Override
-    public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
-        return Collections.unmodifiableMap(values);
+    public Metrics readAllMetrics() throws MetricReadException {
+        return values;
     }
 
     protected InputStreamReader streamEntity(final HttpEntity entity) throws IOException {

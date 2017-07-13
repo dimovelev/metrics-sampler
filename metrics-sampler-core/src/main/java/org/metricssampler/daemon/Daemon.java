@@ -1,8 +1,5 @@
 package org.metricssampler.daemon;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.resources.SamplerTask;
 import org.metricssampler.resources.SamplerThreadPool;
@@ -10,6 +7,9 @@ import org.metricssampler.sampler.Sampler;
 import org.metricssampler.service.Bootstrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Daemon {
 	private final Logger logger = LoggerFactory.getLogger(getClass());

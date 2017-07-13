@@ -1,15 +1,7 @@
 package org.metricssampler.extensions.jdbc;
 
-import java.beans.PropertyVetoException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.PooledDataSource;
 import org.apache.commons.beanutils.BeanUtils;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.resources.SharedResource;
@@ -17,8 +9,11 @@ import org.metricssampler.service.GlobalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.mchange.v2.c3p0.PooledDataSource;
+import java.beans.PropertyVetoException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
 
 public class JdbcConnectionPool implements SharedResource {
 	private static final List<String> STATS_DATASOURCE_PROPERTIES = Arrays.asList(

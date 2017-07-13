@@ -1,14 +1,14 @@
 package org.metricssampler.extensions.webmethods;
 
-import static org.metricssampler.util.Preconditions.checkArgument;
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import org.metricssampler.config.BaseHttpInputConfig;
+import org.metricssampler.config.SocketOptionsConfig;
 
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Map;
 
-import org.metricssampler.config.BaseHttpInputConfig;
-import org.metricssampler.config.SocketOptionsConfig;
+import static org.metricssampler.util.Preconditions.checkArgument;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public class WebMethodsInputConfig extends BaseHttpInputConfig {
 	private final long maxEntrySize;

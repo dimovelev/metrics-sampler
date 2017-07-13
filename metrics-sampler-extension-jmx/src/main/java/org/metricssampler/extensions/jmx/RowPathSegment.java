@@ -1,13 +1,12 @@
 package org.metricssampler.extensions.jmx;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularType;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public class RowPathSegment extends PathSegment {
 	private final List<Object> columns;

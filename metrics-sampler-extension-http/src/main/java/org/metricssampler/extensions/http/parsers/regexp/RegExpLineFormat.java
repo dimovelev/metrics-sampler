@@ -1,12 +1,9 @@
 package org.metricssampler.extensions.http.parsers.regexp;
 
-import java.util.Map;
+import org.metricssampler.reader.Metrics;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
 
 public class RegExpLineFormat {
 	private final Pattern pattern;
@@ -40,12 +37,12 @@ public class RegExpLineFormat {
 		return valueGroupIndex;
 	}
 
-	public boolean parse(final Map<MetricName, MetricValue> values, final long timestamp, final String line) {
+	public boolean parse(final Metrics values, final long timestamp, final String line) {
 		final Matcher matcher = pattern.matcher(line);
 		if (matcher.matches()) {
 			final String name = matcher.group(nameGroupIndex);
 			final String value = matcher.group(valueGroupIndex);
-			values.put(new SimpleMetricName(name, null), new MetricValue(timestamp, value));
+			values.add(name, timestamp, value);
 			return true;
 		} else {
 			return false;

@@ -1,8 +1,8 @@
 package org.metricssampler.extensions.base;
 
-import java.util.regex.Pattern;
-
 import org.metricssampler.config.NameRegExpValueTransformerConfig;
+
+import java.util.regex.Pattern;
 
 public class ELValueTransformerConfig extends NameRegExpValueTransformerConfig {
 	private final String expression;

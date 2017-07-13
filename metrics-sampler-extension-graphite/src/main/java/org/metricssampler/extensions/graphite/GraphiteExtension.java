@@ -1,12 +1,12 @@
 package org.metricssampler.extensions.graphite;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.service.AbstractExtension;
 import org.metricssampler.writer.MetricsWriter;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GraphiteExtension extends AbstractExtension {
 	@Override

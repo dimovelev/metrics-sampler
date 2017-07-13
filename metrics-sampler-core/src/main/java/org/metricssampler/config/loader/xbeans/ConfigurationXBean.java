@@ -1,21 +1,9 @@
 package org.metricssampler.config.loader.xbeans;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.metricssampler.config.Configuration;
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.SamplerConfig;
-import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.SharedResourceConfig;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.metricssampler.config.*;
+
+import java.util.*;
 
 @XStreamAlias("configuration")
 public class ConfigurationXBean extends XBean {

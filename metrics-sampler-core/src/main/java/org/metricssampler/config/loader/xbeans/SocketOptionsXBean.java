@@ -1,9 +1,8 @@
 package org.metricssampler.config.loader.xbeans;
 
-import org.metricssampler.config.SocketOptionsConfig;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.SocketOptionsConfig;
 
 @XStreamAlias("socket-options")
 public class SocketOptionsXBean extends XBean {

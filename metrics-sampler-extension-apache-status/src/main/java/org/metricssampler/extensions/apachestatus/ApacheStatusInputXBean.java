@@ -1,8 +1,7 @@
 package org.metricssampler.extensions.apachestatus;
 
-import org.metricssampler.config.loader.xbeans.BaseHttpInputXBean;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.metricssampler.config.loader.xbeans.BaseHttpInputXBean;
 
 @XStreamAlias("apache-status")
 public class ApacheStatusInputXBean extends BaseHttpInputXBean {

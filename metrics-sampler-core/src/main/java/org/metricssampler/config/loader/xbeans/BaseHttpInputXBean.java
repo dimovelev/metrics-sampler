@@ -1,6 +1,10 @@
 package org.metricssampler.config.loader.xbeans;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.validUrl;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.HttpConnectionPoolConfig;
+import org.metricssampler.config.SocketOptionsConfig;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,12 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.HttpConnectionPoolConfig;
-import org.metricssampler.config.SocketOptionsConfig;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.validUrl;
 
 public abstract class BaseHttpInputXBean extends InputXBean {
 	@XStreamAsAttribute

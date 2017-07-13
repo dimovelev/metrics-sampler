@@ -1,13 +1,13 @@
 package org.metricssampler.extensions.jdbc;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
+import org.metricssampler.config.InputConfig;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.InputConfig;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 public class JdbcInputConfig extends InputConfig {
 	private final String pool;

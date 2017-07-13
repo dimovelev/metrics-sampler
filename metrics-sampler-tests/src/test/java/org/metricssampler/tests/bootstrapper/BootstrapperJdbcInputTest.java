@@ -1,12 +1,12 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.extensions.jdbc.JdbcConnectionPoolConfig;
 import org.metricssampler.extensions.jdbc.JdbcInputConfig;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BootstrapperJdbcInputTest extends BootstrapperTestBase {
 	@Test

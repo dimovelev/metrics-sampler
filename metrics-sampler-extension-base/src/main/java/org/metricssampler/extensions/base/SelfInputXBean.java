@@ -1,8 +1,7 @@
 package org.metricssampler.extensions.base;
 
-import org.metricssampler.config.loader.xbeans.InputXBean;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.metricssampler.config.loader.xbeans.InputXBean;
 
 @XStreamAlias("self")
 public class SelfInputXBean extends InputXBean {

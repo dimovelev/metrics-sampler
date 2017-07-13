@@ -1,18 +1,15 @@
 package org.metricssampler.extensions.base;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.metricssampler.reader.AbstractMetricsReader;
 import org.metricssampler.reader.BulkMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.reader.Metrics;
 import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.resources.SamplerTask;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.service.GlobalRegistry;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class SelfMetricsReader extends AbstractMetricsReader<SelfInputConfig> implements BulkMetricsReader{
 	public SelfMetricsReader(final SelfInputConfig config) {
@@ -30,31 +27,26 @@ public class SelfMetricsReader extends AbstractMetricsReader<SelfInputConfig> im
 	}
 
 	@Override
-	public Iterable<MetricName> readNames() {
-		return readAllMetrics().keySet();
-	}
-
-	@Override
-	public Map<MetricName, MetricValue> readAllMetrics() {
-		final Map<MetricName, MetricValue> result = new HashMap<>();
+	public Metrics readAllMetrics() {
+		final Metrics result = new Metrics();
 		final GlobalRegistry registry = GlobalRegistry.getInstance();
 		final long timestamp = System.currentTimeMillis();
 		for(final SamplerTask task : registry.getTasks()) {
 			final SamplerStats stats = task.getStats();
 			final String prefix = "samplers." + task.getName() + ".";
-			result.put(new SimpleMetricName(prefix + "activeTime", "The number of seconds since the last activation of the sampler"), new MetricValue(timestamp, stats.getActiveTime()));
-			result.put(new SimpleMetricName(prefix + "sampleSuccessCount", "The total number of successful samplings"), new MetricValue(timestamp, stats.getSampleSuccessCount()));
-			result.put(new SimpleMetricName(prefix + "sampleFailureCount", "The total number of failed samplings due to unexpected exception"), new MetricValue(timestamp, stats.getSampleFailureCount()));
-			result.put(new SimpleMetricName(prefix + "connectCount", "The total number of times the reader tried to connect to the input"), new MetricValue(timestamp, stats.getConnectCount()));
-			result.put(new SimpleMetricName(prefix + "disconnectCount", "The total number of times the reader tried to disconnect from the input"), new MetricValue(timestamp, stats.getDisconnectCount()));
-			result.put(new SimpleMetricName(prefix + "metricsCount", "The total number of metrics sampled the last time"), new MetricValue(timestamp, stats.getMetricsCount()));
-			result.put(new SimpleMetricName(prefix + "sampleDuration", "The last sample duration in seconds"), new MetricValue(timestamp, stats.getSampleDuration()));
+			result.add(prefix + "activeTime", "The number of seconds since the last activation of the sampler", timestamp, stats.getActiveTime());
+			result.add(prefix + "sampleSuccessCount", "The total number of successful samplings", timestamp, stats.getSampleSuccessCount());
+			result.add(prefix + "sampleFailureCount", "The total number of failed samplings due to unexpected exception", timestamp, stats.getSampleFailureCount());
+			result.add(prefix + "connectCount", "The total number of times the reader tried to connect to the input", timestamp, stats.getConnectCount());
+			result.add(prefix + "disconnectCount", "The total number of times the reader tried to disconnect from the input", timestamp, stats.getDisconnectCount());
+			result.add(prefix + "metricsCount", "The total number of metrics sampled the last time", timestamp, stats.getMetricsCount());
+			result.add(prefix + "sampleDuration", "The last sample duration in seconds", timestamp, stats.getSampleDuration());
 		}
 
 		for (final SharedResource sharedResource : registry.getSharedResources()) {
 			final Map<String, Object> stats = sharedResource.getStats();
 			for (final Entry<String, Object> entry : stats.entrySet()) {
-				result.put(new SimpleMetricName(entry.getKey(), ""), new MetricValue(timestamp, entry.getValue()));
+				result.add(entry.getKey(), timestamp, entry.getValue());
 			}
 		}
 		return result;

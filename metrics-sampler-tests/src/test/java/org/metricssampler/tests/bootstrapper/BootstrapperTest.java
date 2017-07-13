@@ -1,10 +1,10 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.config.ConfigurationException;
+
+import static org.junit.Assert.assertTrue;
 
 public class BootstrapperTest extends BootstrapperTestBase {
 

@@ -1,11 +1,11 @@
 package org.metricssampler.daemon.commands;
 
+import org.metricssampler.resources.SharedResource;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Map;
-
-import org.metricssampler.resources.SharedResource;
 
 public class StopResourceCommand extends MapEntryCommand<SharedResource> {
 

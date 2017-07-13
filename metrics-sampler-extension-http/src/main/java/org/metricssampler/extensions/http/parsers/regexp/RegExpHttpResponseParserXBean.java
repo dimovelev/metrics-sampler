@@ -1,14 +1,13 @@
 package org.metricssampler.extensions.http.parsers.regexp;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.metricssampler.extensions.http.HttpResponseParserXBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.metricssampler.extensions.http.HttpResponseParserXBean;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 /**
  * Parse HTTP responses using a list of regular expressions. The first regular expression to match wins. If none matches then the line is just ignored.

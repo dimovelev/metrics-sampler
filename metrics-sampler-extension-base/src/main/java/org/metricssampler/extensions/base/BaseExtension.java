@@ -1,22 +1,16 @@
 package org.metricssampler.extensions.base;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.SamplerConfig;
-import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.SharedResourceConfig;
-import org.metricssampler.config.ThreadPoolConfig;
-import org.metricssampler.config.ValueTransformerConfig;
+import org.metricssampler.config.*;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.service.AbstractExtension;
 import org.metricssampler.writer.MetricsWriter;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class BaseExtension extends AbstractExtension {
 	private ELFactory elFactory;

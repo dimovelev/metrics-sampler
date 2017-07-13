@@ -1,16 +1,16 @@
 package org.metricssampler.extensions.jdbc;
 
-import java.sql.DriverManager;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.SharedResourceConfig;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.service.AbstractExtension;
+
+import java.sql.DriverManager;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class JdbcExtension extends AbstractExtension {
 	@Override

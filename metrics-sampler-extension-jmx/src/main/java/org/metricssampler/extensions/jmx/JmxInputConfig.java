@@ -1,12 +1,12 @@
 package org.metricssampler.extensions.jmx;
 
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.SocketOptionsConfig;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.SocketOptionsConfig;
 
 public class JmxInputConfig extends InputConfig {
 	private final String url;

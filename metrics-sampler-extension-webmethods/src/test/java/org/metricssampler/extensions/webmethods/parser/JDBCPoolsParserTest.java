@@ -1,14 +1,12 @@
 package org.metricssampler.extensions.webmethods.parser;
 
-import static org.metricssampler.extensions.webmethods.parser.MetricsAssert.assertMetric;
+import org.junit.Test;
+import org.metricssampler.reader.Metrics;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Map;
 
-import org.junit.Test;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
+import static org.metricssampler.extensions.webmethods.parser.MetricsAssert.assertMetric;
 
 public class JDBCPoolsParserTest extends ParserTestBase {
 	@Override
@@ -18,7 +16,8 @@ public class JDBCPoolsParserTest extends ParserTestBase {
 
 	@Test
 	public void parse() throws IOException,ParseException {
-		final Map<MetricName, MetricValue> result = doParse();
+		final Metrics result = doParse();
+
 		assertMetric(result, 1362057296000L, "JDBCPools.ProcessAudit.wMStorage.MinConnections", "0");
 		assertMetric(result, 1362057296000L, "JDBCPools.ProcessAudit.wMStorage.MaxConnections", "20");
 		assertMetric(result, 1362057296000L, "JDBCPools.ProcessAudit.wMStorage.TotalConnections", "0");

@@ -1,14 +1,13 @@
 package org.metricssampler.extensions.base;
 
+import de.odysseus.el.util.SimpleContext;
+
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.el.ELContext;
-import javax.el.ExpressionFactory;
-
-import de.odysseus.el.util.SimpleContext;
 
 public class ELFactory {
 	private final ExpressionFactory factory;

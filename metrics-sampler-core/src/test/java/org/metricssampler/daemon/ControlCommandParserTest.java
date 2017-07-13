@@ -1,13 +1,13 @@
 package org.metricssampler.daemon;
 
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.metricssampler.daemon.commands.ControlCommand;
 import org.metricssampler.daemon.commands.ControlCommandFactory;
+
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ControlCommandParserTest {
 	private ControlCommandFactory factory;

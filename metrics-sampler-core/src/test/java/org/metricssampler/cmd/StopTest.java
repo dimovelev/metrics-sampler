@@ -1,10 +1,10 @@
 package org.metricssampler.cmd;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.metricssampler.TCPControllerTestUtil;
+
+import static org.junit.Assert.assertEquals;
 
 public class StopTest {
 	private StopCommand testee;

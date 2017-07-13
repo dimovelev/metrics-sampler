@@ -1,14 +1,12 @@
 package org.metricssampler.extensions.webmethods.parser;
 
-import static org.metricssampler.extensions.webmethods.parser.MetricsAssert.assertMetric;
+import org.junit.Test;
+import org.metricssampler.reader.Metrics;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Map;
 
-import org.junit.Test;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
+import static org.metricssampler.extensions.webmethods.parser.MetricsAssert.assertMetric;
 
 public class StoreSettingsParserTest extends ParserTestBase {
 	@Override
@@ -18,7 +16,8 @@ public class StoreSettingsParserTest extends ParserTestBase {
 
 	@Test
 	public void parse() throws IOException,ParseException {
-		final Map<MetricName, MetricValue> result = doParse();
+		final Metrics result = doParse();
+
 		assertMetric(result, 1362057296000L, "StoreSettings.DocumentStoreSettings.InitialStoreSizeMB", "25");
 		assertMetric(result, 1362057296000L, "StoreSettings.DocumentStoreSettings.CapacityDocuments", "50");
 		assertMetric(result, 1362057296000L, "StoreSettings.DocumentStoreSettings.RefillLevelDocuments", "20");

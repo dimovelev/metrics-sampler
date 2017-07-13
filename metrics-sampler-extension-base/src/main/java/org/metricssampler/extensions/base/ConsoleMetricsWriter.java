@@ -1,15 +1,16 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import org.metricssampler.reader.Metric;
+import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.Metrics;
+import org.metricssampler.writer.MetricWriteException;
+import org.metricssampler.writer.MetricsWriter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.writer.MetricWriteException;
-import org.metricssampler.writer.MetricsWriter;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 /**
  * Write metrics to the standard output. This class is not thread safe and one instance should not be used by multiple samplers. Currently,
@@ -25,12 +26,12 @@ public class ConsoleMetricsWriter implements MetricsWriter {
 	}
 
 	@Override
-	public void write(final Map<String, MetricValue> metrics) {
+	public void write(final Metrics metrics) {
 		checkArgumentNotNull(metrics, "metrics");
-		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
+		for (final Metric entry : metrics) {
 			final MetricValue value = entry.getValue();
 			final String timestampPrefix = dateFormat.format(new Date(value.getTimestamp())) + " ";
-			System.out.println(timestampPrefix + entry.getKey() + "=" + value.getValue());
+			System.out.println(timestampPrefix + entry.getName().getName() + "=" + value.getValue());
 		}
 	}
 

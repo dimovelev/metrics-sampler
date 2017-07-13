@@ -1,11 +1,11 @@
 package org.metricssampler.cmd;
 
-import java.util.ResourceBundle;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
+
+import java.util.ResourceBundle;
 
 @Parameters(commandNames="help", commandDescriptionKey="help.help.command")
 public class HelpCommand extends AbstractCommand {

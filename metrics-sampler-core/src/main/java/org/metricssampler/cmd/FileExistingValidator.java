@@ -1,9 +1,9 @@
 package org.metricssampler.cmd;
 
-import java.io.File;
-
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
+
+import java.io.File;
 
 public class FileExistingValidator implements IParameterValidator {
 	@Override

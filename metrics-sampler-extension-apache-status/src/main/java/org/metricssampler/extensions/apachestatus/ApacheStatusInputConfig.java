@@ -1,10 +1,10 @@
 package org.metricssampler.extensions.apachestatus;
 
-import java.net.URL;
-import java.util.Map;
-
 import org.metricssampler.config.BaseHttpInputConfig;
 import org.metricssampler.config.SocketOptionsConfig;
+
+import java.net.URL;
+import java.util.Map;
 
 public class ApacheStatusInputConfig extends BaseHttpInputConfig {
 

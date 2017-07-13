@@ -1,12 +1,11 @@
 package org.metricssampler.config.loader.xbeans;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.metricssampler.config.SharedResourceConfig;
 import org.metricssampler.config.ThreadPoolConfig;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
 
 @XStreamAlias("thread-pool")
 public class SamplerThreadPoolXBean extends SharedResourceXBean {

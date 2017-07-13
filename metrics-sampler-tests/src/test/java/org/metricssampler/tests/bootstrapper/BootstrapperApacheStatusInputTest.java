@@ -1,14 +1,10 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.extensions.apachestatus.ApacheStatusInputConfig;
+
+import static org.junit.Assert.*;
 
 public class BootstrapperApacheStatusInputTest extends BootstrapperTestBase {
 	@Test

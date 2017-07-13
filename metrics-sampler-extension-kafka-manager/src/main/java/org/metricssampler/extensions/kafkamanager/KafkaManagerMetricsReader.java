@@ -12,13 +12,11 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.protocol.HttpContext;
 import org.metricssampler.reader.BaseHttpMetricsReader;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.reader.Metrics;
 import org.metricssampler.resources.SamplerThreadPool;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -37,7 +35,7 @@ public class KafkaManagerMetricsReader extends BaseHttpMetricsReader<KafkaManage
 
     @Override
     protected void fetchOverHttp(final HttpClient httpClient, HttpContext httpContext) throws Exception {
-        values = new HashMap<>();
+        values = new Metrics();
         final List<String> clusters = fetchActiveClusterNames(httpClient);
         final List<Consumer> consumers = new ArrayList<>();
         for (final String cluster : clusters) {
@@ -51,8 +49,8 @@ public class KafkaManagerMetricsReader extends BaseHttpMetricsReader<KafkaManage
             if (consumerMetrics != null) {
                 final String prefix = "clusters." + consumerMetrics.getConsumer().getCluster() + ".topics." + consumerMetrics.getConsumer().getTopic() + ".consumers." + consumerMetrics.getConsumer().getGroup() + ".";
                 final long timestamp = System.currentTimeMillis();
-                values.put(new SimpleMetricName(prefix + "totalLag", "The total lag of the given consumer"), new MetricValue(timestamp, consumerMetrics.getTotalLag()));
-                values.put(new SimpleMetricName(prefix + "percentageCovered", "Percentage of the partitions that have an owner"), new MetricValue(timestamp, consumerMetrics.getPercentageCovered()));
+                values.add(prefix + "totalLag", "The total lag of the given consumer", timestamp, consumerMetrics.getTotalLag());
+                values.add(prefix + "percentageCovered", "Percentage of the partitions that have an owner", timestamp, consumerMetrics.getPercentageCovered());
             }
         }
     }

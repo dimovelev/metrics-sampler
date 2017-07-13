@@ -1,18 +1,14 @@
 package org.metricssampler.extensions.jdbc;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notNegative;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notNegativeOptional;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.SharedResourceConfig;
+import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.metricssampler.config.SharedResourceConfig;
-import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.*;
 
 @XStreamAlias("jdbc-connection-pool")
 public class JdbcConnectionPoolXBean extends SharedResourceXBean {

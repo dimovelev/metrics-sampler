@@ -1,12 +1,10 @@
 package org.metricssampler.writer;
 
-import java.util.Map;
-
-import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.Metrics;
 
 public interface MetricsWriter {
 	void open() throws MetricWriteException;
 	void close();
 
-	void write(Map<String, MetricValue> metrics) throws MetricWriteException;
+	void write(Metrics metrics) throws MetricWriteException;
 }

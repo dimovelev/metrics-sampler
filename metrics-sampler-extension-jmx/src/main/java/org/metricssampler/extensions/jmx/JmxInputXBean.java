@@ -1,15 +1,7 @@
 package org.metricssampler.extensions.jmx;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.SocketOptionsConfig;
@@ -17,8 +9,11 @@ import org.metricssampler.config.loader.xbeans.EntryXBean;
 import org.metricssampler.config.loader.xbeans.InputXBean;
 import org.metricssampler.config.loader.xbeans.SocketOptionsXBean;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 @XStreamAlias("jmx")
 public class JmxInputXBean extends InputXBean {

@@ -1,22 +1,14 @@
 package org.metricssampler.extensions.jdbc;
 
-import static org.metricssampler.util.CloseableUtils.closeQuietly;
+import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.reader.*;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.reader.AbstractMetricsReader;
-import org.metricssampler.reader.BulkMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricReadException;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.OpenMetricsReaderException;
-import org.metricssampler.reader.SimpleMetricName;
+import static org.metricssampler.util.CloseableUtils.closeQuietly;
 
 public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> implements BulkMetricsReader {
 	private final JdbcConnectionPool connectionPool;
@@ -68,16 +60,16 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 	}
 
 	@Override
-	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
+	public Metrics readAllMetrics() throws MetricReadException {
 		assertConnected();
-		final Map<MetricName, MetricValue> result = new HashMap<>();
+		final Metrics result = new Metrics();
 		for (final String query : config.getQueries()) {
 			readMetricsFromQuery(query, result);
 		}
 		return result;
 	}
 
-	protected void readMetricsFromQuery(final String query, final Map<MetricName, MetricValue> result) {
+	protected void readMetricsFromQuery(final String query, final Metrics result) {
 		Statement statement = null;
 		try {
 			logger.debug("Executing query {}", query);
@@ -94,11 +86,11 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 					final SimpleMetricName metric = new SimpleMetricName(key, resultSet.getMetaData().getColumnName(1));
 					if (columnCount == 2) {
 						logger.debug("Using current timestamp as metric timestamp for "+key);
-						result.put(metric, new MetricValue(start, value));
+						result.add(metric, start, value);
 					} else if (columnCount == 3) {
 						logger.debug("Using timestamp from query result column 3 as metric timestamp for "+key);
 						final long timestamp = resultSet.getLong(3);
-						result.put(metric, new MetricValue(timestamp, value));
+						result.add(metric, timestamp, value);
 					} else {
 						closeQuietly(resultSet);
 						throw new ConfigurationException("Query must return either 2 (name, value) or 3 columns (name, value, timestamp)");
@@ -122,10 +114,5 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 	protected void reconnect() {
 		close();
 		open();
-	}
-
-	@Override
-	public Iterable<MetricName> readNames() throws MetricReadException {
-		return readAllMetrics().keySet();
 	}
 }

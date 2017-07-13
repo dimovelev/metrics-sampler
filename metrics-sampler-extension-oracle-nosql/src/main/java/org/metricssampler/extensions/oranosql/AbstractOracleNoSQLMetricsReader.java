@@ -16,8 +16,6 @@ import org.metricssampler.resources.SamplerStats;
 import java.net.URI;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsReader<OracleNoSQLInputConfig> implements BulkMetricsReader {
@@ -69,16 +67,11 @@ public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsRe
     }
 
     @Override
-    public Iterable<MetricName> readNames() {
-        return readAllMetrics().keySet();
-    }
-
-    @Override
-    public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
+    public Metrics readAllMetrics() throws MetricReadException {
         if (service == null) {
             throw new MetricReadException("No command service available");
         }
-        final Map<MetricName, MetricValue> result = new HashMap<>();
+        final Metrics result = new Metrics();
 
         boolean failureEncountered = false;
         try {
@@ -109,7 +102,7 @@ public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsRe
         return result;
     }
 
-    protected void addTopologyMetrics(Map<MetricName, MetricValue> result) throws RemoteException {
+    protected void addTopologyMetrics(Metrics result) throws RemoteException {
         final long timestamp = System.currentTimeMillis();
         final Topology topology = service.getTopology();
         for (StorageNodeId snId : topology.getStorageNodeIds()) {
@@ -117,12 +110,12 @@ public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsRe
             for (RepNodeId rnId : topology.getRepNodeIds()) {
                 final boolean hosted = hostedRepNodes.contains(rnId);
                 final String name = snId.getType().name().toLowerCase() + ".nodes." + snId.getFullName() + ".hosting." + rnId.getFullName();
-                result.put(new SimpleMetricName(name, "Whether replication node " + rnId.getFullName() + " is hosted on " + snId.getFullName()), new MetricValue(timestamp, hosted ? 1 : 0));
+                result.add(name, "Whether replication node " + rnId.getFullName() + " is hosted on " + snId.getFullName(), timestamp, hosted ? 1 : 0);
             }
         }
     }
 
-    private void addStatusMetrics(Map<MetricName, MetricValue> result) throws RemoteException {
+    private void addStatusMetrics(Metrics result) throws RemoteException {
         logger.debug("Loading the status map");
         final ResourceTypeServiceStatusMetrics statusMetrics = new ResourceTypeServiceStatusMetrics();
 
@@ -131,14 +124,14 @@ public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsRe
             statusMetrics.add(type, item.getStatus());
             final String name = type.name().toLowerCase() + ".nodes." + item.getTarget().getFullName();
             final long timestamp = System.currentTimeMillis();
-            result.put(new SimpleMetricName(name + ".status.ordinal", "0-STARTING,1-WAITING_FOR_DEPLOY,2-RUNNING,3-STOPPING,4-STOPPED,5-ERROR_RESTARTING,6-ERROR_NO_RESTART,7-UNREACHABLE,8-EXPECTED_RESTARTING"), new MetricValue(timestamp, item.getStatus().ordinal()));
-            result.put(new SimpleMetricName(name + ".status.age", "The number of milliseconds since this change"), new MetricValue(timestamp, timestamp - item.getChangeTime()));
+            result.add(name + ".status.ordinal", "0-STARTING,1-WAITING_FOR_DEPLOY,2-RUNNING,3-STOPPING,4-STOPPED,5-ERROR_RESTARTING,6-ERROR_NO_RESTART,7-UNREACHABLE,8-EXPECTED_RESTARTING", timestamp, item.getStatus().ordinal());
+            result.add(name + ".status.age", "The number of milliseconds since this change", timestamp, timestamp - item.getChangeTime());
         }
 
         statusMetrics.addMetrics(result);
     }
 
-    protected void addPerfMapMetrics(final Map<MetricName, MetricValue> metrics) throws RemoteException {
+    protected void addPerfMapMetrics(final Metrics metrics) throws RemoteException {
         logger.debug("Loading the perf map");
         for (final PerfEvent event : service.getPerfMap().values()) {
             logger.debug("Processing event {}", event);
@@ -150,18 +143,18 @@ public abstract class AbstractOracleNoSQLMetricsReader extends AbstractMetricsRe
         }
     }
 
-    protected void addLatencyMetrics(final LatencyInfo info, final String prefix, final Map<MetricName, MetricValue> result) {
+    protected void addLatencyMetrics(final LatencyInfo info, final String prefix, final Metrics result) {
         final long timestamp = info.getEnd();
         final Latency latency = info.getLatency();
-        result.put(new SimpleMetricName(prefix + ".totalRequests", ""), new MetricValue(timestamp, latency.getTotalRequests()));
-        result.put(new SimpleMetricName(prefix + ".totalOperations", ""), new MetricValue(timestamp, latency.getTotalOps()));
-        result.put(new SimpleMetricName(prefix + ".overflowRequests", ""), new MetricValue(timestamp, latency.getRequestsOverflow()));
-        result.put(new SimpleMetricName(prefix + ".min", ""), new MetricValue(timestamp, latency.getMin()));
-        result.put(new SimpleMetricName(prefix + ".max", ""), new MetricValue(timestamp, latency.getMax()));
-        result.put(new SimpleMetricName(prefix + ".avg", ""), new MetricValue(timestamp, Math.round(latency.getAvg())));
-        result.put(new SimpleMetricName(prefix + ".percentile95", ""), new MetricValue(timestamp, latency.get95thPercent()));
-        result.put(new SimpleMetricName(prefix + ".percentile99", ""), new MetricValue(timestamp, latency.get99thPercent()));
-        result.put(new SimpleMetricName(prefix + ".tps", ""), new MetricValue(timestamp, info.getThroughputPerSec()));
+        result.add(prefix + ".totalRequests", timestamp, latency.getTotalRequests());
+        result.add(prefix + ".totalOperations", timestamp, latency.getTotalOps());
+        result.add(prefix + ".overflowRequests", timestamp, latency.getRequestsOverflow());
+        result.add(prefix + ".min", timestamp, latency.getMin());
+        result.add(prefix + ".max", timestamp, latency.getMax());
+        result.add(prefix + ".avg", timestamp, Math.round(latency.getAvg()));
+        result.add(prefix + ".percentile95", timestamp, latency.get95thPercent());
+        result.add(prefix + ".percentile99", timestamp, latency.get99thPercent());
+        result.add(prefix + ".tps", timestamp, info.getThroughputPerSec());
     }
 
     protected CommandServiceAPI loadCommandService(OracleNoSQLInputConfig.HostConfig host) throws RemoteException, NotBoundException {

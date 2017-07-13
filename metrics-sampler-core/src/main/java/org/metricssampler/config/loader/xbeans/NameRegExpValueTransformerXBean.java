@@ -1,10 +1,10 @@
 package org.metricssampler.config.loader.xbeans;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import java.util.regex.Pattern;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 public abstract class NameRegExpValueTransformerXBean extends ValueTransformerXBean {
 	@XStreamAsAttribute

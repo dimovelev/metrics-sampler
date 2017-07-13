@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-
 public class OracleNoSQLInputConfigTest {
     @Test
     public void isJavaBean() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {

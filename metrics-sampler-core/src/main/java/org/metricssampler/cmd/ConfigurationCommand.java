@@ -1,9 +1,8 @@
 package org.metricssampler.cmd;
 
+import com.beust.jcommander.ParametersDelegate;
 import org.metricssampler.service.Bootstrapper;
 import org.metricssampler.service.DefaultBootstrapper;
-
-import com.beust.jcommander.ParametersDelegate;
 
 /**
  * Base class for commands that require the loaded application configuration.

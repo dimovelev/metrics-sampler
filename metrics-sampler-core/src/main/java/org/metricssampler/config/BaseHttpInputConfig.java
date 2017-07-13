@@ -1,10 +1,10 @@
 package org.metricssampler.config;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public abstract class BaseHttpInputConfig extends InputConfig {
 	private final URL url;

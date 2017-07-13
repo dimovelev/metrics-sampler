@@ -1,35 +1,32 @@
 package org.metricssampler.extensions.apachestatus.parsers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Before;
-import org.metricssampler.reader.MetricName;
+import org.metricssampler.reader.Metric;
 import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.reader.Metrics;
+
+import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 public abstract class StatusLineParserTestBase {
 	protected StatusLineParser testee;
-	protected Map<MetricName, MetricValue> metrics;
+	protected Metrics metrics;
 	protected long timestamp;
 
 	@Before
 	public void setup() {
 		testee = createTestee();
-		metrics = new HashMap<>();
+		metrics = new Metrics();
 		timestamp = System.currentTimeMillis();
 	}
 
 	protected abstract StatusLineParser createTestee();
 
 	protected void assertMetric(final String name, final Object expectedValue) {
-		final MetricValue metricValue = metrics.get(new SimpleMetricName(name, null));
-		assertNotNull("Metric named \"" + name + "\" not found in " + metrics.keySet(), metricValue);
+		final Optional<Metric> metric = metrics.get(name);
+		assertTrue("Metric named \"" + name + "\" not found in " + metrics.getNames(), metric.isPresent());
+		MetricValue metricValue = metric.get().getValue();
 		assertEquals("Metric \"" + name + "\" has wrong value", expectedValue, metricValue.getValue());
 		assertEquals("Timestamp not used for metric \"" + name + "\"", timestamp, metricValue.getTimestamp());
 	}

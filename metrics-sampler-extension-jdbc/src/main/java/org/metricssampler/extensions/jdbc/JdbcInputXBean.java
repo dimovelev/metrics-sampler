@@ -1,15 +1,14 @@
 package org.metricssampler.extensions.jdbc;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-
-import java.util.List;
-
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.loader.xbeans.InputXBean;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.loader.xbeans.InputXBean;
+
+import java.util.List;
+
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 @XStreamAlias("jdbc")
 public class JdbcInputXBean extends InputXBean {

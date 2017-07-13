@@ -1,14 +1,13 @@
 package org.metricssampler.config.loader.xbeans;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.ConfigurationException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.ConfigurationException;
-
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 public abstract class VariableXBean extends XBean {
 	@XStreamAsAttribute

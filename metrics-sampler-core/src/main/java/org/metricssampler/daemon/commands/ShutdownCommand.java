@@ -1,11 +1,11 @@
 package org.metricssampler.daemon.commands;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
+import org.metricssampler.service.Bootstrapper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 
-import org.metricssampler.service.Bootstrapper;
+import static org.apache.commons.io.IOUtils.closeQuietly;
 
 public class ShutdownCommand extends BaseControlCommand {
 	private final Bootstrapper bootstrapper;

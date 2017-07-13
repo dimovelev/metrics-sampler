@@ -1,8 +1,8 @@
 package org.metric.sampler.extension.redis;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notNegative;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notNegative;
 
 public abstract class RedisCommandXBean {
 	@XStreamAsAttribute

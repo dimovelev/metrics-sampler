@@ -1,14 +1,14 @@
 package org.metricssampler.extensions.http;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.extensions.http.parsers.regexp.RegExpHttpResponseParserXBean;
 import org.metricssampler.extensions.http.parsers.regexp.RegExpLineFormatXBean;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.service.AbstractExtension;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Adds support for fetching metrics from a URL. The response is parsed e.g. using regular expressions.

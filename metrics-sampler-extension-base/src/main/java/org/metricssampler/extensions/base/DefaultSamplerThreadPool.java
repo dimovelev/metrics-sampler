@@ -1,12 +1,5 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.metricssampler.config.ThreadPoolConfig;
 import org.metricssampler.resources.SamplerTask;
 import org.metricssampler.resources.SamplerThreadPool;
@@ -14,6 +7,13 @@ import org.metricssampler.sampler.Sampler;
 import org.metricssampler.service.GlobalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public class DefaultSamplerThreadPool implements SamplerThreadPool {
 	private final Logger logger = LoggerFactory.getLogger(getClass());

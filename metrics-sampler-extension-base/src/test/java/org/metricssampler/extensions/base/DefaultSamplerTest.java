@@ -1,16 +1,15 @@
 package org.metricssampler.extensions.base;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.metricssampler.reader.BulkMetricsReader;
+import org.metricssampler.reader.Metrics;
 import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.selector.MetricsSelector;
 import org.metricssampler.writer.MetricsWriter;
+
+import static org.mockito.Mockito.*;
 
 public class DefaultSamplerTest {
 	private DefaultSampler testee;
@@ -47,7 +46,11 @@ public class DefaultSamplerTest {
 	
 	@Test
 	public void sampleBulk() {
+		when(transformer1.readMetrics(bulkReader)).thenReturn(new Metrics());
+		when(transformer2.readMetrics(bulkReader)).thenReturn(new Metrics());
+
 		testee.sample();
+
 		verify(bulkReader, times(1)).open();
 		verify(bulkReader, times(1)).close();
 

@@ -1,20 +1,13 @@
 package org.metricssampler.selector;
 
+import org.metricssampler.reader.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.metricssampler.reader.BulkMetricsReader;
-import org.metricssampler.reader.MetaDataMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricReadException;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.MetricsMetaData;
-import org.metricssampler.reader.MetricsReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A rudimentary implementation of a metrics selector which supports {@link MetaDataMetricsReader} and {@link BulkMetricsReader}.
@@ -29,7 +22,7 @@ public abstract class AbstractMetricsSelector implements MetricsSelector {
 	private List<SelectedMetric> cachedSelectedMetrics;
 	
 	@Override
-	public Map<String, MetricValue> readMetrics(final MetricsReader reader) {
+	public Metrics readMetrics(final MetricsReader reader) {
 		if (reader instanceof MetaDataMetricsReader) {
 			return readAlreadySelected((MetaDataMetricsReader) reader);
 		} else if (reader instanceof BulkMetricsReader) {
@@ -39,13 +32,13 @@ public abstract class AbstractMetricsSelector implements MetricsSelector {
 		}
 	}
 	
-	protected Map<String, MetricValue> readAlreadySelected(final MetaDataMetricsReader reader) {
+	protected Metrics readAlreadySelected(final MetaDataMetricsReader reader) {
 		final List<SelectedMetric> matchingMetrics = getSelectedMetrics(reader);
-		final Map<String, MetricValue> result = new HashMap<>();
+		final Metrics result = new Metrics();
 		for (final SelectedMetric bean : matchingMetrics) {
 			try {
 				final MetricValue value = reader.readMetric(bean.getOriginalName());
-				result.put(bean.getName(), value);
+				result.add(bean.getName(), value);
 			} catch (final MetricReadException e) {
 				logger.warn("Failed to read " + bean.getOriginalName(), e);
 			}
@@ -85,13 +78,13 @@ public abstract class AbstractMetricsSelector implements MetricsSelector {
 	 */
 	protected abstract SelectedMetric selectMetric(MetricName name);
 
-	protected Map<String, MetricValue> readAllAndSelect(final BulkMetricsReader reader) {
-		final Map<String, MetricValue> result = new HashMap<>();
-		final Map<MetricName, MetricValue> metrics = reader.readAllMetrics();
-		for (final Map.Entry<MetricName, MetricValue> entry : metrics.entrySet()) {
-			final SelectedMetric metric = selectMetric(entry.getKey());
+	protected Metrics readAllAndSelect(final BulkMetricsReader reader) {
+		final Metrics result = new Metrics();
+		final Metrics metrics = reader.readAllMetrics();
+		for (final Metric entry : metrics) {
+			final SelectedMetric metric = selectMetric(entry.getName());
 			if (metric != null) {
-				result.put(metric.getName(), entry.getValue());
+				result.add(metric.getName(), entry.getName().getDescription(), entry.getValue());
 			}
 		}
 		return result;
@@ -123,7 +116,7 @@ public abstract class AbstractMetricsSelector implements MetricsSelector {
 		if (reader instanceof MetaDataMetricsReader) {
 			names = ((MetaDataMetricsReader) reader).getMetaData();
 		} else if (reader instanceof BulkMetricsReader) {
-			names = ((BulkMetricsReader) reader).readAllMetrics().keySet();
+			names = reader.readNames();
 		} else {
 			throw new IllegalArgumentException("Unsupported metrics reader: " + reader);
 		}

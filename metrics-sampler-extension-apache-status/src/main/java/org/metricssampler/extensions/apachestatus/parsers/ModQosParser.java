@@ -1,10 +1,6 @@
 package org.metricssampler.extensions.apachestatus.parsers;
 
-import java.util.Map;
-
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.reader.Metrics;
 
 /**
  * Parse a status line from the mod_qos status module
@@ -13,7 +9,7 @@ public class ModQosParser implements StatusLineParser {
 	private static final String MOD_QOS_MARKER = "QS_";
 
 	@Override
-	public boolean parse(final String line, final Map<MetricName, MetricValue> metrics, final long timestamp) {
+	public boolean parse(final String line, final Metrics metrics, final long timestamp) {
 		if (!line.contains(MOD_QOS_MARKER)) {
 			return false;
 		}
@@ -44,9 +40,8 @@ public class ModQosParser implements StatusLineParser {
 		return true;
 	}
 
-	protected void addValue(final long timestamp, final Map<MetricName, MetricValue> metrics, final String name, final String value) {
-		final SimpleMetricName metric = new SimpleMetricName(name, null);
-		metrics.put(metric, new MetricValue(timestamp, value));
+	protected void addValue(final long timestamp, final Metrics metrics, final String name, final String value) {
+		metrics.add(name, timestamp, value);
 	}
 
 }

@@ -2,11 +2,12 @@ package org.metricssampler.extensions.oranosql;
 
 import oracle.kv.impl.topo.ResourceId.ResourceType;
 import oracle.kv.impl.util.ConfigurableService.ServiceStatus;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.reader.Metrics;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -39,15 +40,14 @@ public class ResourceTypeServiceStatusMetrics {
         statuses.get(type).computeIfPresent(status, (s, count) -> count + 1);
     }
 
-    public void addMetrics(Map<MetricName, MetricValue> result) {
+    public void addMetrics(Metrics result) {
         for (Entry<ResourceType, Map<ServiceStatus, Integer>> entry : statuses.entrySet()) {
             final ResourceType type = entry.getKey();
             final int count = entry.getValue().values().stream().mapToInt(Integer::intValue).sum();
-            result.put(new SimpleMetricName(type.name().toLowerCase() + ".count", "Number of " + type.name() + " nodes"), new MetricValue(timestamp, count));
+            result.add(type.name().toLowerCase() + ".count", "Number of " + type.name() + " nodes", timestamp, count);
             for (Entry<ServiceStatus, Integer> entry2 : entry.getValue().entrySet()) {
                 final ServiceStatus status = entry2.getKey();
-                SimpleMetricName name = new SimpleMetricName(type.name().toLowerCase() + ".status." + status.name().toLowerCase() + ".count", "Number of " + type.name() + " nodes in status " + status.name());
-                result.put(name, new MetricValue(timestamp, entry2.getValue()));
+                result.add(type.name().toLowerCase() + ".status." + status.name().toLowerCase() + ".count", "Number of " + type.name() + " nodes in status " + status.name(), timestamp, entry2.getValue());
             }
         }
     }

@@ -1,27 +1,16 @@
 package org.metric.sampler.extension.redis;
 
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.reader.AbstractMetricsReader;
-import org.metricssampler.reader.BulkMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricReadException;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.OpenMetricsReaderException;
-import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.reader.*;
 import org.metricssampler.resources.SamplerStats;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+
+import java.io.StringReader;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> implements BulkMetricsReader {
 	private Jedis jedis = null;
@@ -76,11 +65,11 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 	}
 
 	@Override
-	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
+	public Metrics readAllMetrics() throws MetricReadException {
 		reconnectIfNecessary();
 		try {
 			final long timestamp = System.currentTimeMillis();
-			final Map<MetricName, MetricValue> result = new HashMap<>();
+			final Metrics result = new Metrics();
 			fetchMetricsFromInfo(timestamp, result);
 			fetchMetricsFromCommands(timestamp, result);
 			return result;
@@ -90,20 +79,20 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 		}
 	}
 
-	protected void fetchMetricsFromInfo(final long timestamp, final Map<MetricName, MetricValue> result) {
+	protected void fetchMetricsFromInfo(final long timestamp, final Metrics result) {
 		final String info = jedis.info();
 		for (final LineIterator lines = IOUtils.lineIterator(new StringReader(info)); lines.hasNext(); ) {
 			final String line = lines.next();
 			final String[] cols = line.split(":", 2);
 			if (cols.length == 2) {
-				result.put(new SimpleMetricName(cols[0], ""), new MetricValue(timestamp, cols[1]));
+				result.add(cols[0], timestamp, cols[1]);
 			} else {
 				logger.debug("Failed to parse line \"{}\"", line);
 			}
 		}
 	}
 
-	protected void fetchMetricsFromCommands(final long timestamp, final Map<MetricName, MetricValue> result) {
+	protected void fetchMetricsFromCommands(final long timestamp, final Metrics result) {
 		for (final RedisCommand command : config.getCommands()) {
 			jedis.select(command.getDatabase());
 			if (command instanceof RedisSizeCommand) {
@@ -116,17 +105,17 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 					if ("list".equals(keyType)) {
 						final Long len = jedis.llen(key);
 						if (len != null) {
-							result.put(new SimpleMetricName(key + ".len", "llen(" + key + ")"), new MetricValue(timestamp, len));
+							result.add(key + ".len", "llen(" + key + ")", timestamp, len);
 						}
 					} else if ("set".equals(keyType)) {
 						final Long len = jedis.scard(key);
 						if (len != null) {
-							result.put(new SimpleMetricName(key + ".len", "scard(" + key + ")"), new MetricValue(timestamp, len));
+							result.add(key + ".len", "scard(" + key + ")", timestamp, len);
 						}
 					} else if ("hash".equals(keyType)) {
 						final Long len = jedis.hlen(key);
 						if (len != null) {
-							result.put(new SimpleMetricName(key + ".len", "hlen(" + key + ")"), new MetricValue(timestamp, len));
+							result.add(key + ".len", "hlen(" + key + ")", timestamp, len);
 						}
 					} else {
 						logger.debug("Unsupported type \"" + keyType + "\" for key \"" + key + "\"");
@@ -136,11 +125,6 @@ public class RedisMetricsReader extends AbstractMetricsReader<RedisInputConfig> 
 				throw new ConfigurationException("Unsupported redis command: " + command);
 			}
 		}
-	}
-
-	@Override
-	public Iterable<MetricName> readNames() {
-		return readAllMetrics().keySet();
 	}
 
 	protected Set<String> findKeys(Set<String> patterns) {

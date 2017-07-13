@@ -3,12 +3,11 @@ package org.metricssampler.extensions.oranosql;
 import oracle.kv.impl.topo.ResourceId.ResourceType;
 import oracle.kv.impl.util.ConfigurableService.ServiceStatus;
 import org.junit.Test;
-import org.metricssampler.reader.MetricName;
+import org.metricssampler.reader.Metric;
 import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.Metrics;
 
-import java.util.HashMap;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -26,7 +25,7 @@ public class ResourceTypeServiceStatusMetricsTest {
         testee.add(ResourceType.STORAGE_NODE, ServiceStatus.RUNNING);
         testee.add(ResourceType.STORAGE_NODE, ServiceStatus.UNREACHABLE);
 
-        final HashMap<MetricName, MetricValue> result = new HashMap<>();
+        final Metrics result = new Metrics();
 
         testee.addMetrics(result);
 
@@ -43,7 +42,7 @@ public class ResourceTypeServiceStatusMetricsTest {
     public void addMetricsNone() throws Exception {
         ResourceTypeServiceStatusMetrics testee = new ResourceTypeServiceStatusMetrics();
 
-        final HashMap<MetricName, MetricValue> result = new HashMap<>();
+        final Metrics result = new Metrics();
 
         testee.addMetrics(result);
 
@@ -56,15 +55,15 @@ public class ResourceTypeServiceStatusMetricsTest {
         verifyStatusMetrics(result, "admin", 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
-    protected void verifyMetric(HashMap<MetricName, MetricValue> result, String name, Integer expectedCount) {
-        final Optional<MetricName> metricName = result.keySet().stream().filter(n -> n.getName().equals(name)).findFirst();
-        assertTrue("Could not find metric " + name + " in " + result.keySet().stream().map(MetricName::getName).collect(Collectors.joining(", ")), metricName.isPresent());
+    protected void verifyMetric(Metrics result, String name, Integer expectedCount) {
+        final Optional<Metric> metric = result.get(name);
+        assertTrue("Could not find metric " + name + " in " + result.getNames(), metric.isPresent());
 
-        final MetricValue value = result.get(metricName.get());
+        final MetricValue value = metric.get().getValue();
         assertEquals("Value for " + name + " wrong", expectedCount, value.getValue());
     }
 
-    protected void verifyStatusMetrics(HashMap<MetricName, MetricValue> result, String type, Integer starting, Integer waitingForDeploy, Integer running, Integer stopping, Integer stopped, Integer errorRestarting, Integer errorNoRestart, Integer unreachable, Integer expectedRestarting) {
+    protected void verifyStatusMetrics(Metrics result, String type, Integer starting, Integer waitingForDeploy, Integer running, Integer stopping, Integer stopped, Integer errorRestarting, Integer errorNoRestart, Integer unreachable, Integer expectedRestarting) {
         verifyMetric(result, type + ".status.starting.count", starting);
         verifyMetric(result, type + ".status.waiting_for_deploy.count", waitingForDeploy);
         verifyMetric(result, type + ".status.running.count", running);

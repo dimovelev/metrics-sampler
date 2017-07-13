@@ -1,13 +1,12 @@
 package org.metricssampler.extensions.jdbc;
 
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.metricssampler.config.loader.xbeans.EntryXBean;
+import org.metricssampler.config.loader.xbeans.XBean;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.metricssampler.config.loader.xbeans.EntryXBean;
-
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import org.metricssampler.config.loader.xbeans.XBean;
 
 public class JdbcOptionsXBean extends XBean {
 	@XStreamImplicit

@@ -1,13 +1,11 @@
 package org.metricssampler.extensions.http.parsers.regexp;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPattern;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import java.util.regex.Pattern;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.*;
 
 @XStreamAlias("regexp-line-format")
 public class RegExpLineFormatXBean {

@@ -1,14 +1,13 @@
 package org.metricssampler.extensions.http;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notNull;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.metricssampler.config.loader.xbeans.BaseHttpInputXBean;
 
 import java.util.List;
 
-import org.metricssampler.config.loader.xbeans.BaseHttpInputXBean;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notNull;
 
 @XStreamAlias("http")
 public class HttpInputXBean extends BaseHttpInputXBean {

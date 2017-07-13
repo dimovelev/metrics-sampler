@@ -1,15 +1,15 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import org.metricssampler.reader.MetricName;
+import org.metricssampler.selector.AbstractMetricsSelector;
+import org.metricssampler.selector.SelectedMetric;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.selector.AbstractMetricsSelector;
-import org.metricssampler.selector.SelectedMetric;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 /**
  * Select metrics using regular expressions and rename them using an expression that can contain variables.

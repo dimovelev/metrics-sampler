@@ -1,14 +1,12 @@
 package org.metricssampler.extensions.apachestatus;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-
 import org.junit.Test;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.loader.xbeans.EntryXBean;
-import org.metricssampler.extensions.apachestatus.ApacheStatusInputConfig;
-import org.metricssampler.extensions.apachestatus.ApacheStatusInputXBean;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
 
 public class ApacheStatusInputXBeanTest {
 
