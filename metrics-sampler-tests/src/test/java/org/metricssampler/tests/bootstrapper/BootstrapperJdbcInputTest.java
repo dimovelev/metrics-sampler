@@ -21,8 +21,8 @@ public class BootstrapperJdbcInputTest extends BootstrapperTestBase {
 		assertEquals("jdbc", item.getName());
 		assertEquals("pool", item.getPool());
 		assertEquals(2, item.getQueries().size());
-		assertTrue(item.getQueries().contains("select 'first' from dual"));
-		assertTrue(item.getQueries().contains("select 'second' from dual"));
+		assertTrue(item.getQueries().contains("select 'one', 123 from dual"));
+		assertTrue(item.getQueries().contains("select 'two', 232, 12312312311 from dual"));
 		assertSingleStringVariable(item.getVariables(), "string", "value");
 		
 		final JdbcConnectionPoolConfig pool = assertSingleSharedResource(config, JdbcConnectionPoolConfig.class);

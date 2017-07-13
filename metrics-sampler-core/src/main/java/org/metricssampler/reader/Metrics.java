@@ -54,6 +54,10 @@ public class Metrics implements Iterable<Metric> {
         return items.stream().filter(e -> e.getName().getName().equals(name)).findFirst();
     }
 
+    public List<Metric> getAll(String name) {
+        return items.stream().filter(e -> e.getName().getName().equals(name)).collect(Collectors.toList());
+    }
+
     public void add(Metric metric) {
         items.add(metric);
     }

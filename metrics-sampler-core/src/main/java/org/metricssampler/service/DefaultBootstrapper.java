@@ -16,6 +16,19 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class DefaultBootstrapper implements Bootstrapper {
+	public static final List<Class<?>> XBEAN_CLASSES = Arrays.asList(
+			ConfigurationXBean.class,
+			SelectorGroupXBean.class,
+			SelectorGroupRefXBean.class,
+			VariableXBean.class,
+			StringVariableXBean.class,
+			DictionaryVariableXBean.class,
+			EntryXBean.class,
+			SharedResourceXBean.class,
+			SamplerThreadPoolXBean.class,
+			HttpConnectionPoolXBean.class
+	);
+
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final List<Class<?>> xbeanClasses = new ArrayList<>();
@@ -63,7 +76,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 	}
 
 	private void initialize() {
-		addDefaultXBeanClasses();
+		xbeanClasses.addAll(XBEAN_CLASSES);
 
 		final ServiceLoader<Extension> services = ServiceLoader.load(Extension.class);
 		for (final Extension extension : services) {
@@ -71,19 +84,6 @@ public class DefaultBootstrapper implements Bootstrapper {
 		}
 
 		Collections.sort(xbeanPostProcessors);
-	}
-
-	protected void addDefaultXBeanClasses() {
-		xbeanClasses.add(ConfigurationXBean.class);
-		xbeanClasses.add(SelectorGroupXBean.class);
-		xbeanClasses.add(SelectorGroupRefXBean.class);
-		xbeanClasses.add(VariableXBean.class);
-		xbeanClasses.add(StringVariableXBean.class);
-		xbeanClasses.add(DictionaryVariableXBean.class);
-		xbeanClasses.add(EntryXBean.class);
-		xbeanClasses.add(SharedResourceXBean.class);
-		xbeanClasses.add(SamplerThreadPoolXBean.class);
-		xbeanClasses.add(HttpConnectionPoolXBean.class);
 	}
 
 	private void loadConfiguration(final String filename) {

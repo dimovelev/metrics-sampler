@@ -8,17 +8,16 @@ import org.metricssampler.resources.SharedResource;
 import org.metricssampler.service.AbstractExtension;
 
 import java.sql.DriverManager;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 public class JdbcExtension extends AbstractExtension {
+	public static final List<Class<?>> XBEAN_CLASSES = Arrays.asList(JdbcInputXBean.class, JdbcConnectionPoolXBean.class);
+
 	@Override
 	public Collection<Class<?>> getXBeans() {
-		final List<Class<?>> result = new LinkedList<Class<?>>();
-		result.add(JdbcInputXBean.class);
-		result.add(JdbcConnectionPoolXBean.class);
-		return result;
+		return XBEAN_CLASSES;
 	}
 
 	@Override
@@ -52,8 +51,6 @@ public class JdbcExtension extends AbstractExtension {
 
 	@Override
 	protected SharedResource doNewSharedResource(final SharedResourceConfig config) {
-		final JdbcConnectionPoolConfig poolConfig = (JdbcConnectionPoolConfig) config;
-		final JdbcConnectionPool result = new JdbcConnectionPool(poolConfig);
-		return result;
+		return new JdbcConnectionPool((JdbcConnectionPoolConfig) config);
 	}
 }

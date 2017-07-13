@@ -70,14 +70,10 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 	}
 
 	protected void readMetricsFromQuery(final String query, final Metrics result) {
-		Statement statement = null;
-		try {
-			logger.debug("Executing query {}", query);
-			final long start = System.currentTimeMillis();
-			statement = connection.createStatement();
-			ResultSet resultSet = null;
-			try {
-				resultSet = statement.executeQuery(query);
+		logger.debug("Executing query {}", query);
+		final long start = System.currentTimeMillis();
+		try (final Statement statement = connection.createStatement()) {
+			try (final ResultSet resultSet = statement.executeQuery(query)) {
 				logger.debug("Fetching results of query {}", query);
 				while (resultSet.next()) {
 					final int columnCount = resultSet.getMetaData().getColumnCount();
@@ -98,16 +94,12 @@ public class JdbcMetricsReader extends AbstractMetricsReader<JdbcInputConfig> im
 				}
 			} catch (final SQLException e) {
 				logger.warn("Failed to execute query \"" + query + "\"", e);
-			} finally {
-				closeQuietly(resultSet);
 			}
 			final long end = System.currentTimeMillis();
 			timingsLogger.debug("Discovered {} metrics in {} ms", result.size(), end - start);
 		} catch (final SQLException e) {
 			reconnect();
 			throw new MetricReadException("Failed to create statement. Will reconnect just in case", e);
-		} finally {
-			closeQuietly(statement);
 		}
 	}
 

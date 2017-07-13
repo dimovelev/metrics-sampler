@@ -14,30 +14,54 @@ import static org.metricssampler.config.loader.xbeans.ValidationUtils.*;
 public class JdbcConnectionPoolXBean extends SharedResourceXBean {
 	private static final int DEFAULT_LOGIN_TIMEOUT = 5;
 
+	/**
+	 * @see JdbcConnectionPoolConfig#getUrl()
+	 */
 	@XStreamAsAttribute
 	private String url;
 
+	/**
+	 * @see JdbcConnectionPoolConfig#getUsername()
+	 */
 	@XStreamAsAttribute
 	private String username;
 
+	/**
+	 * @see JdbcConnectionPoolConfig#getPassword()
+	 */
 	@XStreamAsAttribute
 	private String password;
-	
+
+	/**
+	 * @see JdbcConnectionPoolConfig#getDriver()
+	 */
 	@XStreamAsAttribute
 	private String driver;
 
+	/**
+	 * @see JdbcConnectionPoolConfig#getMinSize()
+	 */
 	@XStreamAsAttribute
 	@XStreamAlias("min-size")
 	private Integer minSize;
-	
+
+	/**
+	 * @see JdbcConnectionPoolConfig#getMaxSize()
+	 */
 	@XStreamAsAttribute
 	@XStreamAlias("max-size")
 	private Integer maxSize;
-	
+
+	/**
+	 * @see JdbcConnectionPoolConfig#getLoginTimeout()
+	 */
 	@XStreamAsAttribute
 	@XStreamAlias("login-timeout")
 	private Integer loginTimeout;
-	
+
+	/**
+	 * @see JdbcConnectionPoolConfig#getOptions()
+	 */
 	private JdbcOptionsXBean options;
 	
 	@Override

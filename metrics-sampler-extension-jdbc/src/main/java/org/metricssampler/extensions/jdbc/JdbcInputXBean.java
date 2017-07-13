@@ -12,9 +12,15 @@ import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 @XStreamAlias("jdbc")
 public class JdbcInputXBean extends InputXBean {
+	/**
+	 * @see JdbcInputConfig#getPool()
+	 */
 	@XStreamAsAttribute
 	private String pool;
 
+	/**
+	 * @see JdbcInputConfig#getQueries()
+	 */
 	@XStreamImplicit(itemFieldName="query")
 	private List<String> queries;
 	

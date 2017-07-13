@@ -21,10 +21,16 @@ public class JdbcInputConfig extends InputConfig {
 		this.queries = Collections.unmodifiableList(queries);
 	}
 
+	/**
+	 * @return the name of a jdbc-connection-pool to use to get connections
+	 */
 	public String getPool() {
 		return pool;
 	}
 
+	/**
+	 * @return the list of SQL queries to execute and interpret results as metrics
+	 */
 	public List<String> getQueries() {
 		return queries;
 	}

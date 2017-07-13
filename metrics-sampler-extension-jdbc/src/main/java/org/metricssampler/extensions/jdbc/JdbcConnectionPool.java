@@ -102,11 +102,7 @@ public class JdbcConnectionPool implements SharedResource {
 			try {
 				final String value = BeanUtils.getProperty(datasource, property);
 				result.put(prefix + property, value);
-			} catch (final IllegalAccessException e) {
-				result.put(property, -1);
-			} catch (final InvocationTargetException e) {
-				result.put(property, -1);
-			} catch (final NoSuchMethodException e) {
+			} catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				result.put(property, -1);
 			}
 		}
