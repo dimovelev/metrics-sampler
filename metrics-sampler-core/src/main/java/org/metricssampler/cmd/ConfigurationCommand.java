@@ -13,6 +13,6 @@ public abstract class ConfigurationCommand extends BootstrappedCommand {
 
 	@Override
 	protected Bootstrapper createBootstrapper() {
-		return DefaultBootstrapper.bootstrap(configuration.getConfig());
+		return DefaultBootstrapper.bootstrap(configuration.getConfig(), false);
 	}
 }

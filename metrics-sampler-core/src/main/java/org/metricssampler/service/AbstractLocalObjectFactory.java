@@ -92,14 +92,14 @@ public abstract class AbstractLocalObjectFactory implements LocalObjectFactory {
 	}
 
 	@Override
-	public SharedResource newSharedResource(final SharedResourceConfig config) {
+	public SharedResource newSharedResource(final SharedResourceConfig config, boolean suspended) {
 		if (!supportsSharedResource(config)) {
 			throw new IllegalArgumentException("Unsupported shared resource config: " + config);
 		}
-		return doNewSharedResource(config);
+		return doNewSharedResource(config, suspended);
 	}
 
-	protected SharedResource doNewSharedResource(final SharedResourceConfig config) {
+	protected SharedResource doNewSharedResource(final SharedResourceConfig config, boolean suspended) {
 		throw new UnsupportedOperationException();
 	}
 

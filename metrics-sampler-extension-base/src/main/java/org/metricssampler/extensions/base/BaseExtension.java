@@ -79,9 +79,9 @@ public class BaseExtension extends AbstractExtension {
 	}
 
 	@Override
-	protected SharedResource doNewSharedResource(final SharedResourceConfig config) {
+	protected SharedResource doNewSharedResource(final SharedResourceConfig config, boolean suspended) {
 		final ThreadPoolConfig actualConfig = (ThreadPoolConfig) config;
-		return new DefaultSamplerThreadPool(actualConfig);
+		return new DefaultSamplerThreadPool(actualConfig, suspended);
 	}
 
 	@Override

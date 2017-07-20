@@ -29,10 +29,12 @@ public class JdbcConnectionPool implements SharedResource {
 	);
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final JdbcConnectionPoolConfig config;
+	private final boolean suspended;
 	private PooledDataSource datasource;
 
-	public JdbcConnectionPool(final JdbcConnectionPoolConfig config) {
+	public JdbcConnectionPool(final JdbcConnectionPoolConfig config, final boolean suspended) {
 		this.config = config;
+		this.suspended = suspended;
 		startup();
 		GlobalRegistry.getInstance().addSharedResource(this);
 	}
@@ -62,8 +64,15 @@ public class JdbcConnectionPool implements SharedResource {
 		result.setUser(config.getUsername());
 		result.setPassword(config.getPassword());
 		result.setJdbcUrl(config.getUrl());
-		result.setMinPoolSize(config.getMinSize());
-		result.setMaxPoolSize(config.getMaxSize());
+		if (suspended) {
+			result.setMinPoolSize(0);
+			result.setMaxPoolSize(1);
+			result.setInitialPoolSize(0);
+		} else {
+			result.setMinPoolSize(config.getMinSize());
+			result.setMaxPoolSize(config.getMaxSize());
+			result.setInitialPoolSize(config.getMinSize());
+		}
 		try {
 			result.setLoginTimeout(config.getLoginTimeout());
 		} catch (final SQLException e) {

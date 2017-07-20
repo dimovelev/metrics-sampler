@@ -50,7 +50,7 @@ public class JdbcExtension extends AbstractExtension {
 	}
 
 	@Override
-	protected SharedResource doNewSharedResource(final SharedResourceConfig config) {
-		return new JdbcConnectionPool((JdbcConnectionPoolConfig) config);
+	protected SharedResource doNewSharedResource(final SharedResourceConfig config, boolean suspended) {
+		return new JdbcConnectionPool((JdbcConnectionPoolConfig) config, suspended);
 	}
 }

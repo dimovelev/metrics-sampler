@@ -40,21 +40,24 @@ public class DefaultBootstrapper implements Bootstrapper {
 	private final String controlHost;
 	private final int controlPort;
 	private List<XBeanPostProcessor> xbeanPostProcessors = new ArrayList<>();
+	private final boolean suspended;
 
 	private DefaultBootstrapper(final String controlHost, final int controlPort) {
 		ApplicationInfo.initialize();
 		this.controlHost = controlHost;
 		this.controlPort = controlPort;
+		this.suspended = false;
 	}
 
-	private DefaultBootstrapper() {
+	private DefaultBootstrapper(final boolean suspended) {
 		ApplicationInfo.initialize();
 		this.controlHost = null;
 		this.controlPort = -1;
+		this.suspended = suspended;
 	}
 
-	public static Bootstrapper bootstrap(final String filename) {
-		final DefaultBootstrapper result = new DefaultBootstrapper();
+	public static Bootstrapper bootstrap(final String filename, final boolean suspended) {
+		final DefaultBootstrapper result = new DefaultBootstrapper(suspended);
 		result.initialize();
 		result.loadConfiguration(filename);
 		result.createSharedResources();
@@ -95,7 +98,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		sharedResources = new HashMap<>();
 		for (final SharedResourceConfig resourceConfig : configuration.getSharedResources().values()) {
 			if (!resourceConfig.isIgnored()) {
-				final SharedResource sharedResource = newSharedResource(resourceConfig);
+				final SharedResource sharedResource = newSharedResource(resourceConfig, suspended);
 				sharedResources.put(resourceConfig.getName(), sharedResource);
 			}
 		}
@@ -103,12 +106,12 @@ public class DefaultBootstrapper implements Bootstrapper {
 	}
 
 	@Override
-	public SharedResource newSharedResource(final SharedResourceConfig config) {
+	public SharedResource newSharedResource(final SharedResourceConfig config, boolean suspended) {
 		for (final LocalObjectFactory factory : objectFactories) {
 			try {
 				if (factory.supportsSharedResource(config)) {
 					logger.debug("Creating shared resource {}", config.getName());
-					return factory.newSharedResource(config);
+					return factory.newSharedResource(config, suspended);
 				}
 			} catch (final RuntimeException e) {
 				throw new ConfigurationException("Failed to create shared resource \"" + config.getName() + "\"", e);

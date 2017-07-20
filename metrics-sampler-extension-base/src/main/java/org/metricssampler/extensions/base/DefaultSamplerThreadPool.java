@@ -18,11 +18,13 @@ import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 public class DefaultSamplerThreadPool implements SamplerThreadPool {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final ThreadPoolConfig config;
+	private final boolean suspended;
 	private ScheduledThreadPoolExecutor executorService;
 
-	public DefaultSamplerThreadPool(final ThreadPoolConfig config) {
+	public DefaultSamplerThreadPool(final ThreadPoolConfig config, boolean suspended) {
 		checkArgumentNotNull(config, "config");
 		this.config = config;
+		this.suspended = suspended;
 		startup();
 		GlobalRegistry.getInstance().addSharedResource(this);
 	}
@@ -44,11 +46,20 @@ public class DefaultSamplerThreadPool implements SamplerThreadPool {
 				return result;
 			}
 		});
-		if (config.getMaxSize() != -1) {
-			result.setMaximumPoolSize(config.getMaxSize());
+
+		if (suspended) {
+			result.setCorePoolSize(0);
+			result.setMaximumPoolSize(1);
+		} else {
+			if (config.getMaxSize() != -1) {
+				result.setMaximumPoolSize(config.getMaxSize());
+			}
 		}
 		if (config.getKeepAliveTime() != -1) {
 			result.setKeepAliveTime(config.getKeepAliveTime(), TimeUnit.SECONDS);
+		}
+		if (suspended) {
+			result.shutdown();
 		}
 		return result;
 	}
