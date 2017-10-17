@@ -322,6 +322,6 @@ Publishing new versions to maven central
  
 Compatibility
 =============
-* Tested with Hotspot JVM 1.7
+* Tested with Hotspot JVM 1.8
 * Tested with Tomcat 7 and Weblogic Server 12c (provided that wlfullclient.jar (or the jmx client and t3 protocol JARs) is on the classpath)
 * You might need to add -Dsun.lang.ClassLoader.allowArraySyntax=true as JVM parameter in the metrics-sampler.sh script if you are connecting using JVM 1.7 client to a JVM 1.5 server
