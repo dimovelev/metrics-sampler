@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.dimovelev</groupId>
 	<artifactId>metrics-sampler</artifactId>
-	<version>0.9.0</version>
+	<version>0.9.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>metrics-sampler</name>
 	<description>metrics-sampler is a java program which regularly queries metrics from a configured set of inputs, selects and renames them using regular expressions and sends them to a configured set of outputs. It supports JMX and JDBC as inputs and Graphite as output out of the box.</description>
@@ -26,7 +26,7 @@
 		<connection>scm:git:git@github.com:dimovelev/metrics-sampler.git</connection>
 		<developerConnection>scm:git:git@github.com:dimovelev/metrics-sampler.git</developerConnection>
 		<url>https://github.com/dimovelev/metrics-sampler</url>
-		<tag>v0.9.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<distributionManagement>
 		<snapshotRepository>
