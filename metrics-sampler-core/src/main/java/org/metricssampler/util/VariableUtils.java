@@ -1,11 +1,11 @@
 package org.metricssampler.util;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 public final class VariableUtils {
 	private VariableUtils() {

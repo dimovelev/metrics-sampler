@@ -1,12 +1,5 @@
 package org.metricssampler.extensions.apachestatus;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.commons.io.LineIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -16,6 +9,11 @@ import org.metricssampler.extensions.apachestatus.parsers.ModQosParser;
 import org.metricssampler.extensions.apachestatus.parsers.ScoreboardParser;
 import org.metricssampler.extensions.apachestatus.parsers.StatusLineParser;
 import org.metricssampler.reader.BaseHttpMetricsReader;
+import org.metricssampler.reader.Metrics;
+
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
 public class ApacheStatusMetricsReader extends BaseHttpMetricsReader<ApacheStatusInputConfig> {
 	private final List<StatusLineParser> lineParsers = Arrays.asList(new ModQosParser(), new ScoreboardParser(), new GenericLineParser());
@@ -31,7 +29,7 @@ public class ApacheStatusMetricsReader extends BaseHttpMetricsReader<ApacheStatu
 		    try(final InputStreamReader reader = streamEntity(entity)) {
 		    	final LineIterator lines = new LineIterator(reader);
 				try {
-					values = new HashMap<>();
+					values = new Metrics();
 					final long timestamp = System.currentTimeMillis();
 					while (lines.hasNext()) {
 						final String line = lines.next();
@@ -42,7 +40,7 @@ public class ApacheStatusMetricsReader extends BaseHttpMetricsReader<ApacheStatu
 				}
 		    }
 		} else {
-			values = Collections.emptyMap();
+			values = new Metrics();
 			logger.warn("Response was null. Response line: {}", response.getStatusLine());
 		}
     }

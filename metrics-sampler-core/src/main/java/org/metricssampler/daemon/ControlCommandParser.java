@@ -1,11 +1,11 @@
 package org.metricssampler.daemon;
 
+import org.metricssampler.daemon.commands.ControlCommand;
+import org.metricssampler.daemon.commands.ControlCommandFactory;
+
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.metricssampler.daemon.commands.ControlCommand;
-import org.metricssampler.daemon.commands.ControlCommandFactory;
 
 public class ControlCommandParser {
 	private static final String CMD_SHUTDOWN = "shutdown";

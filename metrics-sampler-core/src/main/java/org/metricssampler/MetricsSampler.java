@@ -1,14 +1,13 @@
 package org.metricssampler;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import org.metricssampler.cmd.*;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
-
-import org.metricssampler.cmd.*;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
 
 public class MetricsSampler {
 	public static void main(final String[] args) {
@@ -53,6 +52,7 @@ public class MetricsSampler {
 		commander.addCommand(new CheckCommand());
 		commander.addCommand(new TestCommand());
 		commander.addCommand(new MetricsCommand());
+		commander.addCommand(new CheckConfigCommand());
 
 		fixResourceBundleBug(commander, bundle);
 		return result;
@@ -73,11 +73,7 @@ public class MetricsSampler {
 				final Method method = subJc.getClass().getDeclaredMethod("createDescriptions");
 				method.setAccessible(true);
 				method.invoke(subJc);
-			} catch (final NoSuchMethodException e) {
-			} catch (final SecurityException e) {
-			} catch (final IllegalAccessException e) {
-			} catch (final IllegalArgumentException e) {
-			} catch (final InvocationTargetException e) {
+			} catch (final NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			}
 		}
 	}

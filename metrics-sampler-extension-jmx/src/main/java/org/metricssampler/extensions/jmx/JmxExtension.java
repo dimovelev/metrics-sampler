@@ -1,12 +1,12 @@
 package org.metricssampler.extensions.jmx;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.service.AbstractExtension;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class JmxExtension extends AbstractExtension {
 	@Override

@@ -1,8 +1,8 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
 import org.metricssampler.config.SelectorConfig;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public class RegExpSelectorConfig extends SelectorConfig {
 	private final String namePattern;

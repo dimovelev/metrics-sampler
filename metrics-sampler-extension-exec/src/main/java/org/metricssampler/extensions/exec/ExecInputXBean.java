@@ -1,6 +1,9 @@
 package org.metricssampler.extensions.exec;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.loader.xbeans.EntryXBean;
+import org.metricssampler.config.loader.xbeans.InputXBean;
 
 import java.io.File;
 import java.util.HashMap;
@@ -8,11 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.loader.xbeans.EntryXBean;
-import org.metricssampler.config.loader.xbeans.InputXBean;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 @XStreamAlias("exec")
 public class ExecInputXBean extends InputXBean {

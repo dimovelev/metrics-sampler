@@ -1,11 +1,11 @@
 package org.metricssampler.extensions.jmx;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
+import org.metricssampler.reader.MetricName;
 
 import javax.management.ObjectName;
 
-import org.metricssampler.reader.MetricName;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 public class JmxMetricName implements MetricName {
 	private final ObjectName objectName;

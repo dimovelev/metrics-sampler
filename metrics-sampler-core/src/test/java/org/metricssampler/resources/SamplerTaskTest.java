@@ -1,16 +1,11 @@
 package org.metricssampler.resources;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.sampler.Sampler;
+
+import static org.mockito.Mockito.*;
 
 public class SamplerTaskTest {
 	private Sampler sampler;

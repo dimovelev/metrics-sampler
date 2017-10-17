@@ -1,12 +1,12 @@
 package org.metricssampler.config.loader.xbeans;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+
 @XStreamAlias("entry")
-public class EntryXBean {
+public class EntryXBean extends XBean {
 	@XStreamAsAttribute
 	private String key;
 

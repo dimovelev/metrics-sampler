@@ -1,13 +1,13 @@
 package org.metricssampler.extensions.exec;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
+import org.metricssampler.config.InputConfig;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.InputConfig;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 public class ExecInputConfig extends InputConfig {
 	private final File directory;

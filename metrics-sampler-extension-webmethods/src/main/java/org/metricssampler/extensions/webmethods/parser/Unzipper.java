@@ -1,5 +1,8 @@
 package org.metricssampler.extensions.webmethods.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,9 +12,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Unzipper {
 	private static final Logger logger = LoggerFactory.getLogger(Unzipper.class);

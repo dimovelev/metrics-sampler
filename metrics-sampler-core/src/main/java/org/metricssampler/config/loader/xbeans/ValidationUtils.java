@@ -1,6 +1,7 @@
 package org.metricssampler.config.loader.xbeans;
 
-import static org.metricssampler.util.StringUtils.camelCaseToSplit;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.metricssampler.config.ConfigurationException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,9 +9,7 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.metricssampler.config.ConfigurationException;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import static org.metricssampler.util.StringUtils.camelCaseToSplit;
 
 public final class ValidationUtils {
 	private ValidationUtils() {

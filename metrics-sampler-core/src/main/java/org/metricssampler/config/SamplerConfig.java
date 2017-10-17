@@ -1,11 +1,12 @@
 package org.metricssampler.config;
+
+import java.util.List;
+import java.util.Map;
+
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.metricssampler.util.Preconditions.checkArgument;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Base class for sampler configurations.

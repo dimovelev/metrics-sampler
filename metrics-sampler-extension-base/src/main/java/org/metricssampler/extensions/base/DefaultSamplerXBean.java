@@ -1,28 +1,17 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.*;
+import org.metricssampler.config.loader.xbeans.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.SamplerConfig;
-import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.ValueTransformerConfig;
-import org.metricssampler.config.loader.xbeans.SamplerXBean;
-import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
-import org.metricssampler.config.loader.xbeans.SelectorXBean;
-import org.metricssampler.config.loader.xbeans.SimpleSelectorXBean;
-import org.metricssampler.config.loader.xbeans.ValueTransformerXBean;
-import org.metricssampler.config.loader.xbeans.VariableXBean;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 @XStreamAlias("sampler")
 public class DefaultSamplerXBean extends SamplerXBean {

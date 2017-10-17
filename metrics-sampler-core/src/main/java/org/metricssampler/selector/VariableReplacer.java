@@ -1,15 +1,14 @@
 package org.metricssampler.selector;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.metricssampler.config.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 /**
  * Helper class that handles the replacement of variables within a string. Instances are thread-safe and can be reused.

@@ -1,9 +1,6 @@
 package org.metricssampler.extensions.apachestatus.parsers;
 
-import java.util.Map;
-
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.Metrics;
 
 /**
  * A parser that can parse a single line of the response
@@ -18,5 +15,5 @@ public interface StatusLineParser {
 	 * @param timestamp the timestamp to use for the metrics unless they contain their own timestamp
 	 * @return {@code true} if the parser was responsible for parsing this response.
 	 */
-	boolean parse(String line, Map<MetricName, MetricValue> metrics, long timestamp);
+	boolean parse(String line, Metrics metrics, long timestamp);
 }

@@ -1,14 +1,13 @@
 package org.metricssampler.cmd;
 
+import com.beust.jcommander.Parameter;
+import org.metricssampler.resources.SamplerStats;
+import org.metricssampler.sampler.Sampler;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.metricssampler.resources.SamplerStats;
-import org.metricssampler.sampler.Sampler;
-
-import com.beust.jcommander.Parameter;
 
 /**
  * A command that can operate on a subset of the samplers given as command line argument. If the argument is not specified then the command

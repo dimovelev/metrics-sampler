@@ -1,11 +1,11 @@
 package org.metricssampler.config.loader.xbeans;
 
+import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.InputConfig;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.InputConfig;
 
 /**
  * Base class for input XBeans.

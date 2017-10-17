@@ -1,11 +1,6 @@
 package org.metricssampler.service;
 
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.SamplerConfig;
-import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.SharedResourceConfig;
-import org.metricssampler.config.ValueTransformerConfig;
+import org.metricssampler.config.*;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
@@ -97,14 +92,14 @@ public abstract class AbstractLocalObjectFactory implements LocalObjectFactory {
 	}
 
 	@Override
-	public SharedResource newSharedResource(final SharedResourceConfig config) {
+	public SharedResource newSharedResource(final SharedResourceConfig config, boolean suspended) {
 		if (!supportsSharedResource(config)) {
 			throw new IllegalArgumentException("Unsupported shared resource config: " + config);
 		}
-		return doNewSharedResource(config);
+		return doNewSharedResource(config, suspended);
 	}
 
-	protected SharedResource doNewSharedResource(final SharedResourceConfig config) {
+	protected SharedResource doNewSharedResource(final SharedResourceConfig config, boolean suspended) {
 		throw new UnsupportedOperationException();
 	}
 

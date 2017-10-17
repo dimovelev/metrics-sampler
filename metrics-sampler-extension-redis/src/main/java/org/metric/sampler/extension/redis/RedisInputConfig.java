@@ -1,10 +1,10 @@
 package org.metric.sampler.extension.redis;
 
+import org.metricssampler.config.InputConfig;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.metricssampler.config.InputConfig;
 
 public class RedisInputConfig extends InputConfig {
 	private final String host;

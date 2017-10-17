@@ -1,8 +1,5 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.config.OutputConfig;
@@ -10,6 +7,9 @@ import org.metricssampler.extensions.base.DefaultSamplerConfig;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BootstrapperSamplerTest extends BootstrapperTestBase {
 	@Test

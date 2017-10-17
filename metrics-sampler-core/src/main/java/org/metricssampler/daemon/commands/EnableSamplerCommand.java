@@ -1,11 +1,11 @@
 package org.metricssampler.daemon.commands;
 
+import org.metricssampler.resources.SamplerTask;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Map;
-
-import org.metricssampler.resources.SamplerTask;
 
 public class EnableSamplerCommand extends MapEntryCommand<SamplerTask> {
 	private final int times;

@@ -1,30 +1,9 @@
 package org.metricssampler.service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-
-import org.metricssampler.config.Configuration;
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.SamplerConfig;
-import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.SharedResourceConfig;
-import org.metricssampler.config.ValueTransformerConfig;
+import org.metricssampler.config.*;
 import org.metricssampler.config.loader.ConfigurationLoader;
-import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
-import org.metricssampler.config.loader.xbeans.DictionaryVariableXBean;
-import org.metricssampler.config.loader.xbeans.EntryXBean;
-import org.metricssampler.config.loader.xbeans.SamplerThreadPoolXBean;
-import org.metricssampler.config.loader.xbeans.SelectorGroupRefXBean;
-import org.metricssampler.config.loader.xbeans.SelectorGroupXBean;
-import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
-import org.metricssampler.config.loader.xbeans.StringVariableXBean;
-import org.metricssampler.config.loader.xbeans.VariableXBean;
+import org.metricssampler.config.loader.XBeanPostProcessor;
+import org.metricssampler.config.loader.xbeans.*;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
@@ -34,32 +13,51 @@ import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.*;
+
 public class DefaultBootstrapper implements Bootstrapper {
+	public static final List<Class<?>> XBEAN_CLASSES = Arrays.asList(
+			ConfigurationXBean.class,
+			SelectorGroupXBean.class,
+			SelectorGroupRefXBean.class,
+			VariableXBean.class,
+			StringVariableXBean.class,
+			DictionaryVariableXBean.class,
+			EntryXBean.class,
+			SharedResourceXBean.class,
+			SamplerThreadPoolXBean.class,
+			HttpConnectionPoolXBean.class
+	);
+
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private final List<Class<?>> xbeanClasses = new LinkedList<Class<?>>();
-	private final List<LocalObjectFactory> objectFactories = new LinkedList<LocalObjectFactory>();
+	private final List<Class<?>> xbeanClasses = new ArrayList<>();
+	private final List<LocalObjectFactory> objectFactories = new ArrayList<>();
 
 	private Configuration configuration;
 	private List<Sampler> samplers;
 	private Map<String, SharedResource> sharedResources;
 	private final String controlHost;
 	private final int controlPort;
+	private List<XBeanPostProcessor> xbeanPostProcessors = new ArrayList<>();
+	private final boolean suspended;
 
 	private DefaultBootstrapper(final String controlHost, final int controlPort) {
 		ApplicationInfo.initialize();
 		this.controlHost = controlHost;
 		this.controlPort = controlPort;
+		this.suspended = false;
 	}
 
-	private DefaultBootstrapper() {
+	private DefaultBootstrapper(final boolean suspended) {
 		ApplicationInfo.initialize();
 		this.controlHost = null;
 		this.controlPort = -1;
+		this.suspended = suspended;
 	}
 
-	public static Bootstrapper bootstrap(final String filename) {
-		final DefaultBootstrapper result = new DefaultBootstrapper();
+	public static Bootstrapper bootstrap(final String filename, final boolean suspended) {
+		final DefaultBootstrapper result = new DefaultBootstrapper(suspended);
 		result.initialize();
 		result.loadConfiguration(filename);
 		result.createSharedResources();
@@ -81,28 +79,18 @@ public class DefaultBootstrapper implements Bootstrapper {
 	}
 
 	private void initialize() {
-		addDefaultXBeanClasses();
+		xbeanClasses.addAll(XBEAN_CLASSES);
 
 		final ServiceLoader<Extension> services = ServiceLoader.load(Extension.class);
 		for (final Extension extension : services) {
 			registerExtension(extension);
 		}
-	}
 
-	protected void addDefaultXBeanClasses() {
-		xbeanClasses.add(ConfigurationXBean.class);
-		xbeanClasses.add(SelectorGroupXBean.class);
-		xbeanClasses.add(SelectorGroupRefXBean.class);
-		xbeanClasses.add(VariableXBean.class);
-		xbeanClasses.add(StringVariableXBean.class);
-		xbeanClasses.add(DictionaryVariableXBean.class);
-		xbeanClasses.add(EntryXBean.class);
-		xbeanClasses.add(SharedResourceXBean.class);
-		xbeanClasses.add(SamplerThreadPoolXBean.class);
+		Collections.sort(xbeanPostProcessors);
 	}
 
 	private void loadConfiguration(final String filename) {
-		configuration = ConfigurationLoader.fromFile(filename, xbeanClasses);
+		configuration = ConfigurationLoader.fromFile(filename, xbeanClasses, xbeanPostProcessors);
 	}
 
 	private void createSharedResources() {
@@ -110,7 +98,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		sharedResources = new HashMap<>();
 		for (final SharedResourceConfig resourceConfig : configuration.getSharedResources().values()) {
 			if (!resourceConfig.isIgnored()) {
-				final SharedResource sharedResource = newSharedResource(resourceConfig);
+				final SharedResource sharedResource = newSharedResource(resourceConfig, suspended);
 				sharedResources.put(resourceConfig.getName(), sharedResource);
 			}
 		}
@@ -118,12 +106,12 @@ public class DefaultBootstrapper implements Bootstrapper {
 	}
 
 	@Override
-	public SharedResource newSharedResource(final SharedResourceConfig config) {
+	public SharedResource newSharedResource(final SharedResourceConfig config, boolean suspended) {
 		for (final LocalObjectFactory factory : objectFactories) {
 			try {
 				if (factory.supportsSharedResource(config)) {
 					logger.debug("Creating shared resource {}", config.getName());
-					return factory.newSharedResource(config);
+					return factory.newSharedResource(config, suspended);
 				}
 			} catch (final RuntimeException e) {
 				throw new ConfigurationException("Failed to create shared resource \"" + config.getName() + "\"", e);
@@ -147,6 +135,7 @@ public class DefaultBootstrapper implements Bootstrapper {
 		logger.info("Loading extension {}", extension.getName());
 		extension.initialize();
 		xbeanClasses.addAll(extension.getXBeans());
+		xbeanPostProcessors.addAll(extension.getXBeanPostProcessors());
 		final LocalObjectFactory localObjectFactory = extension.getObjectFactory();
 		localObjectFactory.setGlobalFactory(this);
 		objectFactories.add(localObjectFactory);

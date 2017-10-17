@@ -1,16 +1,15 @@
 package org.metricssampler.config.loader.xbeans;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
-
-import java.util.List;
-import java.util.Map;
-
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.SamplerConfig;
 import org.metricssampler.config.SelectorConfig;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.List;
+import java.util.Map;
+
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
 
 /**
  * Base class for sampler XBeans.

@@ -53,9 +53,11 @@ case "$1" in
  		;;
 	check|test|metadata)
 		$CMD $1 $OPTS_CONFIG ${@:2}
+	    exit $?
 		;;
 	*)
 		$CMD ${@:1}
+	    exit $?
 		;;
 esac
 popd > /dev/null

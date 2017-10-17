@@ -1,9 +1,8 @@
 package org.metricssampler.extensions.apachestatus.parsers;
 
-import java.util.Map;
-
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.Metrics;
 import org.metricssampler.reader.SimpleMetricName;
 
 /**
@@ -27,7 +26,7 @@ public class ScoreboardParser implements StatusLineParser {
 	};
 
 	@Override
-	public boolean parse(final String line, final Map<MetricName, MetricValue> metrics, final long timestamp) {
+	public boolean parse(final String line, final Metrics metrics, final long timestamp) {
 		if (!line.startsWith(SCOREBOARD_PREFIX)) {
 			return false;
 		}
@@ -36,9 +35,9 @@ public class ScoreboardParser implements StatusLineParser {
 		for (int i=0; i<scoreboard.length(); i++) {
 			counts[chars.indexOf(scoreboard.charAt(i))]++;
 		}
-		metrics.put(new SimpleMetricName("workers.total_count", "Total number of workers"), new MetricValue(timestamp, scoreboard.length()));
+		metrics.add("workers.total_count", "Total number of workers", timestamp, scoreboard.length());
 		for (int i=0; i<counts.length; i++) {
-			metrics.put(NAMES[i], new MetricValue(timestamp, counts[i]));
+			metrics.add(NAMES[i], new MetricValue(timestamp, counts[i]));
 		}
 		return true;
 	}

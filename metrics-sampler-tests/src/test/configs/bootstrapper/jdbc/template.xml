@@ -11,8 +11,8 @@
 			<variables>
 				<string name="string" value="value" />
 			</variables>
-			<query>select 'first' from dual</query>
-			<query>select 'second' from dual</query>
+			<query>select 'one', 123 from dual</query>
+			<query>select 'two', 232, 12312312311 from dual</query>
 		</jdbc>
 		<jdbc name="jdbc" parent="template" />
 	</inputs>

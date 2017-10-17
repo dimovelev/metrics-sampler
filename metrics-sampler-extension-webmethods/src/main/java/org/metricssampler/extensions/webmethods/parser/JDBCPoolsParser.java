@@ -1,11 +1,9 @@
 package org.metricssampler.extensions.webmethods.parser;
 
-import java.util.List;
-import java.util.Map;
-
 import org.metricssampler.extensions.webmethods.WebMethodsInputConfig;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.Metrics;
+
+import java.util.List;
 
 public class JDBCPoolsParser extends AbstractFileWithHeaderParser {
 	public static final String ENTRY_RUNTIME_JDBC_POOLS = "runtime/JDBCPools.txt";
@@ -15,7 +13,7 @@ public class JDBCPoolsParser extends AbstractFileWithHeaderParser {
 	}
 
 	@Override
-	protected void parseLine(final Map<MetricName, MetricValue> metrics, final List<String> lines, final int lineNum, final String line, final long timestamp) {
+	protected void parseLine(final Metrics metrics, final List<String> lines, final int lineNum, final String line, final long timestamp) {
 		if (line.length() > 0 && !line.startsWith("-")) {
 			final int colIdx = line.indexOf(':');
 			if (colIdx == -1) {
@@ -37,9 +35,9 @@ public class JDBCPoolsParser extends AbstractFileWithHeaderParser {
 						lastSection = null;
 					}
 					metricNameBuilder.append(name);
-					final MetricName metricName = createMetricName(metricNameBuilder);
-					final String actualValue = parseValue(metricName.getName(), value);
-					metrics.put(metricName, new MetricValue(timestamp, actualValue));
+					final String metricName = createMetricName(metricNameBuilder);
+					final String actualValue = parseValue(metricName, value);
+					metrics.add(metricName, timestamp, actualValue);
 				}
 			}
 		}

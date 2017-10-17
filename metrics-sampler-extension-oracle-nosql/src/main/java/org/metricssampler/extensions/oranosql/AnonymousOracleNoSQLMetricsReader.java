@@ -13,23 +13,9 @@ public class AnonymousOracleNoSQLMetricsReader extends AbstractOracleNoSQLMetric
 		super(config);
 	}
 
-	@Override
-	protected CommandServiceAPI loadCommandService() {
-		for (final HostConfig host : config.getHosts()) {
-            logger.info("Trying to get the command service API from {}", host);
-            try {
-                final CommandServiceAPI service = RegistryUtils.getAdmin(host.getHost(), host.getPort(), null);
-                if (service.getMasterRmiAddress().getHost().equalsIgnoreCase(host.getHost()) && service.getMasterRmiAddress().getPort() == host.getPort()) {
-                    return service;
-                }
-            } catch (final RemoteException e) {
-                logger.warn("Failed to fetch command service from " + host, e);
-            } catch (final NotBoundException e) {
-                logger.warn("Failed to fetch command service from " + host, e);
-            }
-        }
-
-        return null;
-	}
+    @Override
+    protected CommandServiceAPI lookupCommandService(HostConfig host) throws RemoteException, NotBoundException {
+        return RegistryUtils.getAdmin(host.getHost(), host.getPort(), null);
+    }
 
 }

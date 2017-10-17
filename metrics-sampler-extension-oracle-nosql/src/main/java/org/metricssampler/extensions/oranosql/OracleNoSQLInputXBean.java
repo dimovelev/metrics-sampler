@@ -1,7 +1,12 @@
 package org.metricssampler.extensions.oranosql;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPort;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.LoginConfig;
+import org.metricssampler.config.loader.xbeans.InputXBean;
+import org.metricssampler.extensions.oranosql.OracleNoSQLInputConfig.HostConfig;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,14 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.LoginConfig;
-import org.metricssampler.config.loader.xbeans.InputXBean;
-import org.metricssampler.extensions.oranosql.OracleNoSQLInputConfig.HostConfig;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPort;
 
 @XStreamAlias("oracle-nosql")
 public class OracleNoSQLInputXBean extends InputXBean {

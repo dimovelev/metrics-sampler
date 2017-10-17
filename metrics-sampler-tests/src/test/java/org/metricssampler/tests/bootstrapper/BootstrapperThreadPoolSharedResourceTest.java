@@ -1,11 +1,11 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.ThreadPoolConfig;
+
+import static org.junit.Assert.assertEquals;
 
 public class BootstrapperThreadPoolSharedResourceTest extends BootstrapperTestBase {
 	@Test

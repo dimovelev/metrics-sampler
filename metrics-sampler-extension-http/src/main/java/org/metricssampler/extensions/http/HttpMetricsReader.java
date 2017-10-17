@@ -4,9 +4,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.metricssampler.reader.BaseHttpMetricsReader;
+import org.metricssampler.reader.Metrics;
 
 import java.io.InputStreamReader;
-import java.util.Collections;
 
 public class HttpMetricsReader extends BaseHttpMetricsReader<HttpInputConfig> {
 	protected final HttpResponseParser parser;
@@ -24,7 +24,7 @@ public class HttpMetricsReader extends BaseHttpMetricsReader<HttpInputConfig> {
                 values = parser.parse(response, entity, reader);
             }
         } else {
-            values = Collections.emptyMap();
+            values = new Metrics();
             logger.warn("Response was null. Response line: {}", response.getStatusLine());
         }
     }

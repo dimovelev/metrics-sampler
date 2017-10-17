@@ -1,18 +1,19 @@
 package org.metricssampler.extensions.elasticsearch;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
+import org.metricssampler.reader.Metrics;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.metricssampler.extensions.elasticsearch.ElasticSearchUtil.mapClusterHealthStatus;
 
 public class ElasticSearchMetricValues {
-    private final Map<MetricName, MetricValue> values;
+    private final Metrics values;
 
-    public ElasticSearchMetricValues(Map<MetricName, MetricValue> values) {
+    public ElasticSearchMetricValues(Metrics values) {
         this.values = values;
     }
 
@@ -43,9 +44,7 @@ public class ElasticSearchMetricValues {
     }
 
     protected void addMetric(final long timestamp, final String name, final Object value) {
-        final SimpleMetricName metricName = new SimpleMetricName(name, null);
-        final MetricValue metricValue = new MetricValue(timestamp, value);
-        values.put(metricName, metricValue);
+        values.add(name, timestamp, value);
     }
 
     public void addNodeStats(JsonNode jsonNode) {

@@ -1,18 +1,17 @@
 package org.metricssampler.cmd;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import org.metricssampler.config.InputConfig;
 import org.metricssampler.reader.MetricName;
 import org.metricssampler.reader.MetricsReader;
 import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.service.GlobalObjectFactory;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 @Parameters(commandNames="metadata", commandDescriptionKey="help.metadata.command")
 public class MetadataCommand extends ConfigurationCommand {

@@ -1,22 +1,16 @@
 package org.metricssampler.extensions.exec;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.Metric;
+import org.metricssampler.reader.Metrics;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class ExecMetricsReaderTest {
 	private ExecMetricsReader testee;
-	private final Map<MetricName, MetricValue> result = new HashMap<>();
+	private final Metrics result = new Metrics();
 	
 	@Before
 	public void setup() {
@@ -57,8 +51,8 @@ public class ExecMetricsReaderTest {
 	}
 	
 	protected void assertMetric(final long timestamp, final String name, final String value) {
-		for (final Entry<MetricName, MetricValue> entry : result.entrySet()) {
-			if (entry.getKey().getName().equals(name)) {
+		for (final Metric entry : result) {
+			if (entry.getName().getName().equals(name)) {
 				if (timestamp != -1L) {
 					assertEquals("Timestamp of metric " + name, timestamp, entry.getValue().getTimestamp());
 				}

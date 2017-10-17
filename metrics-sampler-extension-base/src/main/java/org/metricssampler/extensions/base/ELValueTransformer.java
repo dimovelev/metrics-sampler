@@ -1,9 +1,9 @@
 package org.metricssampler.extensions.base;
 
+import org.metricssampler.values.NameRegExpValueTransformer;
+
 import javax.el.ELContext;
 import javax.el.ValueExpression;
-
-import org.metricssampler.values.NameRegExpValueTransformer;
 
 public class ELValueTransformer extends NameRegExpValueTransformer {
 	private final ELFactory elFactory;

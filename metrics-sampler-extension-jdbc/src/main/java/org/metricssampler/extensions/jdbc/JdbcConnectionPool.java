@@ -1,15 +1,7 @@
 package org.metricssampler.extensions.jdbc;
 
-import java.beans.PropertyVetoException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.PooledDataSource;
 import org.apache.commons.beanutils.BeanUtils;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.resources.SharedResource;
@@ -17,8 +9,11 @@ import org.metricssampler.service.GlobalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.mchange.v2.c3p0.PooledDataSource;
+import java.beans.PropertyVetoException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
 
 public class JdbcConnectionPool implements SharedResource {
 	private static final List<String> STATS_DATASOURCE_PROPERTIES = Arrays.asList(
@@ -34,10 +29,12 @@ public class JdbcConnectionPool implements SharedResource {
 	);
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final JdbcConnectionPoolConfig config;
+	private final boolean suspended;
 	private PooledDataSource datasource;
 
-	public JdbcConnectionPool(final JdbcConnectionPoolConfig config) {
+	public JdbcConnectionPool(final JdbcConnectionPoolConfig config, final boolean suspended) {
 		this.config = config;
+		this.suspended = suspended;
 		startup();
 		GlobalRegistry.getInstance().addSharedResource(this);
 	}
@@ -67,8 +64,15 @@ public class JdbcConnectionPool implements SharedResource {
 		result.setUser(config.getUsername());
 		result.setPassword(config.getPassword());
 		result.setJdbcUrl(config.getUrl());
-		result.setMinPoolSize(config.getMinSize());
-		result.setMaxPoolSize(config.getMaxSize());
+		if (suspended) {
+			result.setMinPoolSize(0);
+			result.setMaxPoolSize(1);
+			result.setInitialPoolSize(0);
+		} else {
+			result.setMinPoolSize(config.getMinSize());
+			result.setMaxPoolSize(config.getMaxSize());
+			result.setInitialPoolSize(config.getMinSize());
+		}
 		try {
 			result.setLoginTimeout(config.getLoginTimeout());
 		} catch (final SQLException e) {
@@ -107,11 +111,7 @@ public class JdbcConnectionPool implements SharedResource {
 			try {
 				final String value = BeanUtils.getProperty(datasource, property);
 				result.put(prefix + property, value);
-			} catch (final IllegalAccessException e) {
-				result.put(property, -1);
-			} catch (final InvocationTargetException e) {
-				result.put(property, -1);
-			} catch (final NoSuchMethodException e) {
+			} catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				result.put(property, -1);
 			}
 		}

@@ -1,14 +1,14 @@
 package org.metricssampler.extensions.http;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-
 import org.junit.Test;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.loader.xbeans.EntryXBean;
 import org.metricssampler.extensions.http.parsers.regexp.RegExpHttpResponseParserXBean;
 import org.metricssampler.extensions.http.parsers.regexp.RegExpLineFormatXBean;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
 
 public class HttpInputXBeanTest {
 

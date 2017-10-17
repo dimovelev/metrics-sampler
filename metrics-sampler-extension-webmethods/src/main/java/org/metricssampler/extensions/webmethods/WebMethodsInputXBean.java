@@ -1,14 +1,13 @@
 package org.metricssampler.extensions.webmethods;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Map;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.loader.xbeans.BaseHttpInputXBean;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Map;
 
 @XStreamAlias("webmethods")
 public class WebMethodsInputXBean extends BaseHttpInputXBean {

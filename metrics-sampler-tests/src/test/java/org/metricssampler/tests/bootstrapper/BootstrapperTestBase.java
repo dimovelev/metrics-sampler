@@ -1,19 +1,12 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import org.metricssampler.config.*;
+import org.metricssampler.service.Bootstrapper;
+import org.metricssampler.service.DefaultBootstrapper;
 
 import java.util.Map;
 
-import org.metricssampler.config.Configuration;
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.SamplerConfig;
-import org.metricssampler.config.SharedResourceConfig;
-import org.metricssampler.config.SocketOptionsConfig;
-import org.metricssampler.service.Bootstrapper;
-import org.metricssampler.service.DefaultBootstrapper;
+import static org.junit.Assert.*;
 
 public abstract class BootstrapperTestBase {
 	protected String getConfig(final String path) {

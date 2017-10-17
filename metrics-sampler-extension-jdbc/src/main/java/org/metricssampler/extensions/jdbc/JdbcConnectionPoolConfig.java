@@ -1,12 +1,12 @@
 package org.metricssampler.extensions.jdbc;
 
-import static org.metricssampler.util.Preconditions.checkArgument;
-import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
+import org.metricssampler.config.SharedResourceConfig;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.metricssampler.config.SharedResourceConfig;
+import static org.metricssampler.util.Preconditions.checkArgument;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 public class JdbcConnectionPoolConfig extends SharedResourceConfig {
 	private final int minSize;
@@ -32,30 +32,51 @@ public class JdbcConnectionPoolConfig extends SharedResourceConfig {
 		this.loginTimeout = loginTimeout;
 	}
 
+	/**
+	 * @return the minimal number of jdbc connections to keep in the pool
+	 */
 	public int getMinSize() {
 		return minSize;
 	}
 
+	/**
+	 * @return the maximal number of jdbc connections to keep in the pool.
+	 */
 	public int getMaxSize() {
 		return maxSize;
 	}
 
+	/**
+	 * @return the URL to connect to the database
+	 */
 	public String getUrl() {
 		return url;
 	}
 
+	/**
+	 * @return the fully qualified class-name of the JDBC driver
+	 */
 	public String getDriver() {
 		return driver;
 	}
 
+	/**
+	 * @return the user to connect as
+	 */
 	public String getUsername() {
 		return username;
 	}
 
+	/**
+	 * @return the user's password
+	 */
 	public String getPassword() {
 		return password;
 	}
 
+	/**
+	 * @return a map of additional, low-level options to pass to the driver when creating connections.
+	 */
 	public Map<String, String> getOptions() {
 		return options;
 	}

@@ -1,13 +1,12 @@
 package org.metricssampler.extensions.graphite;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPort;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.metricssampler.config.OutputConfig;
 import org.metricssampler.config.loader.xbeans.OutputXBean;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPort;
 
 @XStreamAlias("graphite")
 public class GraphiteOutputXBean extends OutputXBean {

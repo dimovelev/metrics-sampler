@@ -1,21 +1,5 @@
 package org.metricssampler.config.loader;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Collection;
-
-import org.metricssampler.config.Configuration;
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.loader.FileGlobProcessor.MatchingFileVisitor;
-import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
-import org.metricssampler.config.loader.xbeans.IncludeXBean;
-import org.metricssampler.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
@@ -23,6 +7,24 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.ReaderWrapper;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.Xpp3DomDriver;
+import org.metricssampler.config.Configuration;
+import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.loader.FileGlobProcessor.MatchingFileVisitor;
+import org.metricssampler.config.loader.xbeans.ConfigurationXBean;
+import org.metricssampler.config.loader.xbeans.IncludeXBean;
+import org.metricssampler.config.loader.xbeans.XBean;
+import org.metricssampler.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
 
 /**
  * Utility class to load a XML configuration file into a {@link ConfigurationXBean} and then convert it to a {@link Configuration}
@@ -30,15 +32,17 @@ import com.thoughtworks.xstream.io.xml.Xpp3DomDriver;
 public class ConfigurationLoader {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final Collection<Class<?>> xbeanClasses;
+	private final List<XBeanPostProcessor> xbeanPostProcessors;
 	private final HierarchicalStreamDriver driver = new Xpp3DomDriver();
 
-	public ConfigurationLoader(final Collection<Class<?>> xbeanClasses) {
+	public ConfigurationLoader(final Collection<Class<?>> xbeanClasses, List<XBeanPostProcessor> xbeanPostProcessors) {
 		checkArgumentNotNullNorEmpty(xbeanClasses, "xbeanClasses");
 		this.xbeanClasses = xbeanClasses;
+		this.xbeanPostProcessors = xbeanPostProcessors;
 	}
 
-	public static Configuration fromFile(final String filename, final Collection<Class<?>> xbeanClasses) {
-		return new ConfigurationLoader(xbeanClasses).load(filename);
+	public static Configuration fromFile(final String filename, final Collection<Class<?>> xbeanClasses, List<XBeanPostProcessor> xbeanPostProcessors) {
+		return new ConfigurationLoader(xbeanClasses, xbeanPostProcessors).load(filename);
 	}
 
 	protected Configuration load(final String filename) {
@@ -47,11 +51,20 @@ public class ConfigurationLoader {
 		final XStream xstream = createXStream();
 		try {
 			final ConfigurationXBean result = loadFile(file, xstream);
+			applyPostProcessing(result);
 			return result.toConfig();
-		} catch (final XStreamException e) {
+		} catch (final XStreamException | IOException e) {
 			throw new ConfigurationException("Failed to load configuration from \"" + file.getAbsolutePath() + "\"", e);
-		} catch (final IOException e) {
-			throw new ConfigurationException("Failed to load configuration from \"" + file.getAbsolutePath() + "\"", e);
+		}
+	}
+
+	private void applyPostProcessing(XBean bean) {
+		try {
+			for (final XBeanPostProcessor postProcessor : xbeanPostProcessors) {
+				postProcessor.postProcessAfterLoad(bean);
+			}
+		} catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+			throw new ConfigurationException("Failed to execute post processors", e);
 		}
 	}
 

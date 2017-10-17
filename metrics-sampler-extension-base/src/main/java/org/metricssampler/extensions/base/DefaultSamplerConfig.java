@@ -1,16 +1,12 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import org.metricssampler.config.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.OutputConfig;
-import org.metricssampler.config.SamplerConfig;
-import org.metricssampler.config.SelectorConfig;
-import org.metricssampler.config.ValueTransformerConfig;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public class DefaultSamplerConfig extends SamplerConfig {
 	private final InputConfig input;

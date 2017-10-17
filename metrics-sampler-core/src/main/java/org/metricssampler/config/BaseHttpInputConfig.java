@@ -1,10 +1,10 @@
 package org.metricssampler.config;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public abstract class BaseHttpInputConfig extends InputConfig {
 	private final URL url;
@@ -13,9 +13,10 @@ public abstract class BaseHttpInputConfig extends InputConfig {
 	private final Map<String, String> headers;
 	private final boolean preemptiveAuthEnabled;
 	private final SocketOptionsConfig socketOptions;
+	private final HttpConnectionPoolConfig connectionPool;
 
 	protected BaseHttpInputConfig(final String name, final Map<String, Object> variables, final URL url, final String username,
-			final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled, final SocketOptionsConfig socketOptions) {
+								  final String password, final Map<String, String> headers, final boolean preemptiveAuthEnabled, final SocketOptionsConfig socketOptions, HttpConnectionPoolConfig connectionPool) {
 		super(name, variables);
 		checkArgumentNotNull(url, "url");
 		checkArgumentNotNull(headers, "headers");
@@ -25,6 +26,7 @@ public abstract class BaseHttpInputConfig extends InputConfig {
 		this.headers = Collections.unmodifiableMap(headers);
 		this.preemptiveAuthEnabled = preemptiveAuthEnabled;
 		this.socketOptions = socketOptions;
+		this.connectionPool = connectionPool;
 	}
 
 	/**
@@ -69,5 +71,12 @@ public abstract class BaseHttpInputConfig extends InputConfig {
 	 */
 	public SocketOptionsConfig getSocketOptions() {
 		return socketOptions;
+	}
+
+	/**
+	 * @return the connection pool configuration. If null, no connection pooling will be configured.
+	 */
+	public HttpConnectionPoolConfig getConnectionPool() {
+		return connectionPool;
 	}
 }

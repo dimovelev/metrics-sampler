@@ -1,23 +1,16 @@
 package org.metricssampler.extensions.base;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.metricssampler.reader.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.metricssampler.extensions.base.RegExpMetricsSelector;
-import org.metricssampler.extensions.base.RegExpSelectorConfig;
-import org.metricssampler.reader.BulkMetricsReader;
-import org.metricssampler.reader.MetaDataMetricsReader;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.MetricsMetaData;
-import org.metricssampler.reader.SimpleMetricName;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RegExpMetricsSelectorTest {
 	private RegExpMetricsSelector testee;
@@ -38,19 +31,20 @@ public class RegExpMetricsSelectorTest {
 
 	@Test
 	public void readMetricsBulk() {
-		Map<MetricName, MetricValue> metrics = new HashMap<>();
 		MetricValue aaaValue = new MetricValue(System.currentTimeMillis(), "11");
-		metrics.put(new SimpleMetricName("ignored-prefix.aaa.ignored-suffix", "whatever"), aaaValue);
 		MetricValue bbbValue = new MetricValue(System.currentTimeMillis(), "28");
-		metrics.put(new SimpleMetricName("ignored-prefix.bbb.ignored-suffix", "whatever"), bbbValue);
-		metrics.put(new SimpleMetricName("ignored-prefix.too-short", "whatever"), new MetricValue(System.currentTimeMillis(), "0"));
+		Metrics metrics = new Metrics(
+				new Metric(new SimpleMetricName("ignored-prefix.aaa.ignored-suffix", "whatever"), aaaValue),
+				new Metric(new SimpleMetricName("ignored-prefix.bbb.ignored-suffix", "whatever"), bbbValue),
+				new Metric(new SimpleMetricName("ignored-prefix.too-short", "whatever"), new MetricValue(System.currentTimeMillis(), "0"))
+		);
 		when(bulkReader.readAllMetrics()).thenReturn(metrics);
 		
-		Map<String, MetricValue> result = testee.readMetrics(bulkReader);
+		Metrics result = testee.readMetrics(bulkReader);
 		
 		assertEquals(2, result.size());
-		assertEquals(aaaValue, result.get("PREFIX.whatever.aaa"));
-		assertEquals(bbbValue, result.get("PREFIX.whatever.bbb"));
+		assertEquals(aaaValue, result.get("PREFIX.whatever.aaa").get().getValue());
+		assertEquals(bbbValue, result.get("PREFIX.whatever.bbb").get().getValue());
 	}
 	
 	@Test
@@ -64,11 +58,11 @@ public class RegExpMetricsSelectorTest {
 		MetricValue bbbValue = new MetricValue(System.currentTimeMillis(), "28");
 		when(metadataReader.readMetric(bbbName)).thenReturn(bbbValue);
 		
-		Map<String, MetricValue> result = testee.readMetrics(metadataReader);
+		Metrics result = testee.readMetrics(metadataReader);
 		
 		assertEquals(2, result.size());
-		assertEquals(aaaValue, result.get("PREFIX.whatever.aaa"));
-		assertEquals(bbbValue, result.get("PREFIX.whatever.bbb"));
+		assertEquals(aaaValue, result.get("PREFIX.whatever.aaa").get().getValue());
+		assertEquals(bbbValue, result.get("PREFIX.whatever.bbb").get().getValue());
 	}
 
 }

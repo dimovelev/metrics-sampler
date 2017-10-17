@@ -1,9 +1,8 @@
 package org.metricssampler.cmd;
 
+import com.beust.jcommander.Parameters;
 import org.metricssampler.reader.MetricReadException;
 import org.metricssampler.sampler.Sampler;
-
-import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="check", commandDescriptionKey="help.check.command")
 public class CheckCommand extends SamplersCommand {

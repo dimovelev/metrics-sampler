@@ -1,5 +1,12 @@
 package org.metricssampler.extensions.webmethods.parser;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.metricssampler.extensions.webmethods.WebMethodsInputConfig;
+import org.metricssampler.extensions.webmethods.WebMethodsInputXBean;
+import org.metricssampler.reader.Metrics;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,16 +14,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.zip.ZipException;
-
-import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.metricssampler.extensions.webmethods.WebMethodsInputConfig;
-import org.metricssampler.extensions.webmethods.WebMethodsInputXBean;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
 
 public abstract class ParserTestBase {
 
@@ -47,7 +45,7 @@ public abstract class ParserTestBase {
 		unzipper.close();
 	}
 
-	protected Map<MetricName, MetricValue> doParse() throws ZipException, IOException, ParseException {
+	protected Metrics doParse() throws ZipException, IOException, ParseException {
 		final AbstractFileParser testee = createTestee();
 		for (final String name : unzipper.getEntries()) {
 			if (testee.canParseEntry(name)) {

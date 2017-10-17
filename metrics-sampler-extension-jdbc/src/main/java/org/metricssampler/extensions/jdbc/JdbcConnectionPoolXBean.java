@@ -1,47 +1,67 @@
 package org.metricssampler.extensions.jdbc;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.greaterThanZero;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notNegative;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notNegativeOptional;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.SharedResourceConfig;
+import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.metricssampler.config.SharedResourceConfig;
-import org.metricssampler.config.loader.xbeans.SharedResourceXBean;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.*;
 
 @XStreamAlias("jdbc-connection-pool")
 public class JdbcConnectionPoolXBean extends SharedResourceXBean {
 	private static final int DEFAULT_LOGIN_TIMEOUT = 5;
 
+	/**
+	 * @see JdbcConnectionPoolConfig#getUrl()
+	 */
 	@XStreamAsAttribute
 	private String url;
 
+	/**
+	 * @see JdbcConnectionPoolConfig#getUsername()
+	 */
 	@XStreamAsAttribute
 	private String username;
 
+	/**
+	 * @see JdbcConnectionPoolConfig#getPassword()
+	 */
 	@XStreamAsAttribute
 	private String password;
-	
+
+	/**
+	 * @see JdbcConnectionPoolConfig#getDriver()
+	 */
 	@XStreamAsAttribute
 	private String driver;
 
+	/**
+	 * @see JdbcConnectionPoolConfig#getMinSize()
+	 */
 	@XStreamAsAttribute
 	@XStreamAlias("min-size")
 	private Integer minSize;
-	
+
+	/**
+	 * @see JdbcConnectionPoolConfig#getMaxSize()
+	 */
 	@XStreamAsAttribute
 	@XStreamAlias("max-size")
 	private Integer maxSize;
-	
+
+	/**
+	 * @see JdbcConnectionPoolConfig#getLoginTimeout()
+	 */
 	@XStreamAsAttribute
 	@XStreamAlias("login-timeout")
 	private Integer loginTimeout;
-	
+
+	/**
+	 * @see JdbcConnectionPoolConfig#getOptions()
+	 */
 	private JdbcOptionsXBean options;
 	
 	@Override

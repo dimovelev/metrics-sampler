@@ -1,9 +1,9 @@
 package org.metricssampler.config;
 
+import java.util.Map;
+
 import static java.util.Collections.unmodifiableMap;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
-import java.util.Map;
 
 /**
  * Base class for input configurations.

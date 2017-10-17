@@ -1,12 +1,12 @@
 package org.metricssampler.resources;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.metricssampler.sampler.Sampler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A wrapper around a sampler that handles run-time aspects - enabling, disabling and running for a configured amount of time

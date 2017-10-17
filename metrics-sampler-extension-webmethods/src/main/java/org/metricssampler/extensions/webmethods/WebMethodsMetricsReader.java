@@ -8,12 +8,12 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.metricssampler.extensions.webmethods.parser.DiagnosticDataParser;
 import org.metricssampler.extensions.webmethods.parser.Unzipper;
 import org.metricssampler.reader.BaseHttpMetricsReader;
+import org.metricssampler.reader.Metrics;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
 
 public class WebMethodsMetricsReader extends BaseHttpMetricsReader<WebMethodsInputConfig> {
 	private final DiagnosticDataParser parser;
@@ -47,7 +47,7 @@ public class WebMethodsMetricsReader extends BaseHttpMetricsReader<WebMethodsInp
                 FileUtils.deleteQuietly(file);
             }
         } else {
-            values = Collections.emptyMap();
+            values = new Metrics();
             logger.warn("Response was null. Response line: {}", response.getStatusLine());
         }
     }

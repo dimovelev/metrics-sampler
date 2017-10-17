@@ -1,16 +1,12 @@
 package org.metricssampler;
 
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class TCPControllerTestUtil {
 	public static int setupServer(final String request, final String response) {

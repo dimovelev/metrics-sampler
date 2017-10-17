@@ -1,11 +1,11 @@
 package org.metricssampler.service;
 
+import org.metricssampler.resources.SamplerTask;
+import org.metricssampler.resources.SharedResource;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-
-import org.metricssampler.resources.SamplerTask;
-import org.metricssampler.resources.SharedResource;
 
 public class GlobalRegistry {
 	private static GlobalRegistry instance = new GlobalRegistry();

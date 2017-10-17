@@ -1,18 +1,13 @@
 package org.metricssampler.cmd;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
+import com.beust.jcommander.ParametersDelegate;
 import org.apache.commons.io.IOUtils;
 import org.metricssampler.service.Bootstrapper;
 import org.metricssampler.service.DefaultBootstrapper;
 
-import com.beust.jcommander.ParametersDelegate;
+import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * Base class for control commands that only require the control host and port to operate.

@@ -1,13 +1,12 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.metricssampler.config.ConfigurationException;
 import org.metricssampler.config.SelectorConfig;
 import org.metricssampler.config.loader.xbeans.SimpleSelectorXBean;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 @XStreamAlias("regexp")
 public class RegExpSelectorXBean extends SimpleSelectorXBean {

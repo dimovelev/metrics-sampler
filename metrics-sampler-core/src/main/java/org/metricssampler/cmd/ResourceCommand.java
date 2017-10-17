@@ -1,12 +1,12 @@
 package org.metricssampler.cmd;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="resource", commandDescriptionKey="help.resource.command")
 public class ResourceCommand extends ControlCommand {

@@ -1,13 +1,11 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.metric.sampler.extension.redis.RedisInputConfig;
 import org.metric.sampler.extension.redis.RedisSizeCommand;
 import org.metricssampler.config.Configuration;
+
+import static org.junit.Assert.*;
 
 public class BootstrapperRedisInputTest extends BootstrapperTestBase {
 	@Test

@@ -1,10 +1,10 @@
 package org.metricssampler.service;
 
-import java.util.Map;
-
 import org.metricssampler.config.Configuration;
 import org.metricssampler.resources.SharedResource;
 import org.metricssampler.sampler.Sampler;
+
+import java.util.Map;
 
 public interface Bootstrapper extends GlobalObjectFactory {
 	Configuration getConfiguration();

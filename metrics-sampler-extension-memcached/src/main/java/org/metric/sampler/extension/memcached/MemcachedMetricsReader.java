@@ -1,12 +1,13 @@
 package org.metric.sampler.extension.memcached;
 
-import org.metricssampler.reader.*;
+import org.metricssampler.reader.AbstractMetricsReader;
+import org.metricssampler.reader.BulkMetricsReader;
+import org.metricssampler.reader.MetricReadException;
+import org.metricssampler.reader.Metrics;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.metricssampler.util.SocketUtils.createAndConnect;
 
@@ -28,11 +29,11 @@ public class MemcachedMetricsReader extends AbstractMetricsReader<MemcachedInput
 	}
 
 	@Override
-	public Map<MetricName, MetricValue> readAllMetrics() throws MetricReadException {
+	public Metrics readAllMetrics() throws MetricReadException {
         try(final Socket socket = createAndConnect(config.getHost(), config.getPort(), config.getSocketOptions())) {
             final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), ASCII_CHARSET));
             final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), ASCII_CHARSET));
-            final Map<MetricName, MetricValue> result = new HashMap<>();
+            final Metrics result = new Metrics();
             fetchStatistics("general", reader, writer, result);
             quit(writer);
             return result;
@@ -41,7 +42,7 @@ public class MemcachedMetricsReader extends AbstractMetricsReader<MemcachedInput
         }
 	}
 
-    protected void fetchStatistics(String type, BufferedReader reader, BufferedWriter writer, Map<MetricName, MetricValue> metrics) throws IOException {
+    protected void fetchStatistics(String type, BufferedReader reader, BufferedWriter writer, Metrics metrics) throws IOException {
         final String command = "stats" + (type.equals("general") ?  "" : " " + type);
         writer.write(command + "\n");
         writer.flush();
@@ -54,7 +55,7 @@ public class MemcachedMetricsReader extends AbstractMetricsReader<MemcachedInput
                 if (cols.length == 3) {
                     final String key = cols[1];
                     final String value = cols[2];
-                    metrics.put(new SimpleMetricName(prefix + key, null), new MetricValue(timestamp, value));
+                    metrics.add(prefix + key, timestamp, value);
                 } else {
                     logger.warn("Failed to parse line \"" + line + "\". Skipping.");
                 }
@@ -69,10 +70,4 @@ public class MemcachedMetricsReader extends AbstractMetricsReader<MemcachedInput
         writer.write("quit\n");
         writer.flush();
     }
-
-	@Override
-	public Iterable<MetricName> readNames() {
-		return readAllMetrics().keySet();
-	}
-
 }

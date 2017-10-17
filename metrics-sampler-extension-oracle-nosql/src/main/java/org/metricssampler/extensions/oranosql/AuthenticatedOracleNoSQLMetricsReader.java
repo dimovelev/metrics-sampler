@@ -8,7 +8,6 @@ import oracle.kv.impl.util.registry.RegistryUtils;
 import org.apache.commons.io.IOUtils;
 import org.metricssampler.extensions.oranosql.OracleNoSQLInputConfig.HostConfig;
 import org.metricssampler.reader.OpenMetricsReaderException;
-import org.metricssampler.resources.SamplerStats;
 
 import java.nio.file.Path;
 import java.rmi.NotBoundException;
@@ -63,20 +62,13 @@ public class AuthenticatedOracleNoSQLMetricsReader extends AbstractOracleNoSQLMe
     @Override
 	protected CommandServiceAPI loadCommandService() {
         connectStoreIfNecessary();
-        for (final HostConfig host : config.getHosts()) {
-            logger.info("Trying to get the command service API from {}", host);
-            try {
-                final AdminLoginManager adminLoginManager = getAdminLoginManager(host);
-                final CommandServiceAPI service = RegistryUtils.getAdmin(host.getHost(), host.getPort(), adminLoginManager);
-                if (service.getMasterRmiAddress().getHost().equalsIgnoreCase(host.getHost()) && service.getMasterRmiAddress().getPort() == host.getPort()) {
-                    return service;
-                }
-            } catch (RuntimeException | RemoteException | NotBoundException e) {
-                logger.warn("Failed to fetch the command service from [{}]", host);
-            }
-        }
-        return null;
+        return super.loadCommandService();
 	}
+
+    protected CommandServiceAPI lookupCommandService(HostConfig host) throws RemoteException, NotBoundException {
+        final AdminLoginManager adminLoginManager = getAdminLoginManager(host);
+        return RegistryUtils.getAdmin(host.getHost(), host.getPort(), adminLoginManager);
+    }
 
     protected void connectStoreIfNecessary() {
         if (!storeConnectedOnce) {

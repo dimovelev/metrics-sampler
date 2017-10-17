@@ -1,18 +1,14 @@
 package org.metricssampler.extensions.webmethods.parser;
 
+import org.metricssampler.extensions.webmethods.WebMethodsInputConfig;
+import org.metricssampler.reader.Metrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.metricssampler.extensions.webmethods.WebMethodsInputConfig;
-import org.metricssampler.reader.MetricName;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.SimpleMetricName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for parsers of files zipped in the webmethods diagnostics data file.
@@ -28,8 +24,8 @@ public abstract class AbstractFileParser {
 		this.prefix = prefix;
 	}
 
-	public Map<MetricName, MetricValue> parse(final InputStream stream) throws IOException, ParseException {
-		final Map<MetricName, MetricValue> result = new HashMap<>();
+	public Metrics parse(final InputStream stream) throws IOException, ParseException {
+		final Metrics result = new Metrics();
 		doParse(stream, result);
 		return result;
 	}
@@ -79,7 +75,7 @@ public abstract class AbstractFileParser {
 	 * @param name
 	 * @return
 	 */
-	protected MetricName createMetricName(final StringBuilder name) {
+	protected String createMetricName(final StringBuilder name) {
 		final StringBuilder result = new StringBuilder(prefix).append('.');
 		for (int i=0; i<name.length(); i++) {
 			final char c = name.charAt(i);
@@ -91,10 +87,10 @@ public abstract class AbstractFileParser {
 				}
 			}
 		}
-		return new SimpleMetricName(result.toString(), null);
+		return result.toString();
 	}
 
-	protected abstract void doParse(final InputStream stream, final Map<MetricName, MetricValue> metrics) throws IOException, ParseException;
+	protected abstract void doParse(final InputStream stream, final Metrics metrics) throws IOException, ParseException;
 
 	/**
 	 * @param name a name of a ZIP file entry

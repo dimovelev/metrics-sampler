@@ -1,8 +1,7 @@
 package org.metricssampler.cmd;
 
-import org.metricssampler.sampler.Sampler;
-
 import com.beust.jcommander.Parameters;
+import org.metricssampler.sampler.Sampler;
 
 @Parameters(commandNames="test", commandDescriptionKey="help.test.command")
 public class TestCommand extends SamplersCommand {

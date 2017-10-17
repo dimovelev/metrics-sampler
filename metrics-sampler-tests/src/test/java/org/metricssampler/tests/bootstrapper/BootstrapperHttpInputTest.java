@@ -1,16 +1,12 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.extensions.http.HttpInputConfig;
 import org.metricssampler.extensions.http.parsers.regexp.RegExpHttpResponseParser;
 import org.metricssampler.extensions.http.parsers.regexp.RegExpLineFormat;
+
+import static org.junit.Assert.*;
 
 public class BootstrapperHttpInputTest extends BootstrapperTestBase {
 	@Test

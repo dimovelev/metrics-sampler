@@ -1,12 +1,12 @@
 package org.metricssampler.tests.bootstrapper;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.extensions.exec.ExecInputConfig;
+
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
 
 public class BootstrapperExecInputTest extends BootstrapperTestBase {
 	@Test

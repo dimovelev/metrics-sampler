@@ -1,10 +1,10 @@
 package org.metricssampler.extensions.exec;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.converters.extended.ToAttributedValueConverter;
+
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 @XStreamAlias("argument")
 @XStreamConverter(value=ToAttributedValueConverter.class, strings={"value"})

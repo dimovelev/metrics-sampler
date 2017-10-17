@@ -1,11 +1,11 @@
 package org.metricssampler.tests.bootstrapper;
 
-import java.util.Iterator;
-
 import org.junit.Test;
 import org.metricssampler.config.Configuration;
 import org.metricssampler.extensions.oranosql.OracleNoSQLInputConfig;
 import org.metricssampler.extensions.oranosql.OracleNoSQLInputConfig.HostConfig;
+
+import java.util.Iterator;
 
 import static org.junit.Assert.*;
 

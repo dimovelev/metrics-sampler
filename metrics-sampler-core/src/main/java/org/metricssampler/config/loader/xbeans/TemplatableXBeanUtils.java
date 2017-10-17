@@ -1,14 +1,14 @@
 package org.metricssampler.config.loader.xbeans;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.metricssampler.config.ConfigurationException;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.metricssampler.config.ConfigurationException;
 
 public class TemplatableXBeanUtils {
 	public static <T extends TemplatableXBean> LinkedHashMap<String, T> sortByDependency(final List<T> list) {

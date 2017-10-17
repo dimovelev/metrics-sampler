@@ -1,11 +1,10 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-
-import org.metricssampler.config.loader.xbeans.NameRegExpValueTransformerXBean;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.loader.xbeans.NameRegExpValueTransformerXBean;
+
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
 
 @XStreamAlias("el-value-transformer")
 public class ELValueTransformerXBean extends NameRegExpValueTransformerXBean {

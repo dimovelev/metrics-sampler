@@ -1,11 +1,10 @@
 package org.metricssampler.cmd;
 
+import com.beust.jcommander.Parameters;
+import com.beust.jcommander.ParametersDelegate;
 import org.metricssampler.daemon.Daemon;
 import org.metricssampler.service.Bootstrapper;
 import org.metricssampler.service.DefaultBootstrapper;
-
-import com.beust.jcommander.Parameters;
-import com.beust.jcommander.ParametersDelegate;
 
 @Parameters(commandNames="start", commandDescriptionKey="help.start.command")
 public class StartCommand extends BootstrappedCommand {

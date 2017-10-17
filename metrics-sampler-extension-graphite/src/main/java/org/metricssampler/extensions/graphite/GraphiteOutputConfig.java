@@ -1,9 +1,9 @@
 package org.metricssampler.extensions.graphite;
 
+import org.metricssampler.config.OutputConfig;
+
 import static org.metricssampler.util.Preconditions.checkArgument;
 import static org.metricssampler.util.Preconditions.checkArgumentNotNullNorEmpty;
-
-import org.metricssampler.config.OutputConfig;
 
 public class GraphiteOutputConfig extends OutputConfig {
 	private final String host;

@@ -1,8 +1,7 @@
 package org.metricssampler.config.loader.xbeans;
 
-import org.metricssampler.config.SharedResourceConfig;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.metricssampler.config.SharedResourceConfig;
 
 @XStreamAlias("shared-resource")
 public abstract class SharedResourceXBean extends NamedXBean {

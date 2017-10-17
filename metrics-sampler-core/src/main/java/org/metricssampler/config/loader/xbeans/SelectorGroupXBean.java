@@ -1,15 +1,14 @@
 package org.metricssampler.config.loader.xbeans;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.metricssampler.config.ConfigurationException;
+import org.metricssampler.config.SelectorConfig;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.metricssampler.config.ConfigurationException;
-import org.metricssampler.config.SelectorConfig;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 @XStreamAlias("selector-group")
 public class SelectorGroupXBean extends NamedXBean {

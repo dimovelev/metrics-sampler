@@ -1,16 +1,15 @@
 package org.metric.sampler.extension.redis;
 
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
-import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPort;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.metricssampler.config.InputConfig;
+import org.metricssampler.config.loader.xbeans.InputXBean;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.metricssampler.config.InputConfig;
-import org.metricssampler.config.loader.xbeans.InputXBean;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.notEmpty;
+import static org.metricssampler.config.loader.xbeans.ValidationUtils.validPort;
 
 @XStreamAlias("redis")
 public class RedisInputXBean extends InputXBean {

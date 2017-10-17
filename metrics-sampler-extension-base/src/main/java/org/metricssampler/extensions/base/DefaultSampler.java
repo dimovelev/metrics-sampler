@@ -1,14 +1,6 @@
 package org.metricssampler.extensions.base;
 
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
-
-import java.util.*;
-import java.util.Map.Entry;
-
-import org.metricssampler.reader.MetricReadException;
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.reader.MetricsReader;
-import org.metricssampler.reader.OpenMetricsReaderException;
+import org.metricssampler.reader.*;
 import org.metricssampler.resources.SamplerStats;
 import org.metricssampler.sampler.Sampler;
 import org.metricssampler.selector.MetricsSelector;
@@ -17,6 +9,10 @@ import org.metricssampler.writer.MetricWriteException;
 import org.metricssampler.writer.MetricsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 public class DefaultSampler implements Sampler {
 	private final Logger logger;
@@ -99,8 +95,8 @@ public class DefaultSampler implements Sampler {
 		logger.debug("Sampling");
 		try {
 			final long readStart = System.currentTimeMillis();
-			final Map<String, MetricValue> rawMetrics = readMetrics();
-			final Map<String, MetricValue> metrics = transformValues(rawMetrics);
+			final Metrics rawMetrics = readMetrics();
+			final Metrics metrics = transformValues(rawMetrics);
 			final long readEnd = System.currentTimeMillis();
 			timingsLogger.debug("Sampled {} metrics in {} ms", metrics.size(), readEnd-readStart);
 			writeMetrics(metrics);
@@ -122,15 +118,15 @@ public class DefaultSampler implements Sampler {
 		}
 	}
 
-	protected Map<String, MetricValue> transformValues(final Map<String, MetricValue> metrics) {
+	protected Metrics transformValues(final Metrics metrics) {
 		if (valueTransformers.isEmpty()) {
 			return metrics;
 		} else {
 			logger.debug("Transforming values");
-			final Map<String, MetricValue> result = new HashMap<>();
-			for (final Entry<String, MetricValue> entry : metrics.entrySet()) {
-				final MetricValue newValue = transformValue(entry.getKey(), entry.getValue());
-				result.put(entry.getKey(), newValue);
+			final Metrics result = new Metrics();
+			for (final Metric entry : metrics) {
+				final MetricValue newValue = transformValue(entry.getName().getName(), entry.getValue());
+				result.add(new Metric(entry.getName(), newValue));
 			}
 			return result;
 		}
@@ -146,7 +142,9 @@ public class DefaultSampler implements Sampler {
 		return value;
 	}
 
-	private void writeMetrics(final Map<String, MetricValue> metrics) {
+	protected void writeMetrics(final Metrics metrics) {
+		debugMetricsIfNecessary(metrics);
+
 		openWriters();
 
 		for (final MetricsWriter writer : writers) {
@@ -161,17 +159,25 @@ public class DefaultSampler implements Sampler {
 		closeWriters();
 	}
 
-	private Map<String, MetricValue> readMetrics() {
+	protected void debugMetricsIfNecessary(Metrics metrics) {
+		if (logger.isDebugEnabled()) {
+			for (final Metric item : metrics) {
+				logger.debug("Metric {} = {} @ {}", item.getName().getName(), item.getValue().getValue(), item.getValue().getTimestamp());
+			}
+		}
+	}
+
+	private Metrics readMetrics() {
 		logger.debug("Opening reader {}", reader);
 		reader.open();
 
 		logger.debug("Reading metrics from {}", reader);
-		final Map<String, MetricValue> result = new HashMap<>();
+		final Metrics result = new Metrics();
 		for (final MetricsSelector selector : selectors) {
 			logger.debug("Reading metrics from {} via {}", reader, selector);
-			final Map<String, MetricValue> metrics = selector.readMetrics(reader);
+			final Metrics metrics = selector.readMetrics(reader);
 			logger.debug("Selector " + selector + " returned " + metrics.size() + " metrics for " + reader);
-			result.putAll(metrics);
+			result.addAll(metrics);
 		}
 
 		reader.close();
@@ -262,10 +268,10 @@ public class DefaultSampler implements Sampler {
     public Set<String> metrics() {
         logger.debug("Listing the matched metrics");
         try {
-            final Map<String, MetricValue> rawMetrics = readMetrics();
-            final Map<String, MetricValue> metrics = transformValues(rawMetrics);
-            final Set<String> result = new TreeSet<String>();
-            result.addAll(metrics.keySet());
+            final Metrics rawMetrics = readMetrics();
+            final Metrics metrics = transformValues(rawMetrics);
+            final Set<String> result = new TreeSet<>();
+			metrics.getNames().forEach(i -> result.add(i.getName()));
             return result;
         } catch (final OpenMetricsReaderException e) {
             final String msg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();

@@ -1,20 +1,20 @@
 package org.metricssampler.extensions.graphite;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
+import org.metricssampler.reader.Metric;
+import org.metricssampler.reader.MetricValue;
+import org.metricssampler.reader.Metrics;
+import org.metricssampler.writer.MetricWriteException;
+import org.metricssampler.writer.MetricsWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Map;
 
-import org.metricssampler.reader.MetricValue;
-import org.metricssampler.writer.MetricWriteException;
-import org.metricssampler.writer.MetricsWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.apache.commons.io.IOUtils.closeQuietly;
+import static org.metricssampler.util.Preconditions.checkArgumentNotNull;
 
 /**
  * Send metrics to graphite. This class is not thread safe and should not be used by multiple samplers.
@@ -39,8 +39,6 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 	        try {
 				socket = new Socket(config.getHost(), config.getPort());
 				writer = new OutputStreamWriter(socket.getOutputStream());
-			} catch (final UnknownHostException e) {
-				throw new MetricWriteException(e);
 			} catch (final IOException e) {
 				throw new MetricWriteException(e);
 			}
@@ -62,14 +60,18 @@ public class GraphiteMetricsWriter implements MetricsWriter {
 	}
 
 	@Override
-	public void write(final Map<String, MetricValue> metrics) {
+	public void write(final Metrics metrics) {
 		checkArgumentNotNull(metrics, "metrics");
 		assertIsConnected();
 		final StringBuilder builder = new StringBuilder();
-		for (final Map.Entry<String, MetricValue> entry : metrics.entrySet()) {
+		for (final Metric entry : metrics) {
 			final MetricValue value = entry.getValue();
-			final String msg = serializeValue(entry.getKey(), value);
-			builder.append(msg);
+			if (value.getValue() != null) {
+				final String msg = serializeValue(entry.getName().getName(), value);
+				builder.append(msg);
+			} else {
+				logger.debug("Skipping null value for metric [{}]", entry.getName().getName());
+			}
 		}
 		try {
 			logger.debug("Sending to graphite:\n"+builder.toString());
