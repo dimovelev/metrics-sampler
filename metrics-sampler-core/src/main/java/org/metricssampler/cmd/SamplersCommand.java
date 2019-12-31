@@ -46,7 +46,7 @@ public abstract class SamplersCommand extends ConfigurationCommand {
 	/**
 	 * Invoked within the loop over the samplers
 	 *
-	 * @param sampler
+	 * @param sampler the sampler to process
 	 */
 	protected abstract void process(Sampler sampler);
 

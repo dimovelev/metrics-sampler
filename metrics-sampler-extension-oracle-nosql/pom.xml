@@ -12,19 +12,21 @@
 			<artifactId>metrics-sampler-core</artifactId>
 			<version>0.9.1-SNAPSHOT</version>
 		</dependency>
-		<!-- Download Oracle NoSQL from http://download.oracle.com/otn/nosql-database/kv-ce-1.2.123.zip and install the artefacts in your local maven repository using:
-			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvstore -Dpackaging=jar -Dversion=2.1.8 -Dfile=kvstore.jar -DgeneratePom=true
-			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvclient -Dpackaging=jar -Dversion=2.1.8 -Dfile=kvclient.jar -DgeneratePom=true -->
+		<!-- 1. Download Oracle NoSQL from https://download.oracle.com/otn-pub/otn_software/nosql-database/kv-ce-4.5.12.zip
+			 2. Extract the ZIP file and go to kv-4.5.12/lib
+			 3. Install the artifacts in your local maven repository using:
+			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvstore -Dpackaging=jar -Dversion=4.5.12 -Dfile=kvstore.jar -DgeneratePom=true
+			 mvn install:install-file -DgroupId=com.oracle.nosql -DartifactId=kvclient -Dpackaging=jar -Dversion=4.5.12 -Dfile=kvclient.jar -DgeneratePom=true -->
 		<dependency>
 			<groupId>com.oracle.nosql</groupId>
 			<artifactId>kvstore</artifactId>
-			<version>4.3.11</version>
+			<version>4.5.12</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle.nosql</groupId>
 			<artifactId>kvclient</artifactId>
-			<version>4.3.11</version>
+			<version>4.5.12</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

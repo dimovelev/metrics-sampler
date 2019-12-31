@@ -34,6 +34,42 @@ public class OracleNoSQLInputXBean extends InputXBean {
 	@XStreamAsAttribute
 	private String trustFile;
 
+	public String getStore() {
+		return store;
+	}
+
+	public OracleNoSQLInputXBean setStore(final String store) {
+		this.store = store;
+		return this;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public OracleNoSQLInputXBean setUsername(final String username) {
+		this.username = username;
+		return this;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public OracleNoSQLInputXBean setPassword(final String password) {
+		this.password = password;
+		return this;
+	}
+
+	public String getTrustFile() {
+		return trustFile;
+	}
+
+	public OracleNoSQLInputXBean setTrustFile(final String trustFile) {
+		this.trustFile = trustFile;
+		return this;
+	}
+
 	public String getHosts() {
 		return hosts;
 	}

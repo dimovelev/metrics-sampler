@@ -1,11 +1,15 @@
 package org.metricssampler.util;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketException;
+
 import org.metricssampler.config.SocketOptionsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.*;
 
 public class SocketUtils {
     private static final Logger logger = LoggerFactory.getLogger(SocketUtils.class);
@@ -14,11 +18,12 @@ public class SocketUtils {
     }
 
     /**
-     * Configure the socket with the given socket options. This should be done before the socket is connected.
-     * The connection timeout is not configurable - it must be used when connecting the socket.
+     * Configure the socket with the given socket options. This should be done before the socket is connected. The
+     * connection timeout is not configurable - it must be used when connecting the socket.
      *
-     * @param socket A not connected socket
+     * @param socket  A not connected socket
      * @param options The socket options. If null, no socket options will be configured.
+     * @throws SocketException in case some of the options failed to be set
      */
     public static void configureSocketOptions(Socket socket, SocketOptionsConfig options) throws SocketException {
         if (options != null) {
@@ -39,10 +44,12 @@ public class SocketUtils {
 
     /**
      * Create, configure and connect a socket.
+     *
      * @param address The address to connect to
      * @param options The socket options to configure. If null, no socket options will be configured
      * @return The configured and connected socket
-     * @throws IOException
+     *
+     * @throws IOException if the connection failed
      */
     public static Socket createAndConnect(SocketAddress address, SocketOptionsConfig options) throws IOException {
         final Socket result = new Socket();

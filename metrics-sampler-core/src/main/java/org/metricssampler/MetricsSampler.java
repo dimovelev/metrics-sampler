@@ -60,8 +60,8 @@ public class MetricsSampler {
 
 	/**
 	 * Reinvoke the createDescriptions of the sub-commanders as they will otherwise not have their descriptions taken from the bundle. 
-	 * @param jc
-	 * @param bundle
+	 * @param jc the jcommander
+	 * @param bundle the messages resource bundle for the descriptions
 	 */
 	protected static void fixResourceBundleBug(final JCommander jc, final ResourceBundle bundle) {
 		for (final Entry<String,JCommander> entry : jc.getCommands().entrySet()) {
