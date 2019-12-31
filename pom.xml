@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.dimovelev</groupId>
     <artifactId>metrics-sampler</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>metrics-sampler</name>
     <description>metrics-sampler is a java program which regularly queries metrics from a configured set of inputs,
@@ -29,7 +29,7 @@
         <connection>scm:git:git@github.com:dimovelev/metrics-sampler.git</connection>
         <developerConnection>scm:git:git@github.com:dimovelev/metrics-sampler.git</developerConnection>
         <url>https://github.com/dimovelev/metrics-sampler</url>
-        <tag>v0.9.1</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
