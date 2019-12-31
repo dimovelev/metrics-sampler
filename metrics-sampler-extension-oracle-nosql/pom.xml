@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.github.dimovelev</groupId>
 		<artifactId>metrics-sampler</artifactId>
-		<version>0.9.1-SNAPSHOT</version>
+		<version>0.9.1</version>
 	</parent>
 	<artifactId>metrics-sampler-extension-oracle-nosql</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.dimovelev</groupId>
 			<artifactId>metrics-sampler-core</artifactId>
-			<version>0.9.1-SNAPSHOT</version>
+			<version>0.9.1</version>
 		</dependency>
 		<!-- 1. Download Oracle NoSQL from https://download.oracle.com/otn-pub/otn_software/nosql-database/kv-ce-4.5.12.zip
 			 2. Extract the ZIP file and go to kv-4.5.12/lib

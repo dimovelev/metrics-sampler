@@ -3,7 +3,7 @@
     <parent>
         <artifactId>metrics-sampler</artifactId>
         <groupId>com.github.dimovelev</groupId>
-        <version>0.9.1-SNAPSHOT</version>
+        <version>0.9.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.github.dimovelev</groupId>
             <artifactId>metrics-sampler-core</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.9.1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
