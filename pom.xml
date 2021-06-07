@@ -44,7 +44,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <versions.slf4j>1.7.5</versions.slf4j>
-        <versions.logback>1.0.12</versions.logback>
+        <versions.logback>1.2.0</versions.logback>
     </properties>
     <modules>
         <module>metrics-sampler-core</module>
