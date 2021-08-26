@@ -1,6 +1,6 @@
 language: java
 jdk:
   - oraclejdk8
-install: mvn clean package -pl .,metrics-sampler-core,metrics-sampler-extension-apache-status,metrics-sampler-extension-base,metrics-sampler-extension-graphite,metrics-sampler-extension-jdbc,metrics-sampler-extension-jmx,metrics-sampler-extension-redis,metrics-sampler-extension-webmethods,metrics-sampler-extension-exec -Dmaven.test.skip=true
-script: mvn test -pl .,metrics-sampler-core,metrics-sampler-extension-apache-status,metrics-sampler-extension-base,metrics-sampler-extension-graphite,metrics-sampler-extension-jdbc,metrics-sampler-extension-jmx,metrics-sampler-extension-redis,metrics-sampler-extension-webmethods,metrics-sampler-extension-exec -Dmaven.test.skip=true
+install: mvn -T 1C clean package -pl .,metrics-sampler-core,metrics-sampler-extension-apache-status,metrics-sampler-extension-base,metrics-sampler-extension-graphite,metrics-sampler-extension-jdbc,metrics-sampler-extension-jmx,metrics-sampler-extension-redis,metrics-sampler-extension-webmethods,metrics-sampler-extension-exec -Dmaven.test.skip=true
+script: mvn -T 1C test -pl .,metrics-sampler-core,metrics-sampler-extension-apache-status,metrics-sampler-extension-base,metrics-sampler-extension-graphite,metrics-sampler-extension-jdbc,metrics-sampler-extension-jmx,metrics-sampler-extension-redis,metrics-sampler-extension-webmethods,metrics-sampler-extension-exec -Dmaven.test.skip=true
 
