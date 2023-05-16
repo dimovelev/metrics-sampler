@@ -11,6 +11,7 @@ import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.naming.Context;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
@@ -32,12 +33,21 @@ public class JmxConnection {
 
 	private Map<String, Object> constructEnvironment() {
 		final Map<String, Object> result = new HashMap<>();
+
+		if (config.getProviderPackages() != null && config.getProviderPackages().contains("weblogic")) {
+			if (config.getUsername() != null) {
+				result.put(Context.SECURITY_PRINCIPAL, config.getUsername());
+				result.put(Context.SECURITY_CREDENTIALS, config.getPassword());
+				result.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, config.getProviderPackages());
+	    		return result;
+			}	
+		}
+
 		result.putAll(config.getConnectionProperties());
 		if (config.getUsername() != null) {
 			String[]  credentials = new String[] {config.getUsername(), config.getPassword()};
 			result.put(JMXConnector.CREDENTIALS, credentials);
 		}
-		result.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, config.getProviderPackages());
 		if (config.hasSocketOptions()) {
 			final JmxClientSocketFactory sf = new JmxClientSocketFactory(config.getSocketOptions());
 			result.put("com.sun.jndi.rmi.factory.socket", sf);
