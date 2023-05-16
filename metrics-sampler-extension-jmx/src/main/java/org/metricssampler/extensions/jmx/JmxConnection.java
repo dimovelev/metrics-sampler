@@ -38,8 +38,11 @@ public class JmxConnection {
 			if (config.getUsername() != null) {
 				result.put(Context.SECURITY_PRINCIPAL, config.getUsername());
 				result.put(Context.SECURITY_CREDENTIALS, config.getPassword());
+				// This is something for enabling weblogic support. http://download.oracle.com/docs/cd/E13222_01/wls/docs90/jmx/accessWLS.
+		                // You'd set this to: weblogic.management.remote
 				result.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, config.getProviderPackages());
-	    		return result;
+	    			
+				return result;
 			}	
 		}
 
